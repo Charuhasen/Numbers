@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Home Hub Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7d8c9b",
+                        "surface-variant": "#EDE8E2",
+                        "background-light": "#F5F0EB",
+                        "background-dark": "#18191a",
+                        "matte-neutral": "#d1d5db"
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 min-h-screen">
+    <div class="max-w-md mx-auto px-6 pt-12 pb-10">
+        <header class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/20">
+                    <img alt="User Avatar" class="w-full h-full object-cover"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyty6T-luOW86yNbNfJ7a_m4VG5Pl1O9lT_Oi1sXnhZRS9m1JXv7W-UfYPB9PHyPDrQ2q9lvWy_8NOwc4Zu9D4RvrbJWsjMnSM1ahhlZZz8om6wfYHwjXoeRKHlSncwbW9pIQ12-27ZCH-Xyr8f48saDEIPfMcbWS9jQanutydKS9QAvPSkyYv4ug09DddAiyJB6jz7w5ia_sLzzA_WygfLjcHQe4NGMlq6IUP2KRMVGXe8IAW_u6aPPpM6InskfIaCIGIi845Krc" />
+                </div>
+                <div>
+                    <p class="text-xs text-primary font-medium opacity-80 uppercase tracking-wider">Welcome back</p>
+                    <h2 class="text-lg font-bold leading-tight">Hi, Username</h2>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <div
+                    class="bg-surface-variant dark:bg-primary/10 px-3 py-1.5 rounded-full flex items-center gap-2 border border-primary/5">
+                    <span class="text-sm">🪙</span>
+                    <span class="text-sm font-bold text-primary">1,240</span>
+                </div>
+                <button
+                    class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-variant dark:bg-primary/10 text-primary">
+                    <span class="material-icons text-[20px]">settings</span>
+                </button>
+            </div>
+        </header>
+        <div class="space-y-4 mb-10">
+            <div class="bg-surface-variant dark:bg-slate-800 p-6 rounded-lg relative overflow-hidden group">
+                <div class="relative z-10">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold mb-1">Classic</h3>
+                            <p class="text-sm text-slate-500 dark:text-slate-400">The standard mental challenge.</p>
+                        </div>
+                        <span
+                            class="bg-white/50 dark:bg-slate-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-primary">Best:
+                            2,800</span>
+                    </div>
+                    <button
+                        class="bg-primary hover:bg-primary/90 text-white w-full py-3 rounded-full font-bold text-sm tracking-wide transition-colors">
+                        PLAY
+                    </button>
+                </div>
+                <div class="absolute -right-4 -top-4 text-primary/5 select-none pointer-events-none">
+                    <span class="material-icons text-9xl">calculate</span>
+                </div>
+            </div>
+            <div class="bg-surface-variant dark:bg-slate-800 p-6 rounded-lg relative overflow-hidden">
+                <div class="relative z-10">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold mb-1">Blitz</h3>
+                            <p class="text-sm text-slate-500 dark:text-slate-400">Fast-paced arithmetic.</p>
+                        </div>
+                        <span
+                            class="bg-white/50 dark:bg-slate-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-primary">Best:
+                            1,500</span>
+                    </div>
+                    <button
+                        class="bg-primary hover:bg-primary/90 text-white w-full py-3 rounded-full font-bold text-sm tracking-wide transition-colors">
+                        PLAY
+                    </button>
+                </div>
+                <div class="absolute -right-4 -top-4 text-primary/5 select-none pointer-events-none">
+                    <span class="material-icons text-9xl">bolt</span>
+                </div>
+            </div>
+            <div class="bg-surface-variant dark:bg-slate-800 p-6 rounded-lg relative overflow-hidden">
+                <div class="relative z-10">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-xl font-bold mb-1">Daily</h3>
+                            <p class="text-sm text-slate-500 dark:text-slate-400">New puzzles every 24h.</p>
+                        </div>
+                        <span
+                            class="bg-white/50 dark:bg-slate-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-primary">Best:
+                            --</span>
+                    </div>
+                    <button
+                        class="bg-primary hover:bg-primary/90 text-white w-full py-3 rounded-full font-bold text-sm tracking-wide transition-colors">
+                        PLAY
+                    </button>
+                </div>
+                <div class="absolute -right-4 -top-4 text-primary/5 select-none pointer-events-none">
+                    <span class="material-icons text-9xl">calendar_today</span>
+                </div>
+            </div>
+        </div>
+        <section>
+            <h4 class="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 mb-4 px-1">Quick Access</h4>
+            <div class="grid grid-cols-2 gap-4">
+                <button
+                    class="bg-surface-variant/70 dark:bg-slate-800/50 p-5 rounded-lg flex flex-col items-center gap-3 transition-transform active:scale-95">
+                    <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+                        <span class="material-icons">emoji_events</span>
+                    </div>
+                    <span class="text-sm font-bold">Rankings</span>
+                </button>
+                <button
+                    class="bg-surface-variant/70 dark:bg-slate-800/50 p-5 rounded-lg flex flex-col items-center gap-3 transition-transform active:scale-95">
+                    <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+                        <span class="material-icons">science</span>
+                    </div>
+                    <span class="text-sm font-bold">My Potions</span>
+                </button>
+            </div>
+        </section>
+        <div class="mt-12 text-center">
+            <div class="inline-block w-8 h-1 bg-primary/20 rounded-full"></div>
+        </div>
+    </div>
+
+</body>
+
+</html>

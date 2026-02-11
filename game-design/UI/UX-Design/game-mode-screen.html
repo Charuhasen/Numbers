@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Classic Game Mode - Cognitive Trainer</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1983e6",
+                        "background-light": "#f6f7f8", // Using theme-specific light bg
+                        "background-dark": "#111921",
+                        "warm-beige": "#F2EFEA",
+                        "sand-taupe": "#CFC7BC",
+                        "charcoal-brown": "#3F3A34",
+                        "muted-blue": "#7C8B9A",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .bg-app-base {
+            background-color: #F2EFEA;
+        }
+
+        .text-brown {
+            color: #3F3A34;
+        }
+
+        .bg-taupe {
+            background-color: #CFC7BC;
+        }
+
+        .text-muted {
+            color: #7C8B9A;
+        }
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark flex justify-center items-center min-h-screen p-4">
+    <!-- Mobile Screen Container -->
+    <div
+        class="w-full max-w-[400px] h-[812px] bg-app-base dark:bg-background-dark rounded-[3rem] shadow-2xl overflow-hidden relative border-8 border-gray-900 flex flex-col font-display">
+        <!-- Header Section -->
+        <div class="px-6 pt-12 pb-4 flex items-center justify-between">
+            <button class="text-muted hover:text-charcoal-brown transition-colors">
+                <span class="material-icons text-3xl">close</span>
+            </button>
+            <div class="flex flex-col items-center">
+                <span class="text-xs font-bold tracking-widest text-muted uppercase">Challenge 4</span>
+                <div class="flex gap-1.5 mt-2">
+                    <div class="w-2 h-2 rounded-full bg-primary"></div>
+                    <div class="w-2 h-2 rounded-full bg-primary"></div>
+                    <div class="w-2 h-2 rounded-full bg-primary/30"></div>
+                    <div class="w-2 h-2 rounded-full bg-primary/30"></div>
+                    <div class="w-2 h-2 rounded-full bg-primary/30"></div>
+                </div>
+            </div>
+            <div class="flex gap-1">
+                <span class="material-icons text-red-500">favorite</span>
+                <span class="material-icons text-red-500">favorite</span>
+                <span class="material-icons text-red-500">favorite</span>
+            </div>
+        </div>
+        <!-- Instruction Area -->
+        <div class="mt-8 px-6 text-center">
+            <h2 class="text-xl font-bold text-charcoal-brown dark:text-white">Find the highest number</h2>
+            <p class="text-sm font-medium text-muted mt-1 uppercase tracking-wider">Round 12</p>
+        </div>
+        <!-- Timer Bar -->
+        <div class="mt-6 px-10">
+            <div class="w-full h-2 bg-taupe/30 dark:bg-gray-700 rounded-full overflow-hidden">
+                <div class="h-full bg-primary w-[60%] rounded-full shadow-[0_0_10px_rgba(25,131,230,0.5)]"></div>
+            </div>
+        </div>
+        <!-- Game Grid Container -->
+        <div class="flex-grow flex items-center justify-center px-8">
+            <div class="grid grid-cols-3 gap-4 w-full aspect-square">
+                <!-- Tile 1 -->
+                <button
+                    class="bg-taupe dark:bg-gray-800 rounded-xl shadow-lg active:scale-95 transition-transform flex items-center justify-center">
+                    <span class="text-3xl font-bold text-charcoal-brown dark:text-white">42</span>
+                </button>
+                <!-- Tile 2 -->
+                <button
+                    class="bg-taupe dark:bg-gray-800 rounded-xl shadow-lg active:scale-95 transition-transform flex items-center justify-center">
+                    <span class="text-3xl font-bold text-charcoal-brown dark:text-white">18</span>
+                </button>
+                <!-- Tile 3 -->
+                <button
+                    class="bg-taupe dark:bg-gray-800 rounded-xl shadow-lg active:scale-95 transition-transform flex items-center justify-center border-4 border-primary/20">
+                    <span class="text-3xl font-bold text-charcoal-brown dark:text-white">89</span>
+                </button>
+                <!-- Tile 4 -->
+                <button
+                    class="bg-taupe dark:bg-gray-800 rounded-xl shadow-lg active:scale-95 transition-transform flex items-center justify-center">
+                    <span class="text-3xl font-bold text-charcoal-brown dark:text-white">27</span>
+                </button>
+                <!-- Tile 5 -->
+                <button
+                    class="bg-taupe dark:bg-gray-800 rounded-xl shadow-lg active:scale-95 transition-transform flex items-center justify-center">
+                    <span class="text-3xl font-bold text-charcoal-brown dark:text-white">54</span>
+                </button>
+                <!-- Tile 6 -->
+                <button
+                    class="bg-taupe dark:bg-gray-800 rounded-xl shadow-lg active:scale-95 transition-transform flex items-center justify-center">
+                    <span class="text-3xl font-bold text-charcoal-brown dark:text-white">63</span>
+                </button>
+                <!-- Tile 7 -->
+                <button
+                    class="bg-taupe dark:bg-gray-800 rounded-xl shadow-lg active:scale-95 transition-transform flex items-center justify-center">
+                    <span class="text-3xl font-bold text-charcoal-brown dark:text-white">11</span>
+                </button>
+                <!-- Tile 8 -->
+                <button
+                    class="bg-taupe dark:bg-gray-800 rounded-xl shadow-lg active:scale-95 transition-transform flex items-center justify-center">
+                    <span class="text-3xl font-bold text-charcoal-brown dark:text-white">71</span>
+                </button>
+                <!-- Tile 9 -->
+                <button
+                    class="bg-taupe dark:bg-gray-800 rounded-xl shadow-lg active:scale-95 transition-transform flex items-center justify-center">
+                    <span class="text-3xl font-bold text-charcoal-brown dark:text-white">35</span>
+                </button>
+            </div>
+        </div>
+        <!-- Bottom Stats Bar -->
+        <div class="bg-taupe/20 dark:bg-gray-800/50 py-4 border-t border-taupe/30">
+            <div class="flex justify-evenly items-center">
+                <div class="text-center flex-1">
+                    <p class="text-[10px] uppercase font-bold text-muted tracking-tighter">Score</p>
+                    <p class="text-xl font-bold text-charcoal-brown dark:text-white">2,840</p>
+                </div>
+                <div class="w-px h-8 bg-taupe/40"></div>
+                <div class="text-center flex-1">
+                    <p class="text-[10px] uppercase font-bold text-muted tracking-tighter">Best</p>
+                    <p class="text-xl font-bold text-charcoal-brown dark:text-white">4,120</p>
+                </div>
+                <div class="w-px h-8 bg-taupe/40"></div>
+                <div class="text-center flex-1">
+                    <p class="text-[10px] uppercase font-bold text-muted tracking-tighter">Time</p>
+                    <p class="text-xl font-bold text-charcoal-brown dark:text-white">0:45</p>
+                </div>
+            </div>
+        </div>
+        <!-- Potion Tray -->
+        <div class="p-6 pb-10 flex justify-center gap-6">
+            <button
+                class="w-14 h-14 bg-white dark:bg-gray-800 rounded-xl shadow-md flex items-center justify-center border-b-4 border-taupe relative group">
+                <span class="material-icons text-primary/80">auto_fix_high</span>
+                <span
+                    class="absolute -top-1 -right-1 w-5 h-5 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center">2</span>
+            </button>
+            <button
+                class="w-14 h-14 bg-white dark:bg-gray-800 rounded-xl shadow-md flex items-center justify-center border-b-4 border-taupe relative group opacity-50">
+                <span class="material-icons text-muted">timer_off</span>
+                <span
+                    class="absolute -top-1 -right-1 w-5 h-5 bg-muted text-white text-[10px] font-bold rounded-full flex items-center justify-center">0</span>
+            </button>
+            <button
+                class="w-14 h-14 bg-white dark:bg-gray-800 rounded-xl shadow-md flex items-center justify-center border-b-4 border-taupe relative group">
+                <span class="material-icons text-primary/80">visibility</span>
+                <span
+                    class="absolute -top-1 -right-1 w-5 h-5 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center">1</span>
+            </button>
+        </div>
+        <!-- iOS Home Indicator Sim -->
+        <div class="absolute bottom-1 left-1/2 -translate-x-1/2 w-32 h-1 bg-charcoal-brown/20 rounded-full"></div>
+    </div>
+</body>
+
+</html>

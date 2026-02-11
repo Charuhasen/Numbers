@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Leaderboard Full List View</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7d8c9b",
+                        "background-light": "#F5F0EB",
+                        "background-dark": "#18191a",
+                        "surface-variant": "#EDE8E2",
+                        "neutral-soft": "#E5DFD9",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200 antialiased min-h-screen">
+    <div class="max-w-md mx-auto min-h-screen flex flex-col">
+        <!-- Header -->
+        <header
+            class="pt-12 pb-6 px-6 flex items-center justify-between sticky top-0 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md z-30">
+            <button
+                class="w-10 h-10 flex items-center justify-center rounded-full bg-white/50 dark:bg-white/10 text-primary">
+                <span class="material-icons">arrow_back_ios_new</span>
+            </button>
+            <h1 class="text-sm font-bold tracking-[0.2em] uppercase text-primary">Leaderboard</h1>
+            <div class="w-10"></div> <!-- Spacer for symmetry -->
+        </header>
+        <!-- Mode Tabs -->
+        <div class="px-6 mb-6">
+            <div class="bg-neutral-soft/50 dark:bg-white/5 p-1 rounded-full flex gap-1">
+                <button
+                    class="flex-1 py-2.5 px-4 rounded-full bg-primary text-white text-sm font-semibold transition-all">
+                    Classic
+                </button>
+                <button
+                    class="flex-1 py-2.5 px-4 rounded-full text-primary/70 dark:text-white/60 text-sm font-semibold hover:bg-white/30 transition-all">
+                    Blitz
+                </button>
+                <button
+                    class="flex-1 py-2.5 px-4 rounded-full text-primary/70 dark:text-white/60 text-sm font-semibold hover:bg-white/30 transition-all">
+                    Daily
+                </button>
+            </div>
+        </div>
+        <!-- Scope Toggle -->
+        <div class="px-6 mb-8 flex justify-center gap-8 border-b border-primary/10 pb-4">
+            <button class="relative text-sm font-bold text-primary tracking-wide">
+                GLOBAL
+                <span class="absolute -bottom-4 left-1/2 -translate-x-1/2 w-8 h-1 bg-primary rounded-full"></span>
+            </button>
+            <button class="text-sm font-semibold text-primary/40 dark:text-white/30 tracking-wide">
+                REGIONAL
+            </button>
+        </div>
+        <!-- User Rank Card -->
+        <div class="px-6 mb-8">
+            <div class="bg-primary p-6 rounded-2xl shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-white/70 text-xs font-bold uppercase tracking-widest mb-1">Your Standing</p>
+                    <h2 class="text-white text-3xl font-bold">#42</h2>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="text-right">
+                        <p class="text-white font-semibold">Alex Rivera</p>
+                        <p class="text-white/60 text-xs">Top 15% this week</p>
+                    </div>
+                    <img alt="Your Profile Avatar" class="w-12 h-12 rounded-full border-2 border-white/20 object-cover"
+                        data-alt="Professional male portrait for profile avatar"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuD13anhLRIS1vodPFAXG3UWn83W1kQAQGe6WVo8Gd0RIHdHJUJHogApnP4DCUDl4fqHwP13Ug6OIeEcS4p4uP2nTILEhU-yp97zdYB8JY28F--fxz0VPaBT1j0qJAWtvD-oCXiw3moIFgW2MOtehXrU1lUIpW7fr3FG54Ki5ngUDVq6K0qrY4T_QZsMr2zJNBNPh_3XniRGTBrBUcXO80VTogB6yA07tloPQy72Wl2FERb1zzoQISd6Amu-aBaw-r5pstnhVd29PzU" />
+                </div>
+            </div>
+        </div>
+        <!-- Leaderboard List -->
+        <div class="flex-1 px-4 space-y-1 pb-10">
+            <!-- Rank #1 -->
+            <div class="flex items-center p-4 rounded-xl bg-white/40 dark:bg-white/5">
+                <div class="w-10 text-center">
+                    <span class="text-primary font-bold text-lg">#1</span>
+                </div>
+                <div class="flex items-center gap-3 flex-1 px-2">
+                    <div class="relative">
+                        <img alt="Rank 1 Avatar" class="w-10 h-10 rounded-full object-cover border-2 border-primary"
+                            data-alt="Young woman smiling for profile avatar"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdqp2DJk5ahIvmMf34D-qVitwH3RLz4ydFlCJCqN9ImVE3gs2AouBJJITFTR9zZMVqZuUar9At4vU5n3dx2DB51NX8USmSJcJmdape5g7BglFZkBPTYfox4eQQWagQ8qrvOXURO4pwVp2V6TNRWQceZCEkUTcbrCx145TNsxgnKDAMji_LZoI8dGq213k7-BLWdxS7Qvs1RiwSyYcKzxLKiZuaJErXzs-hYsz7eXhkMkf3kfKvzwl3cPJCGqPyfDPaIyUG_cFDFh8" />
+                        <div
+                            class="absolute -top-1 -right-1 bg-primary text-[10px] text-white w-4 h-4 rounded-full flex items-center justify-center">
+                            <span class="material-icons text-[10px]">star</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="font-bold text-slate-800 dark:text-white">Sarah Chen</p>
+                        <p class="text-[10px] text-primary/60 uppercase font-bold tracking-tighter">Grandmaster</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="font-bold text-primary">12,840</p>
+                </div>
+            </div>
+            <!-- Rank #2 -->
+            <div class="flex items-center p-4 rounded-xl bg-white/40 dark:bg-white/5">
+                <div class="w-10 text-center">
+                    <span class="text-primary font-bold text-lg">#2</span>
+                </div>
+                <div class="flex items-center gap-3 flex-1 px-2">
+                    <img alt="Rank 2 Avatar" class="w-10 h-10 rounded-full object-cover border-2 border-primary/40"
+                        data-alt="Male portrait with glasses for profile"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVifbh4v494bT8qbAvfWB-ADQ1kAPcolkVjGdMknLzmXBd4Fwp3W6U2mxsriKXJxSrDbPJZxMf9xIrFvGC-plwj53aeSHMXIwj9i8S_kc5E73zgKoLDQ1NlKoUdE4-LscBwZhC3myycQNg0XqsD-Wejpu8RxvCM-QwcLNOAMj7vL6eaZCjFWYIkZpAbF0qJPecTnx7Evq6ZyVWDUKBnKk9OsQz82ve5USnlEhUW9_FtA4W9g164mrmGXSyiaUoGKcv1QIryKZ25r8" />
+                    <div>
+                        <p class="font-bold text-slate-800 dark:text-white">Marcus Thorne</p>
+                        <p class="text-[10px] text-primary/60 uppercase font-bold tracking-tighter">Elite</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="font-bold text-primary">11,920</p>
+                </div>
+            </div>
+            <!-- Rank #3 -->
+            <div class="flex items-center p-4 rounded-xl bg-white/40 dark:bg-white/5">
+                <div class="w-10 text-center">
+                    <span class="text-primary font-bold text-lg">#3</span>
+                </div>
+                <div class="flex items-center gap-3 flex-1 px-2">
+                    <img alt="Rank 3 Avatar" class="w-10 h-10 rounded-full object-cover border-2 border-primary/20"
+                        data-alt="Portrait of a young woman smiling"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwQX00vzTRoQnM_rvjn7nF4cbWm2k_vs6AMhPJZYtkBY80MEaXsw4yc8UlweXe5UW-PwRM-ZY1uBQj4lygQWAKYUXnEux_6OsJRwQ4M1RHkTDzoObEMcPKa70wxUqn0YuT7XNzATwwHaIYXvoCNLH9SfZULlf6tWFsWW6MisAzyBpo3R4kvUeXvQHSMJcxirsHQlqqqEKPpAMy0gxptkPXexBuPvx55_xBuGnN236G0cFlybEa8Y_2v3PIv_8k7Bks08gmGwqBgk0" />
+                    <div>
+                        <p class="font-bold text-slate-800 dark:text-white">Elena Rodriguez</p>
+                        <p class="text-[10px] text-primary/60 uppercase font-bold tracking-tighter">Elite</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="font-bold text-primary">10,450</p>
+                </div>
+            </div>
+            <!-- Rank #4 -->
+            <div class="flex items-center p-4 rounded-xl">
+                <div class="w-10 text-center">
+                    <span class="text-slate-400 font-bold">#4</span>
+                </div>
+                <div class="flex items-center gap-3 flex-1 px-2">
+                    <img alt="Player Avatar" class="w-10 h-10 rounded-full object-cover"
+                        data-alt="Casual male profile photo"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRNBfEcujOb6dYAeKLuaY1j2hlSVDG6fey52gCYZG5Dpsc8NWeRYtbsN86exXEVcm74SMRRUyxtqId83S11aMloR5r0gf8T_V5bn980EiDABwTF18qEJkfTJcAIfAu4EG8eO2QQXoJKgqSZhS0j1Ljn76ipFOJctqlkuMLvfer82OH0o-biJAkmeLcK_5f1WsuX7h7zYNjUZ-l7eenmnHoJA5XEAqw7nV_4ny4v44oEF3wTYYYT4ccLZYrpw3kUedBF_716o9fHm4" />
+                    <div>
+                        <p class="font-medium text-slate-700 dark:text-slate-300">David Kim</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="font-bold text-slate-600 dark:text-slate-400">9,820</p>
+                </div>
+            </div>
+            <!-- Separator -->
+            <div class="flex justify-center py-2">
+                <div class="flex gap-1">
+                    <div class="w-1 h-1 rounded-full bg-primary/30"></div>
+                    <div class="w-1 h-1 rounded-full bg-primary/30"></div>
+                    <div class="w-1 h-1 rounded-full bg-primary/30"></div>
+                </div>
+            </div>
+            <!-- Current User Highlighted Row -->
+            <div class="flex items-center p-4 rounded-xl bg-surface-variant dark:bg-primary/20 ring-2 ring-primary/10">
+                <div class="w-10 text-center">
+                    <span class="text-primary font-bold">#42</span>
+                </div>
+                <div class="flex items-center gap-3 flex-1 px-2">
+                    <img alt="Your Avatar" class="w-10 h-10 rounded-full object-cover ring-2 ring-primary/30"
+                        data-alt="Your profile picture again for rank row"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDobq5H0yBdNe39r0d1qWaLoP2tegneyQelAd6nSWkrK8OJtDoT5Sos5ea1ZrO4FHxNgSgM4AgZ0jLrz0s7uXPwfttCbVeIyU79u0rlIXiYNQvOgC_EuQGMP-a604tKlNIMxBs6X7BOf9Y17njYaUiUrpHLnPqx0iCcgadlbwbqqwc3ISBA2rmRxfWLcr5v08Dvsq7HHv6U6Qct-Sc4-eUnZFpr-Rs3M64SqKQVdXYDvR0Jrip5Q4LAhYYbTRhi1hMbmpbjc34gw0Y" />
+                    <div>
+                        <p class="font-bold text-primary">Alex Rivera (You)</p>
+                        <p class="text-[10px] text-primary/60 uppercase font-bold tracking-tighter">Strategist</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="font-bold text-primary">6,420</p>
+                </div>
+            </div>
+            <!-- Rank #43 -->
+            <div class="flex items-center p-4 rounded-xl">
+                <div class="w-10 text-center">
+                    <span class="text-slate-400 font-bold">#43</span>
+                </div>
+                <div class="flex items-center gap-3 flex-1 px-2">
+                    <img alt="Player Avatar" class="w-10 h-10 rounded-full object-cover grayscale opacity-60"
+                        data-alt="Young man profile portrait"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuB48IbNtfDDFPIzwNonppmrvPnxR4963Jd7KZG7O6tiTqmjTM20k8dxlQgRmLth9yS3_qdJ8tqkovF59pX11_OvjzxnXEw5J0MfqeNgEsaaL53AsnlIG91FQeHrifMscq08Fy3exjM3giZCQX4Ux49SBFzWCTTNVcS1ntbuVOeQHNMTsrUw0pE0j_6Lohq9mvFbyZ7l28ypXqeCMua06qwNUZDIDuSbNsSZ3uf8IJ6qH6SBNObS_gNPZtD-BH6El9AzAeC8i0oQ840" />
+                    <div>
+                        <p class="font-medium text-slate-700 dark:text-slate-300">James Wilson</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="font-bold text-slate-600 dark:text-slate-400">6,390</p>
+                </div>
+            </div>
+            <!-- Rank #44 -->
+            <div class="flex items-center p-4 rounded-xl">
+                <div class="w-10 text-center">
+                    <span class="text-slate-400 font-bold">#44</span>
+                </div>
+                <div class="flex items-center gap-3 flex-1 px-2">
+                    <img alt="Player Avatar" class="w-10 h-10 rounded-full object-cover grayscale opacity-60"
+                        data-alt="Woman with professional headshot"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCM2jvbfaiEsAOy6yNWfMZlnNwN3oL0R-Jr6fnHen2ah9XxziGqM_pp4Tlglw6oMHKLc2IU8J4QCx1C1kLkpddUFVsvLoO10AFp6EInF8bEpVqWK5w8S2Kcx_Bc0pdWXY43dYXu22HKNVruTUNRV3Y1QQ8rglxJTEGgLr18QYOPDq29e_t6yPvki50HaxMa62s1XeJzNKySWGaZ2fhKTNJbePu_oxhRt_U6EwUBBbRQqzolfsr6xyrn2dYxFcHt959jUMcrc9_cTbc" />
+                    <div>
+                        <p class="font-medium text-slate-700 dark:text-slate-300">Sophia Lane</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="font-bold text-slate-600 dark:text-slate-400">6,120</p>
+                </div>
+            </div>
+        </div>
+        <!-- Scroll Indicator / Footer area -->
+        <div
+            class="h-8 bg-gradient-to-t from-background-light dark:from-background-dark to-transparent sticky bottom-0 pointer-events-none">
+        </div>
+    </div>
+
+    ```
+</body>
+
+</html>
