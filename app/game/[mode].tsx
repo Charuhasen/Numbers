@@ -6,7 +6,7 @@ import { StatsBar } from '@/components/game/stats-bar';
 import { TimerBar } from '@/components/game/timer-bar';
 import { Colors, Spacing } from '@/constants/theme';
 import { useProfile } from '@/context/profile-ctx';
-import { GameMode } from '@/engine/types';
+import { Difficulty, GameMode } from '@/engine/types';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useGameEngine } from '@/hooks/use-game-engine';
 import { setGameSessionData } from '@/lib/game-session-store';
@@ -16,17 +16,16 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function GameScreen() {
-  const { mode } = useLocalSearchParams<{ mode: string }>();
+  const { mode, difficulty: difficultyParam } = useLocalSearchParams<{ mode: string; difficulty?: string }>();
   const router = useRouter();
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
 
   const gameMode = (mode as GameMode) || 'classic';
-  const { state, tapCell, timerProgress, elapsedSeconds, isReady, resumeTimer } = useGameEngine(gameMode);
+  const difficulty = (['easy', 'medium', 'hard'].includes(difficultyParam ?? '') ? difficultyParam : undefined) as Difficulty | undefined;
+  const { state, tapCell, timerProgress, elapsedSeconds, isReady, resumeTimer } = useGameEngine(gameMode, difficulty);
   const { bestScores } = useProfile();
 
-  // sum_to_n multi-tap state
-  const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const [feedbackMap, setFeedbackMap] = useState<Record<number, TileFeedback>>({});
   const [inputDisabled, setInputDisabled] = useState(false);
   const prevGridRef = useRef(state.currentGrid);
@@ -48,10 +47,9 @@ export default function GameScreen() {
     resumeTimer();
   }, [resumeTimer]);
 
-  // Reset selection when grid changes
+  // Reset feedback when grid changes
   useEffect(() => {
     if (state.currentGrid !== prevGridRef.current) {
-      setSelectedIndices([]);
       setFeedbackMap({});
       setInputDisabled(false);
       prevGridRef.current = state.currentGrid;
@@ -69,6 +67,7 @@ export default function GameScreen() {
           challengeIndex: state.challengeIndex,
           elapsedSeconds,
           events: state.events,
+          difficulty,
         });
         router.replace({
           pathname: '/game/game-over',
@@ -85,67 +84,22 @@ export default function GameScreen() {
     }
   }, [state.phase, state.score, state.challengeIndex, state.bitsEarned, elapsedSeconds, gameMode, router]);
 
-  const isSumToN = state.currentChallenge.type === 'sum_to_n';
-
   const handleTap = useCallback((index: number) => {
     if (inputDisabled) return;
 
-    if (!isSumToN) {
-      // Single-tap challenges
-      const isCorrect = state.currentGrid.correctIndices.includes(index);
-      setInputDisabled(true);
-      setFeedbackMap({ [index]: isCorrect ? 'correct' : 'wrong' });
+    const isCorrect = state.currentGrid.correctIndices.includes(index);
+    setInputDisabled(true);
+    setFeedbackMap({ [index]: isCorrect ? 'correct' : 'wrong' });
 
-      if (!isCorrect) {
-        // Allow retry after brief feedback
-        setTimeout(() => {
-          setFeedbackMap({});
-          setInputDisabled(false);
-        }, 400);
-      }
-
-      tapCell(index);
-      return;
+    if (!isCorrect) {
+      setTimeout(() => {
+        setFeedbackMap({});
+        setInputDisabled(false);
+      }, 400);
     }
 
-    // sum_to_n: two taps required
-    const correctSet = new Set(state.currentGrid.correctIndices);
-
-    if (selectedIndices.length === 0) {
-      // First tap
-      if (correctSet.has(index)) {
-        setSelectedIndices([index]);
-      } else {
-        // Wrong first tap
-        setFeedbackMap({ [index]: 'wrong' });
-        setTimeout(() => {
-          setFeedbackMap({});
-        }, 400);
-        tapCell(index); // dispatch wrong
-      }
-      return;
-    }
-
-    if (selectedIndices.length === 1) {
-      const firstIdx = selectedIndices[0];
-      if (index === firstIdx) return; // tapped same cell
-
-      if (correctSet.has(index) && correctSet.has(firstIdx)) {
-        // Both correct — success!
-        setFeedbackMap({ [firstIdx]: 'correct', [index]: 'correct' });
-        setInputDisabled(true);
-        tapCell(index);
-      } else {
-        // Wrong second tap
-        setFeedbackMap({ [firstIdx]: 'wrong', [index]: 'wrong' });
-        setSelectedIndices([]);
-        setTimeout(() => {
-          setFeedbackMap({});
-        }, 400);
-        tapCell(index); // dispatch wrong
-      }
-    }
-  }, [isSumToN, selectedIndices, state.currentGrid, tapCell, inputDisabled]);
+    tapCell(index);
+  }, [state.currentGrid, tapCell, inputDisabled]);
 
   const handleExit = useCallback(() => {
     router.replace('/');
@@ -187,7 +141,6 @@ export default function GameScreen() {
         <GameGrid
           numbers={state.currentGrid.numbers}
           feedbackMap={feedbackMap}
-          selectedIndices={selectedIndices}
           onTap={handleTap}
           disabled={inputDisabled || state.phase === 'gameOver' || showBanner}
         />

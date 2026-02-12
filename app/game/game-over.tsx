@@ -16,7 +16,7 @@ export default function GameOverScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
-  const { bestScores, refreshProfile } = useProfile();
+  const { refreshProfile } = useProfile();
   const params = useLocalSearchParams<{
     score: string;
     challengeIndex: string;
@@ -39,29 +39,25 @@ export default function GameOverScreen() {
   const [isNewBest, setIsNewBest] = useState(false);
   const submittedRef = useRef(false);
 
-  const previousBest = bestScores[mode] ?? 0;
-
   const doSubmit = useCallback(async () => {
     const sessionData = getGameSessionData();
     if (!sessionData) {
-      // No session data available (e.g. direct navigation) — skip submission
       setSubmissionStatus('success');
       return;
     }
 
     try {
       setSubmissionStatus('submitting');
-      await submitGameScore(sessionData.mode, sessionData.events, sessionData.challengeIndex);
+      const result = await submitGameScore(sessionData.mode, sessionData.events, sessionData.challengeIndex);
       clearGameSessionData();
       setSubmissionStatus('success');
 
-      if (score > previousBest) {
+      if (result.isNewBest) {
         setIsNewBest(true);
       }
 
       await refreshProfile();
     } catch {
-      // Queue for offline retry
       if (sessionData) {
         await queuePendingScore({
           mode: sessionData.mode,
@@ -72,7 +68,7 @@ export default function GameOverScreen() {
       }
       setSubmissionStatus('error');
     }
-  }, [score, previousBest, refreshProfile]);
+  }, [refreshProfile]);
 
   useEffect(() => {
     if (submittedRef.current) return;
@@ -86,7 +82,6 @@ export default function GameOverScreen() {
       const flushed = await processPendingScores();
       if (flushed > 0) {
         setSubmissionStatus('success');
-        if (score > previousBest) setIsNewBest(true);
         await refreshProfile();
       } else {
         setSubmissionStatus('error');
@@ -94,7 +89,7 @@ export default function GameOverScreen() {
     } catch {
       setSubmissionStatus('error');
     }
-  }, [score, previousBest, refreshProfile]);
+  }, [refreshProfile]);
 
   const handlePlayAgain = () => {
     router.replace(`/game/${mode}`);

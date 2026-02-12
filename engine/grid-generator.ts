@@ -194,87 +194,12 @@ function generatePrime(challenge: Challenge): Grid {
   return { numbers, correctIndices, challenge };
 }
 
-function generateSumToN(challenge: Challenge): Grid {
-  const { min_value, max_value, target_value } = challenge.rules;
-  if (target_value === undefined) throw new Error('sum_to_n requires target_value');
-
-  const used = new Set<number>();
-
-  // Pick two numbers that sum to target
-  const a = randInt(
-    Math.max(min_value, 1),
-    Math.min(max_value, target_value - 1),
-  );
-  const b = target_value - a;
-  if (b < min_value || b > max_value || a === b) {
-    // Retry with safe values
-    const safeA = Math.floor(target_value / 3);
-    const safeB = target_value - safeA;
-    used.add(safeA);
-    used.add(safeB);
-
-    // 7 distractors where no pair sums to target
-    const distractors: number[] = [];
-    for (let i = 0; i < 7; i++) {
-      let d: number;
-      let attempts = 0;
-      do {
-        d = randInt(min_value, max_value);
-        attempts++;
-        if (attempts > 1000) break;
-      } while (
-        used.has(d) ||
-        used.has(target_value - d) || // would create another valid pair
-        d === target_value - d         // self-pair
-      );
-      used.add(d);
-      distractors.push(d);
-    }
-
-    const numbers = shuffleArray([safeA, safeB, ...distractors]);
-    return {
-      numbers,
-      correctIndices: [numbers.indexOf(safeA), numbers.indexOf(safeB)],
-      challenge,
-    };
-  }
-
-  used.add(a);
-  used.add(b);
-
-  // 7 distractors where no pair sums to target
-  const distractors: number[] = [];
-  for (let i = 0; i < 7; i++) {
-    let d: number;
-    let attempts = 0;
-    do {
-      d = randInt(min_value, max_value);
-      attempts++;
-      if (attempts > 1000) break;
-    } while (
-      used.has(d) ||
-      used.has(target_value - d) || // would create another valid pair
-      d === target_value - d         // self-pair
-    );
-    used.add(d);
-    distractors.push(d);
-  }
-
-  const numbers = shuffleArray([a, b, ...distractors]);
-  return {
-    numbers,
-    correctIndices: [numbers.indexOf(a), numbers.indexOf(b)],
-    challenge,
-  };
-}
-
 const generators: Record<string, (c: Challenge) => Grid> = {
   highest: generateHighest,
   lowest: generateLowest,
   closest: generateClosest,
   odd_one_out: generateOddOneOut,
   prime: generatePrime,
-  sum_to_n: generateSumToN,
 };
 
 export function generateGrid(challenge: Challenge): Grid {

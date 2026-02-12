@@ -15,6 +15,7 @@ export interface SubmitResult {
   score: number;
   bitsEarned: number;
   scoreId: string;
+  isNewBest: boolean;
 }
 
 /** Map camelCase GameEvent fields to snake_case for the RPC. */
@@ -47,6 +48,7 @@ export async function submitGameScore(
     score: data.score,
     bitsEarned: data.bits_earned,
     scoreId: data.score_id,
+    isNewBest: data.is_new_best,
   };
 }
 

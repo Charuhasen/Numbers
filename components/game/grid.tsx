@@ -7,7 +7,6 @@ import { GridTile, TileFeedback } from './grid-tile';
 interface GridProps {
   numbers: number[];
   feedbackMap: Record<number, TileFeedback>; // index → feedback state
-  selectedIndices: number[];
   onTap: (index: number) => void;
   disabled: boolean;
 }
@@ -23,12 +22,10 @@ function calculateTileSize(): number {
 export const GameGrid = React.memo(function GameGrid({
   numbers,
   feedbackMap,
-  selectedIndices,
   onTap,
   disabled,
 }: GridProps) {
   const tileSize = useMemo(calculateTileSize, []);
-  const selectedSet = useMemo(() => new Set(selectedIndices), [selectedIndices]);
 
   const rows = [
     numbers.slice(0, 3),
@@ -47,7 +44,6 @@ export const GameGrid = React.memo(function GameGrid({
                 key={idx}
                 number={num}
                 feedback={feedbackMap[idx] ?? 'idle'}
-                isSelected={selectedSet.has(idx)}
                 onPress={() => onTap(idx)}
                 disabled={disabled}
                 size={tileSize}

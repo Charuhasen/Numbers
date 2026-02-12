@@ -16,7 +16,6 @@ export type TileFeedback = 'idle' | 'correct' | 'wrong';
 interface GridTileProps {
   number: number;
   feedback: TileFeedback;
-  isSelected: boolean;
   onPress: () => void;
   disabled: boolean;
   size: number;
@@ -27,7 +26,6 @@ const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 export const GridTile = React.memo(function GridTile({
   number,
   feedback,
-  isSelected,
   onPress,
   disabled,
   size,
@@ -55,13 +53,11 @@ export const GridTile = React.memo(function GridTile({
   const getBgColor = () => {
     if (feedback === 'correct') return theme.success;
     if (feedback === 'wrong') return theme.error;
-    if (isSelected) return theme.primaryContainer;
     return theme.surfaceVariant;
   };
 
   const getTextColor = () => {
     if (feedback === 'correct' || feedback === 'wrong') return '#FFFFFF';
-    if (isSelected) return theme.onPrimary;
     return theme.onSurface;
   };
 

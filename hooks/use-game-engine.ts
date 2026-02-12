@@ -2,22 +2,22 @@ import { ChallengePool, getNextChallenge, loadChallengePool } from '@/engine/cha
 import { createInitialState, getTimerDuration } from '@/engine/game-init';
 import { generateGrid } from '@/engine/grid-generator';
 import { gameReducer } from '@/engine/game-reducer';
-import { ChallengeType, GameMode, GameState } from '@/engine/types';
+import { ChallengeType, Difficulty, GameMode, GameState } from '@/engine/types';
 import * as Haptics from 'expo-haptics';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useSharedValue } from 'react-native-reanimated';
 
-export function useGameEngine(mode: GameMode) {
+export function useGameEngine(mode: GameMode, difficulty?: Difficulty) {
   const pool = useMemo<ChallengePool>(() => loadChallengePool(), []);
   const recentTypesRef = useRef<ChallengeType[]>([]);
 
   // Generate first challenge and grid
   const initialData = useMemo(() => {
-    const challenge = getNextChallenge(0, mode, [], pool);
+    const challenge = getNextChallenge(0, mode, [], pool, difficulty);
     recentTypesRef.current = [challenge.type];
     const grid = generateGrid(challenge);
     return { challenge, grid };
-  }, [mode, pool]);
+  }, [mode, pool, difficulty]);
 
   const [state, dispatch] = useReducer(
     gameReducer,
@@ -64,6 +64,7 @@ export function useGameEngine(mode: GameMode) {
         mode,
         recentTypesRef.current,
         pool,
+        difficulty,
       );
       recentTypesRef.current = [...recentTypesRef.current.slice(-2), nextChallenge.type];
       const nextGrid = generateGrid(nextChallenge);
@@ -73,7 +74,7 @@ export function useGameEngine(mode: GameMode) {
     // Same challenge, new grid
     const nextGrid = generateGrid(s.currentChallenge);
     return { nextGrid };
-  }, [mode, pool]);
+  }, [mode, pool, difficulty]);
 
   // Reset timer for a new grid
   const resetTimer = useCallback((gridIdx: number) => {
@@ -201,7 +202,6 @@ export function useGameEngine(mode: GameMode) {
     }
   }, [advanceGrid]);
 
-  // Get current time remaining (for sum_to_n multi-tap scenarios)
   const getTimeRemaining = useCallback(() => {
     const elapsed = (Date.now() - timerStartRef.current) / 1000;
     return Math.max(0, timerDurationRef.current - elapsed);

@@ -45,8 +45,9 @@ export function getNextChallenge(
   mode: GameMode,
   recentTypes: ChallengeType[],
   pool: ChallengePool,
+  difficultyOverride?: Difficulty,
 ): Challenge {
-  const tiers = getDifficultyTier(challengeIndex, mode);
+  const tiers = difficultyOverride ? [difficultyOverride] : getDifficultyTier(challengeIndex, mode);
 
   // Collect all challenges from allowed tiers
   const candidates: Challenge[] = [];

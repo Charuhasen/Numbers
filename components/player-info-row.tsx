@@ -102,7 +102,7 @@ export function PlayerInfoRow({ username, bits, avatarUrl, onSettingsPress }: Pl
       {/* Right: Bits and Settings */}
       <View style={styles.rightSection}>
         <View style={[styles.bitsBadge, { backgroundColor: theme.surfaceVariant, borderColor: `${theme.primary}0D` }]}>
-          <Text style={styles.coinIcon}>{'\u{1FA99}'}</Text>
+          <MaterialIcons name="paid" size={16} color="#D4A017" />
           <Text style={[styles.bitsText, { color: theme.primary }]}>{bits.toLocaleString()}</Text>
         </View>
 
@@ -182,9 +182,6 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     borderWidth: 1,
     gap: 8,
-  },
-  coinIcon: {
-    fontSize: 14,
   },
   bitsText: {
     fontSize: 14,

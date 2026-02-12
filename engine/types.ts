@@ -7,8 +7,7 @@ export type ChallengeType =
   | 'lowest'
   | 'closest'
   | 'odd_one_out'
-  | 'prime'
-  | 'sum_to_n';
+  | 'prime';
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
@@ -35,7 +34,7 @@ export interface Challenge {
 
 export interface Grid {
   numbers: number[];       // length 9
-  correctIndices: number[]; // 1 for most types, 2 for sum_to_n
+  correctIndices: number[]; // always 1 correct answer
   challenge: Challenge;
 }
 

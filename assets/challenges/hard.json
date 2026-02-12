@@ -4,69 +4,64 @@
     "instruction": "Find the prime number",
     "type": "prime",
     "difficulty": "hard",
-    "rules": { "min_value": 2, "max_value": 100, "distractor_min_delta": 1, "distractor_max_delta": 3, "required_selections": 1 }
+    "rules": {
+      "min_value": 2,
+      "max_value": 100,
+      "distractor_min_delta": 1,
+      "distractor_max_delta": 3,
+      "required_selections": 1
+    }
   },
   {
     "id": "hard_prime_2",
     "instruction": "Find the prime number",
     "type": "prime",
     "difficulty": "hard",
-    "rules": { "min_value": 10, "max_value": 200, "distractor_min_delta": 1, "distractor_max_delta": 3, "required_selections": 1 }
+    "rules": {
+      "min_value": 10,
+      "max_value": 200,
+      "distractor_min_delta": 1,
+      "distractor_max_delta": 3,
+      "required_selections": 1
+    }
   },
   {
     "id": "hard_prime_3",
     "instruction": "Find the prime number",
     "type": "prime",
     "difficulty": "hard",
-    "rules": { "min_value": 50, "max_value": 500, "distractor_min_delta": 1, "distractor_max_delta": 3, "required_selections": 1 }
+    "rules": {
+      "min_value": 50,
+      "max_value": 500,
+      "distractor_min_delta": 1,
+      "distractor_max_delta": 3,
+      "required_selections": 1
+    }
   },
   {
     "id": "hard_prime_4",
     "instruction": "Find the prime number",
     "type": "prime",
     "difficulty": "hard",
-    "rules": { "min_value": 100, "max_value": 750, "distractor_min_delta": 1, "distractor_max_delta": 3, "required_selections": 1 }
+    "rules": {
+      "min_value": 100,
+      "max_value": 750,
+      "distractor_min_delta": 1,
+      "distractor_max_delta": 3,
+      "required_selections": 1
+    }
   },
   {
     "id": "hard_prime_5",
     "instruction": "Find the prime number",
     "type": "prime",
     "difficulty": "hard",
-    "rules": { "min_value": 200, "max_value": 1000, "distractor_min_delta": 1, "distractor_max_delta": 3, "required_selections": 1 }
-  },
-  {
-    "id": "hard_sum_1",
-    "instruction": "Find two numbers that sum to 50",
-    "type": "sum_to_n",
-    "difficulty": "hard",
-    "rules": { "min_value": 1, "max_value": 100, "distractor_min_delta": 1, "distractor_max_delta": 3, "target_value": 50, "required_selections": 2 }
-  },
-  {
-    "id": "hard_sum_2",
-    "instruction": "Find two numbers that sum to 75",
-    "type": "sum_to_n",
-    "difficulty": "hard",
-    "rules": { "min_value": 5, "max_value": 150, "distractor_min_delta": 1, "distractor_max_delta": 3, "target_value": 75, "required_selections": 2 }
-  },
-  {
-    "id": "hard_sum_3",
-    "instruction": "Find two numbers that sum to 100",
-    "type": "sum_to_n",
-    "difficulty": "hard",
-    "rules": { "min_value": 10, "max_value": 200, "distractor_min_delta": 1, "distractor_max_delta": 3, "target_value": 100, "required_selections": 2 }
-  },
-  {
-    "id": "hard_sum_4",
-    "instruction": "Find two numbers that sum to 150",
-    "type": "sum_to_n",
-    "difficulty": "hard",
-    "rules": { "min_value": 10, "max_value": 300, "distractor_min_delta": 1, "distractor_max_delta": 3, "target_value": 150, "required_selections": 2 }
-  },
-  {
-    "id": "hard_sum_5",
-    "instruction": "Find two numbers that sum to 200",
-    "type": "sum_to_n",
-    "difficulty": "hard",
-    "rules": { "min_value": 20, "max_value": 400, "distractor_min_delta": 1, "distractor_max_delta": 3, "target_value": 200, "required_selections": 2 }
+    "rules": {
+      "min_value": 200,
+      "max_value": 1000,
+      "distractor_min_delta": 1,
+      "distractor_max_delta": 3,
+      "required_selections": 1
+    }
   }
 ]
