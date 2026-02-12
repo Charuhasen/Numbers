@@ -1,0 +1,72 @@
+[
+  {
+    "id": "med_closest_1",
+    "instruction": "Find the number closest to 50",
+    "type": "closest",
+    "difficulty": "medium",
+    "rules": { "min_value": 1, "max_value": 100, "distractor_min_delta": 8, "distractor_max_delta": 30, "target_value": 50, "required_selections": 1 }
+  },
+  {
+    "id": "med_closest_2",
+    "instruction": "Find the number closest to 75",
+    "type": "closest",
+    "difficulty": "medium",
+    "rules": { "min_value": 20, "max_value": 130, "distractor_min_delta": 10, "distractor_max_delta": 40, "target_value": 75, "required_selections": 1 }
+  },
+  {
+    "id": "med_closest_3",
+    "instruction": "Find the number closest to 100",
+    "type": "closest",
+    "difficulty": "medium",
+    "rules": { "min_value": 40, "max_value": 160, "distractor_min_delta": 10, "distractor_max_delta": 45, "target_value": 100, "required_selections": 1 }
+  },
+  {
+    "id": "med_closest_4",
+    "instruction": "Find the number closest to 150",
+    "type": "closest",
+    "difficulty": "medium",
+    "rules": { "min_value": 80, "max_value": 220, "distractor_min_delta": 12, "distractor_max_delta": 50, "target_value": 150, "required_selections": 1 }
+  },
+  {
+    "id": "med_closest_5",
+    "instruction": "Find the number closest to 175",
+    "type": "closest",
+    "difficulty": "medium",
+    "rules": { "min_value": 100, "max_value": 250, "distractor_min_delta": 12, "distractor_max_delta": 55, "target_value": 175, "required_selections": 1 }
+  },
+  {
+    "id": "med_odd_1",
+    "instruction": "Find the odd one out",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "rules": { "min_value": 1, "max_value": 100, "distractor_min_delta": 3, "distractor_max_delta": 8, "required_selections": 1 }
+  },
+  {
+    "id": "med_odd_2",
+    "instruction": "Find the odd one out",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "rules": { "min_value": 1, "max_value": 120, "distractor_min_delta": 3, "distractor_max_delta": 8, "required_selections": 1 }
+  },
+  {
+    "id": "med_odd_3",
+    "instruction": "Find the odd one out",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "rules": { "min_value": 10, "max_value": 150, "distractor_min_delta": 4, "distractor_max_delta": 8, "required_selections": 1 }
+  },
+  {
+    "id": "med_odd_4",
+    "instruction": "Find the odd one out",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "rules": { "min_value": 1, "max_value": 180, "distractor_min_delta": 3, "distractor_max_delta": 8, "required_selections": 1 }
+  },
+  {
+    "id": "med_odd_5",
+    "instruction": "Find the odd one out",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "rules": { "min_value": 5, "max_value": 200, "distractor_min_delta": 3, "distractor_max_delta": 8, "required_selections": 1 }
+  }
+]

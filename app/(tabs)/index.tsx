@@ -4,6 +4,7 @@ import { Colors } from '@/constants/theme';
 import { useSession } from '@/context/ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -13,6 +14,7 @@ export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
   const { session } = useSession();
+  const router = useRouter();
 
   const fullName = session?.user?.user_metadata?.full_name
     || session?.user?.user_metadata?.name
@@ -20,7 +22,9 @@ export default function HomeScreen() {
     || 'Player';
   const displayName = fullName.split(/\s+/)[0];
 
-  const handlePlayClassic = () => {};
+  const handlePlayClassic = () => {
+    router.push('/game/classic');
+  };
   const handlePlayBlitz = () => {};
   const handlePlayDaily = () => {};
 
