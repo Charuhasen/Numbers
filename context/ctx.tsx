@@ -24,11 +24,15 @@ const AuthContext = createContext<{
   signOut: () => Promise<void>;
   session?: Session | null;
   isLoading: boolean;
+  isSigningIn: boolean;
+  signInError: string | null;
 }>({
   signIn: async () => {},
   signOut: async () => {},
   session: null,
   isLoading: true,
+  isSigningIn: false,
+  signInError: null,
 });
 
 export function useSession() {
@@ -45,6 +49,8 @@ export function useSession() {
 export function SessionProvider({ children }: PropsWithChildren) {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [signInError, setSignInError] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -63,10 +69,13 @@ export function SessionProvider({ children }: PropsWithChildren) {
   }, []);
 
   const signIn = async (provider: 'google' | 'apple') => {
+    if (isSigningIn) return;
+    setIsSigningIn(true);
+    setSignInError(null);
+
     try {
-      const redirectUrl = Linking.createURL('/auth/callback'); 
-      console.log('redirectUrl:', redirectUrl);
-      
+      const redirectUrl = Linking.createURL('/auth/callback');
+
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
@@ -78,18 +87,9 @@ export function SessionProvider({ children }: PropsWithChildren) {
       if (error) throw error;
       if (!data?.url) throw new Error('No auth URL returned');
 
-      console.log('Supabase Auth URL:', data.url);
-
       const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
-      console.log('WebBrowser result:', result);
 
       if (result.type === 'success' && result.url) {
-        // Parse the URL to get the session key.
-        // Usually Supabase redirects with #access_token=...&refresh_token=...
-        // We need to parse this manually or let supabase handle it if we pass the URL??
-        // Supabase v2 doesn't have a helper to parse URL string directly into session easily publicly exposed setup usually.
-        // Actually, easiest way is to extract params.
-        
         const { url } = result;
         const params = extractParamsFromUrl(url);
 
@@ -103,10 +103,16 @@ export function SessionProvider({ children }: PropsWithChildren) {
            const { error } = await supabase.auth.exchangeCodeForSession(params.code);
            if (error) throw error;
         }
+      } else if (result.type === 'cancel' || result.type === 'dismiss') {
+        // User cancelled — not an error, just reset
+        setIsSigningIn(false);
+        return;
       }
     } catch (e) {
-      console.error('Sign in error:', e);
-      // alert('Sign in failed');
+      const message = e instanceof Error ? e.message : 'Sign in failed. Please try again.';
+      setSignInError(message);
+    } finally {
+      setIsSigningIn(false);
     }
   };
 
@@ -121,6 +127,8 @@ export function SessionProvider({ children }: PropsWithChildren) {
         signOut,
         session,
         isLoading,
+        isSigningIn,
+        signInError,
       }}>
       {children}
     </AuthContext.Provider>

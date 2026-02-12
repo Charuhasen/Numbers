@@ -1,98 +1,159 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { ModeCard } from '@/components/mode-card';
+import { PlayerInfoRow } from '@/components/player-info-row';
+import { Colors } from '@/constants/theme';
+import { useSession } from '@/context/ctx';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { MaterialIcons } from '@expo/vector-icons';
+import { StatusBar } from 'expo-status-bar';
+import React from 'react';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const colorScheme = useColorScheme();
+  const theme = Colors[colorScheme ?? 'light'];
+  const { session } = useSession();
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  const fullName = session?.user?.user_metadata?.full_name
+    || session?.user?.user_metadata?.name
+    || session?.user?.email?.split('@')[0]
+    || 'Player';
+  const displayName = fullName.split(/\s+/)[0];
+
+  const handlePlayClassic = () => {};
+  const handlePlayBlitz = () => {};
+  const handlePlayDaily = () => {};
+
+  const handleSettingsPress = () => {
+    Alert.alert('Settings', 'Profile & settings coming soon.');
+  };
+
+  return (
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.surface }]}>
+      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+
+        {/* Header */}
+        <PlayerInfoRow
+          username={displayName}
+          bits={0}
+          onSettingsPress={handleSettingsPress}
+        />
+
+        {/* Mode Cards */}
+        <View style={styles.section}>
+          <ModeCard
+            title="Classic"
+            description="The standard mental challenge."
+            bestScore={0}
+            onPlayPress={handlePlayClassic}
+            iconName="calculate"
+          />
+
+          <ModeCard
+            title="Blitz"
+            description="Fast-paced arithmetic."
+            bestScore={0}
+            onPlayPress={handlePlayBlitz}
+            iconName="bolt"
+          />
+
+          <ModeCard
+            title="Daily"
+            description="New puzzles every 24h."
+            bestScore={0}
+            onPlayPress={handlePlayDaily}
+            iconName="calendar-today"
+          />
+        </View>
+
+        {/* Quick Access Section */}
+        <View style={styles.quickAccessSection}>
+          <Text style={[styles.sectionTitle, { color: `${theme.primary}99` }]}>QUICK ACCESS</Text>
+          <View style={styles.quickAccessGrid}>
+            <TouchableOpacity
+              style={[styles.quickActionButton, { backgroundColor: `${theme.surfaceVariant}B3` }]}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.iconCircle, { backgroundColor: `${theme.primary}1A` }]}>
+                <MaterialIcons name="emoji-events" size={24} color={theme.primary} />
+              </View>
+              <Text style={[styles.quickActionText, { color: theme.onSurface }]}>Rankings</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.quickActionButton, { backgroundColor: `${theme.surfaceVariant}B3` }]}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.iconCircle, { backgroundColor: `${theme.primary}1A` }]}>
+                <MaterialIcons name="science" size={24} color={theme.primary} />
+              </View>
+              <Text style={[styles.quickActionText, { color: theme.onSurface }]}>My Potions</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.footerSpacing}>
+          <View style={[styles.footerDivider, { backgroundColor: `${theme.primary}33` }]} />
+        </View>
+
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingVertical: 12,
+  },
+  section: {
+    marginTop: 8,
+  },
+  quickAccessSection: {
+    paddingHorizontal: 24,
+    marginTop: 24,
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 10,
+    fontWeight: '900',
+    letterSpacing: 2.4,
+    marginBottom: 16,
+    paddingHorizontal: 4,
+  },
+  quickAccessGrid: {
     flexDirection: 'row',
+    gap: 16,
+  },
+  quickActionButton: {
+    flex: 1,
+    padding: 20,
+    borderRadius: 16,
     alignItems: 'center',
-    gap: 8,
+    gap: 12,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  iconCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  quickActionText: {
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  footerSpacing: {
+    marginTop: 32,
+    alignItems: 'center',
+    paddingBottom: 40,
+  },
+  footerDivider: {
+    width: 32,
+    height: 4,
+    borderRadius: 2,
   },
 });

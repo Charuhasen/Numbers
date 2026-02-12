@@ -36,6 +36,7 @@ export const Colors = {
     potionRare: '#7C8B9A',
     potionEpic: '#9A7CB0',
     potionLegendary: '#B09A5C',
+    outlineVariant: '#E5DFD8', // Matches surfaceDim
   },
   dark: {
     // Standard template keys (backward compatibility)
@@ -64,6 +65,7 @@ export const Colors = {
     potionRare: '#9AACBE',
     potionEpic: '#B89BCE',
     potionLegendary: '#D4BE80',
+    outlineVariant: '#353230', // Matches surfaceVariant
   },
 };
 
