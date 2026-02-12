@@ -34,6 +34,8 @@ export function useGameEngine(mode: GameMode) {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const stateRef = useRef<GameState>(state);
   const isAdvancingRef = useRef(false);
+  const isPausedRef = useRef(true); // start paused for initial banner
+  const pausedElapsedRef = useRef(0); // time already elapsed when paused
 
   // Elapsed time tracking
   const gameStartRef = useRef<number>(Date.now());
@@ -78,8 +80,24 @@ export function useGameEngine(mode: GameMode) {
     const duration = getTimerDuration(gridIdx);
     timerDurationRef.current = duration;
     timerStartRef.current = Date.now();
+    pausedElapsedRef.current = 0;
     timerProgress.value = 1;
   }, [timerProgress]);
+
+  // Pause / resume timer (for challenge banner)
+  const pauseTimer = useCallback(() => {
+    if (isPausedRef.current) return;
+    isPausedRef.current = true;
+    // Snapshot how much time has elapsed so far
+    pausedElapsedRef.current = (Date.now() - timerStartRef.current) / 1000;
+  }, []);
+
+  const resumeTimer = useCallback(() => {
+    if (!isPausedRef.current) return;
+    isPausedRef.current = false;
+    // Shift the start time so the elapsed snapshot is preserved
+    timerStartRef.current = Date.now() - pausedElapsedRef.current * 1000;
+  }, []);
 
   // Advance to next grid (called after correct answer or timeout)
   const advanceGrid = useCallback(() => {
@@ -87,13 +105,21 @@ export function useGameEngine(mode: GameMode) {
     if (stateRef.current.phase === 'gameOver') return;
     isAdvancingRef.current = true;
 
+    const s = stateRef.current;
+    const isNewChallenge = s.gridIndex + 1 >= 5;
+
     const { nextGrid, nextChallenge } = generateNextGridData();
     dispatch({ type: 'ADVANCE_GRID', nextGrid, nextChallenge });
 
     // Calculate the next gridIndex for timer reset
-    const s = stateRef.current;
-    const nextGridIndex = s.gridIndex + 1 >= 5 ? 0 : s.gridIndex + 1;
+    const nextGridIndex = isNewChallenge ? 0 : s.gridIndex + 1;
     resetTimer(nextGridIndex);
+
+    // Pause timer if a new challenge is starting (banner will resume it)
+    if (isNewChallenge) {
+      isPausedRef.current = true;
+      pausedElapsedRef.current = 0;
+    }
 
     // Small delay before allowing next advance
     setTimeout(() => {
@@ -117,6 +143,8 @@ export function useGameEngine(mode: GameMode) {
     }, 1000);
 
     intervalRef.current = setInterval(() => {
+      if (isPausedRef.current) return;
+
       const elapsed = (Date.now() - timerStartRef.current) / 1000;
       const duration = timerDurationRef.current;
       const remaining = Math.max(0, duration - elapsed);
@@ -187,5 +215,7 @@ export function useGameEngine(mode: GameMode) {
     elapsedSeconds,
     isReady,
     getTimeRemaining,
+    pauseTimer,
+    resumeTimer,
   };
 }

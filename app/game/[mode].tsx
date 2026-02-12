@@ -1,3 +1,4 @@
+import { ChallengeBanner } from '@/components/game/challenge-banner';
 import { GameTopBar } from '@/components/game/game-top-bar';
 import { GameGrid } from '@/components/game/grid';
 import { TileFeedback } from '@/components/game/grid-tile';
@@ -19,13 +20,30 @@ export default function GameScreen() {
   const theme = Colors[colorScheme ?? 'light'];
 
   const gameMode = (mode as GameMode) || 'classic';
-  const { state, tapCell, timerProgress, elapsedSeconds, isReady } = useGameEngine(gameMode);
+  const { state, tapCell, timerProgress, elapsedSeconds, isReady, resumeTimer } = useGameEngine(gameMode);
 
   // sum_to_n multi-tap state
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const [feedbackMap, setFeedbackMap] = useState<Record<number, TileFeedback>>({});
   const [inputDisabled, setInputDisabled] = useState(false);
   const prevGridRef = useRef(state.currentGrid);
+
+  // Challenge banner state
+  const [showBanner, setShowBanner] = useState(true); // show for first challenge
+  const prevChallengeIndexRef = useRef(state.challengeIndex);
+
+  // Show banner when challenge index changes
+  useEffect(() => {
+    if (state.challengeIndex !== prevChallengeIndexRef.current) {
+      setShowBanner(true);
+      prevChallengeIndexRef.current = state.challengeIndex;
+    }
+  }, [state.challengeIndex]);
+
+  const handleBannerDismiss = useCallback(() => {
+    setShowBanner(false);
+    resumeTimer();
+  }, [resumeTimer]);
 
   // Reset selection when grid changes
   useEffect(() => {
@@ -160,7 +178,7 @@ export default function GameScreen() {
           feedbackMap={feedbackMap}
           selectedIndices={selectedIndices}
           onTap={handleTap}
-          disabled={inputDisabled || state.phase === 'gameOver'}
+          disabled={inputDisabled || state.phase === 'gameOver' || showBanner}
         />
       </View>
 
@@ -179,6 +197,15 @@ export default function GameScreen() {
         <View style={[styles.potionSlot, { backgroundColor: theme.surfaceDim }]} />
         <View style={[styles.potionSlot, { backgroundColor: theme.surfaceDim }]} />
       </View>
+
+      {/* Challenge banner overlay */}
+      {showBanner && (
+        <ChallengeBanner
+          challengeNumber={state.challengeIndex + 1}
+          instruction={state.currentChallenge.instruction}
+          onDismiss={handleBannerDismiss}
+        />
+      )}
     </SafeAreaView>
   );
 }
