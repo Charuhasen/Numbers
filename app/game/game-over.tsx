@@ -1,15 +1,22 @@
 import { Colors, Spacing } from '@/constants/theme';
+import { useProfile } from '@/context/profile-ctx';
+import { GameMode } from '@/engine/types';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { clearGameSessionData, getGameSessionData } from '@/lib/game-session-store';
+import { processPendingScores, queuePendingScore, submitGameScore } from '@/lib/score-service';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+type SubmissionStatus = 'submitting' | 'success' | 'error';
 
 export default function GameOverScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
+  const { bestScores, refreshProfile } = useProfile();
   const params = useLocalSearchParams<{
     score: string;
     challengeIndex: string;
@@ -22,11 +29,72 @@ export default function GameOverScreen() {
   const rounds = parseInt(params.challengeIndex || '0', 10);
   const bits = parseInt(params.bitsEarned || '0', 10);
   const elapsed = parseInt(params.elapsedSeconds || '0', 10);
-  const mode = params.mode || 'classic';
+  const mode = (params.mode || 'classic') as GameMode;
 
   const minutes = Math.floor(elapsed / 60);
   const seconds = elapsed % 60;
   const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+  const [submissionStatus, setSubmissionStatus] = useState<SubmissionStatus>('submitting');
+  const [isNewBest, setIsNewBest] = useState(false);
+  const submittedRef = useRef(false);
+
+  const previousBest = bestScores[mode] ?? 0;
+
+  const doSubmit = useCallback(async () => {
+    const sessionData = getGameSessionData();
+    if (!sessionData) {
+      // No session data available (e.g. direct navigation) — skip submission
+      setSubmissionStatus('success');
+      return;
+    }
+
+    try {
+      setSubmissionStatus('submitting');
+      await submitGameScore(sessionData.mode, sessionData.events, sessionData.challengeIndex);
+      clearGameSessionData();
+      setSubmissionStatus('success');
+
+      if (score > previousBest) {
+        setIsNewBest(true);
+      }
+
+      await refreshProfile();
+    } catch {
+      // Queue for offline retry
+      if (sessionData) {
+        await queuePendingScore({
+          mode: sessionData.mode,
+          events: sessionData.events,
+          roundReached: sessionData.challengeIndex,
+        });
+        clearGameSessionData();
+      }
+      setSubmissionStatus('error');
+    }
+  }, [score, previousBest, refreshProfile]);
+
+  useEffect(() => {
+    if (submittedRef.current) return;
+    submittedRef.current = true;
+    doSubmit();
+  }, [doSubmit]);
+
+  const handleRetry = useCallback(async () => {
+    setSubmissionStatus('submitting');
+    try {
+      const flushed = await processPendingScores();
+      if (flushed > 0) {
+        setSubmissionStatus('success');
+        if (score > previousBest) setIsNewBest(true);
+        await refreshProfile();
+      } else {
+        setSubmissionStatus('error');
+      }
+    } catch {
+      setSubmissionStatus('error');
+    }
+  }, [score, previousBest, refreshProfile]);
 
   const handlePlayAgain = () => {
     router.replace(`/game/${mode}`);
@@ -41,6 +109,14 @@ export default function GameOverScreen() {
       <View style={styles.content}>
         {/* Title */}
         <Text style={[styles.title, { color: theme.error }]}>GAME OVER</Text>
+
+        {/* New Best indicator */}
+        {isNewBest && (
+          <View style={[styles.newBestBadge, { backgroundColor: theme.primary }]}>
+            <MaterialIcons name="emoji-events" size={16} color={theme.onPrimary} />
+            <Text style={[styles.newBestText, { color: theme.onPrimary }]}>New Best!</Text>
+          </View>
+        )}
 
         {/* Score */}
         <View style={styles.scoreSection}>
@@ -71,6 +147,35 @@ export default function GameOverScreen() {
               <Text style={[styles.statValue, { color: theme.onSurface }]}>{bits}</Text>
             </View>
           </View>
+        </View>
+
+        {/* Submission status */}
+        <View style={styles.statusRow}>
+          {submissionStatus === 'submitting' && (
+            <>
+              <ActivityIndicator size="small" color={theme.primary} />
+              <Text style={[styles.statusText, { color: theme.onSurfaceVariant }]}>
+                Saving score...
+              </Text>
+            </>
+          )}
+          {submissionStatus === 'success' && (
+            <>
+              <MaterialIcons name="check-circle" size={18} color={theme.primary} />
+              <Text style={[styles.statusText, { color: theme.primary }]}>Score saved</Text>
+            </>
+          )}
+          {submissionStatus === 'error' && (
+            <>
+              <MaterialIcons name="cloud-off" size={18} color={theme.onSurfaceVariant} />
+              <Text style={[styles.statusText, { color: theme.onSurfaceVariant }]}>
+                Offline — score queued
+              </Text>
+              <TouchableOpacity onPress={handleRetry} hitSlop={8}>
+                <MaterialIcons name="refresh" size={18} color={theme.primary} />
+              </TouchableOpacity>
+            </>
+          )}
         </View>
 
         {/* Buttons */}
@@ -118,6 +223,19 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     letterSpacing: 4,
   },
+  newBestBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 20,
+    marginTop: -16,
+  },
+  newBestText: {
+    fontSize: 14,
+    fontWeight: '700',
+  },
   scoreSection: {
     alignItems: 'center',
     gap: 8,
@@ -157,6 +275,16 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 22,
     fontWeight: '700',
+  },
+  statusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: -16,
+  },
+  statusText: {
+    fontSize: 13,
+    fontWeight: '600',
   },
   buttons: {
     width: '100%',

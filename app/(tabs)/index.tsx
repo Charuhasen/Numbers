@@ -2,11 +2,12 @@ import { ModeCard } from '@/components/mode-card';
 import { PlayerInfoRow } from '@/components/player-info-row';
 import { Colors } from '@/constants/theme';
 import { useSession } from '@/context/ctx';
+import { useProfile } from '@/context/profile-ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -14,7 +15,15 @@ export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
   const { session } = useSession();
+  const { profile, bestScores, refreshProfile } = useProfile();
   const router = useRouter();
+
+  // Refresh profile data whenever this screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      refreshProfile();
+    }, [refreshProfile])
+  );
 
   const fullName = session?.user?.user_metadata?.full_name
     || session?.user?.user_metadata?.name
@@ -40,7 +49,7 @@ export default function HomeScreen() {
         {/* Header */}
         <PlayerInfoRow
           username={displayName}
-          bits={0}
+          bits={profile?.bits ?? 0}
           onSettingsPress={handleSettingsPress}
         />
 
@@ -49,7 +58,7 @@ export default function HomeScreen() {
           <ModeCard
             title="Classic"
             description="The standard mental challenge."
-            bestScore={0}
+            bestScore={bestScores.classic}
             onPlayPress={handlePlayClassic}
             iconName="calculate"
           />
@@ -57,7 +66,7 @@ export default function HomeScreen() {
           <ModeCard
             title="Blitz"
             description="Fast-paced arithmetic."
-            bestScore={0}
+            bestScore={bestScores.blitz}
             onPlayPress={handlePlayBlitz}
             iconName="bolt"
           />
@@ -65,7 +74,7 @@ export default function HomeScreen() {
           <ModeCard
             title="Daily"
             description="New puzzles every 24h."
-            bestScore={0}
+            bestScore={bestScores.daily}
             onPlayPress={handlePlayDaily}
             iconName="calendar-today"
           />

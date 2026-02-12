@@ -5,9 +5,11 @@ import { TileFeedback } from '@/components/game/grid-tile';
 import { StatsBar } from '@/components/game/stats-bar';
 import { TimerBar } from '@/components/game/timer-bar';
 import { Colors, Spacing } from '@/constants/theme';
+import { useProfile } from '@/context/profile-ctx';
 import { GameMode } from '@/engine/types';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useGameEngine } from '@/hooks/use-game-engine';
+import { setGameSessionData } from '@/lib/game-session-store';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
@@ -21,6 +23,7 @@ export default function GameScreen() {
 
   const gameMode = (mode as GameMode) || 'classic';
   const { state, tapCell, timerProgress, elapsedSeconds, isReady, resumeTimer } = useGameEngine(gameMode);
+  const { bestScores } = useProfile();
 
   // sum_to_n multi-tap state
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
@@ -59,6 +62,14 @@ export default function GameScreen() {
   useEffect(() => {
     if (state.phase === 'gameOver') {
       const timeout = setTimeout(() => {
+        setGameSessionData({
+          mode: gameMode,
+          score: state.score,
+          bitsEarned: state.bitsEarned,
+          challengeIndex: state.challengeIndex,
+          elapsedSeconds,
+          events: state.events,
+        });
         router.replace({
           pathname: '/game/game-over',
           params: {
@@ -186,7 +197,7 @@ export default function GameScreen() {
       <View style={styles.statsContainer}>
         <StatsBar
           score={state.score}
-          bestScore={0}
+          bestScore={bestScores[gameMode] ?? 0}
           elapsedSeconds={elapsedSeconds}
         />
       </View>

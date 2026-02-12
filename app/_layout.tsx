@@ -6,6 +6,7 @@ import 'react-native-reanimated';
 import 'react-native-url-polyfill/auto';
 
 import { SessionProvider, useSession } from '@/context/ctx';
+import { ProfileProvider } from '@/context/profile-ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export const unstable_settings = {
@@ -45,7 +46,9 @@ function RootLayoutNav() {
 export default function RootLayout() {
   return (
     <SessionProvider>
-      <RootLayoutNav />
+      <ProfileProvider>
+        <RootLayoutNav />
+      </ProfileProvider>
     </SessionProvider>
   );
 }
