@@ -5,7 +5,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     case 'TAP_CELL': {
       const { index, timeRemaining } = action;
       const { currentGrid, mode } = state;
-      const isCorrect = currentGrid.correctIndices.includes(index);
+      const isCorrect = currentGrid.correctAnswers.includes(index);
 
       if (isCorrect) {
         // Score: 100 base + round(timeRemaining * 10)
@@ -100,7 +100,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'ADVANCE_GRID': {
-      const { nextGrid, nextChallenge } = action;
+      const { nextGrid, nextChallengeType, nextInstruction } = action;
       const nextGridIndex = state.gridIndex + 1;
 
       // Grid 4 (0-indexed) was the last grid in this challenge
@@ -110,7 +110,8 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           gridIndex: 0,
           challengeIndex: state.challengeIndex + 1,
           currentGrid: nextGrid,
-          currentChallenge: nextChallenge ?? state.currentChallenge,
+          currentChallengeType: nextChallengeType ?? state.currentChallengeType,
+          currentInstruction: nextInstruction ?? state.currentInstruction,
         };
       }
 

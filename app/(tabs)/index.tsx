@@ -67,7 +67,7 @@ export default function HomeScreen() {
           <ModeCard
             title="Classic"
             description="The standard mental challenge."
-            bestScore={bestScores.classic}
+            bestScore={bestScores.classic[classicDifficulty]}
             onPlayPress={handlePlayClassic}
             iconName="calculate"
             difficulty={classicDifficulty}
@@ -77,7 +77,7 @@ export default function HomeScreen() {
           <ModeCard
             title="Blitz"
             description="Fast-paced arithmetic."
-            bestScore={bestScores.blitz}
+            bestScore={bestScores.blitz[blitzDifficulty]}
             onPlayPress={handlePlayBlitz}
             iconName="bolt"
             difficulty={blitzDifficulty}
@@ -87,7 +87,7 @@ export default function HomeScreen() {
           <ModeCard
             title="Daily"
             description="New puzzles every 24h."
-            bestScore={bestScores.daily}
+            bestScore={bestScores.daily[dailyDifficulty]}
             onPlayPress={handlePlayDaily}
             iconName="calendar-today"
             difficulty={dailyDifficulty}

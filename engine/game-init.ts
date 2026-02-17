@@ -1,9 +1,8 @@
-import { Challenge, GameMode, GameState, Grid } from './types';
+import { Board, GameMode, GameState } from './types';
 
 export function createInitialState(
   mode: GameMode,
-  firstChallenge: Challenge,
-  firstGrid: Grid,
+  firstBoard: Board,
 ): GameState {
   return {
     mode,
@@ -13,13 +12,22 @@ export function createInitialState(
     score: 0,
     bitsEarned: 0,
     phase: 'playing',
-    currentGrid: firstGrid,
-    currentChallenge: firstChallenge,
+    currentGrid: {
+      numbers: firstBoard.grid,
+      correctAnswers: firstBoard.correct_answers,
+      boardId: firstBoard.id,
+      instruction: firstBoard.instruction,
+      type: firstBoard.type,
+      estimatedSolveTimeMs: firstBoard.estimated_solve_time_ms,
+    },
+    currentChallengeType: firstBoard.type,
+    currentInstruction: firstBoard.instruction,
     events: [],
   };
 }
 
 /**
+ * @deprecated Use board.estimated_solve_time_ms instead.
  * Timer duration in seconds for a given grid index.
  * Grid 0: 6s, Grid 1: 5s, Grid 2: 4s, Grid 3: 3s, Grid 4: 2s
  */

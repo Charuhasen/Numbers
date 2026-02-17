@@ -1,0 +1,2202 @@
+[
+  {
+    "id": "med_odd_1_b08",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      38,
+      92,
+      34,
+      40,
+      52,
+      96,
+      60,
+      7,
+      12
+    ],
+    "correct_answers": [
+      7
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_3_b05",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      127,
+      113,
+      137,
+      104,
+      87,
+      71,
+      115,
+      91,
+      39
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_4_b03",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 150",
+    "grid": [
+      116,
+      198,
+      177,
+      162,
+      150,
+      106,
+      199,
+      102,
+      178
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_2_b09",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 75",
+    "grid": [
+      61,
+      64,
+      75,
+      97,
+      46,
+      47,
+      35,
+      87,
+      110
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_3_b04",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      10,
+      149,
+      47,
+      147,
+      63,
+      29,
+      49,
+      55,
+      61
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_4_b06",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 150",
+    "grid": [
+      102,
+      127,
+      104,
+      175,
+      165,
+      166,
+      150,
+      100,
+      183
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_4_b04",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 150",
+    "grid": [
+      166,
+      100,
+      113,
+      167,
+      150,
+      163,
+      105,
+      179,
+      190
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_4_b08",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 150",
+    "grid": [
+      150,
+      171,
+      192,
+      177,
+      172,
+      199,
+      131,
+      183,
+      130
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_1_b05",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 50",
+    "grid": [
+      29,
+      59,
+      64,
+      69,
+      66,
+      70,
+      40,
+      33,
+      50
+    ],
+    "correct_answers": [
+      8
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_5_b07",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      191,
+      17,
+      169,
+      81,
+      106,
+      13,
+      97,
+      39,
+      65
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_5_b02",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 175",
+    "grid": [
+      200,
+      139,
+      199,
+      210,
+      122,
+      212,
+      211,
+      175,
+      129
+    ],
+    "correct_answers": [
+      7
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_4_b05",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      150,
+      66,
+      84,
+      120,
+      110,
+      46,
+      118,
+      2,
+      63
+    ],
+    "correct_answers": [
+      8
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_1_b01",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      27,
+      82,
+      94,
+      78,
+      14,
+      16,
+      40,
+      58,
+      38
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_1_b06",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      69,
+      53,
+      47,
+      9,
+      57,
+      23,
+      54,
+      25,
+      61
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_5_b04",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      36,
+      162,
+      44,
+      148,
+      93,
+      164,
+      200,
+      154,
+      114
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_1_b10",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      76,
+      42,
+      4,
+      22,
+      54,
+      46,
+      34,
+      37,
+      62
+    ],
+    "correct_answers": [
+      7
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_4_b02",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      154,
+      158,
+      56,
+      82,
+      68,
+      116,
+      8,
+      43,
+      48
+    ],
+    "correct_answers": [
+      7
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_5_b10",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      128,
+      98,
+      155,
+      190,
+      90,
+      70,
+      192,
+      74,
+      140
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_1_b01",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 50",
+    "grid": [
+      26,
+      30,
+      36,
+      59,
+      27,
+      37,
+      50,
+      61,
+      22
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_3_b02",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      18,
+      148,
+      61,
+      64,
+      20,
+      110,
+      96,
+      122,
+      22
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_5_b09",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      87,
+      171,
+      67,
+      125,
+      113,
+      151,
+      105,
+      109,
+      20
+    ],
+    "correct_answers": [
+      8
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_1_b06",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 50",
+    "grid": [
+      21,
+      78,
+      59,
+      63,
+      50,
+      34,
+      73,
+      41,
+      22
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_1_b07",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 50",
+    "grid": [
+      35,
+      80,
+      50,
+      26,
+      36,
+      33,
+      61,
+      69,
+      28
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_2_b08",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      36,
+      46,
+      80,
+      14,
+      48,
+      31,
+      106,
+      42,
+      100
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_2_b02",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 75",
+    "grid": [
+      93,
+      104,
+      91,
+      58,
+      45,
+      75,
+      113,
+      35,
+      48
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_4_b04",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      110,
+      68,
+      62,
+      40,
+      43,
+      88,
+      122,
+      58,
+      30
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_3_b06",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 100",
+    "grid": [
+      119,
+      111,
+      62,
+      132,
+      82,
+      86,
+      100,
+      84,
+      74
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_5_b01",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      156,
+      158,
+      70,
+      160,
+      148,
+      40,
+      74,
+      65,
+      88
+    ],
+    "correct_answers": [
+      7
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_3_b08",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 100",
+    "grid": [
+      64,
+      134,
+      117,
+      111,
+      115,
+      126,
+      132,
+      57,
+      100
+    ],
+    "correct_answers": [
+      8
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_1_b10",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 50",
+    "grid": [
+      68,
+      24,
+      70,
+      31,
+      77,
+      66,
+      50,
+      21,
+      35
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_4_b10",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      161,
+      43,
+      79,
+      157,
+      49,
+      111,
+      122,
+      9,
+      33
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_5_b06",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      62,
+      60,
+      12,
+      36,
+      52,
+      182,
+      188,
+      35,
+      186
+    ],
+    "correct_answers": [
+      7
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_3_b07",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      147,
+      75,
+      33,
+      137,
+      149,
+      136,
+      15,
+      139,
+      135
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_5_b10",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 175",
+    "grid": [
+      203,
+      138,
+      147,
+      190,
+      216,
+      196,
+      222,
+      163,
+      175
+    ],
+    "correct_answers": [
+      8
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_2_b01",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      99,
+      107,
+      16,
+      19,
+      27,
+      69,
+      9,
+      23,
+      3
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_1_b04",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 50",
+    "grid": [
+      36,
+      60,
+      71,
+      50,
+      79,
+      32,
+      29,
+      63,
+      62
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_5_b03",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      5,
+      108,
+      82,
+      122,
+      142,
+      140,
+      24,
+      136,
+      104
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_1_b02",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      58,
+      74,
+      93,
+      18,
+      68,
+      10,
+      42,
+      54,
+      40
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_3_b10",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      129,
+      30,
+      23,
+      55,
+      95,
+      101,
+      47,
+      135,
+      57
+    ],
+    "correct_answers": [
+      1
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_1_b09",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 50",
+    "grid": [
+      62,
+      20,
+      27,
+      50,
+      26,
+      40,
+      72,
+      79,
+      60
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_5_b05",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 175",
+    "grid": [
+      229,
+      192,
+      200,
+      175,
+      155,
+      193,
+      160,
+      225,
+      215
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_3_b01",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      27,
+      57,
+      69,
+      93,
+      87,
+      143,
+      127,
+      145,
+      142
+    ],
+    "correct_answers": [
+      8
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_2_b06",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 75",
+    "grid": [
+      58,
+      75,
+      115,
+      103,
+      98,
+      61,
+      37,
+      51,
+      35
+    ],
+    "correct_answers": [
+      1
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_1_b09",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      24,
+      37,
+      48,
+      40,
+      36,
+      82,
+      76,
+      12,
+      64
+    ],
+    "correct_answers": [
+      1
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_5_b07",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 175",
+    "grid": [
+      204,
+      145,
+      135,
+      143,
+      175,
+      208,
+      216,
+      138,
+      148
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_3_b02",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 100",
+    "grid": [
+      128,
+      80,
+      132,
+      100,
+      144,
+      116,
+      75,
+      66,
+      63
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_2_b06",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      107,
+      39,
+      75,
+      97,
+      53,
+      84,
+      49,
+      91,
+      1
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_2_b07",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      15,
+      21,
+      8,
+      95,
+      99,
+      47,
+      61,
+      31,
+      119
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_2_b03",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 75",
+    "grid": [
+      75,
+      103,
+      36,
+      99,
+      54,
+      55,
+      93,
+      51,
+      110
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_3_b03",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 100",
+    "grid": [
+      127,
+      67,
+      66,
+      81,
+      86,
+      130,
+      145,
+      100,
+      142
+    ],
+    "correct_answers": [
+      7
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_4_b01",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      86,
+      36,
+      48,
+      102,
+      18,
+      28,
+      77,
+      124,
+      88
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_5_b06",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 175",
+    "grid": [
+      142,
+      206,
+      175,
+      192,
+      145,
+      198,
+      215,
+      200,
+      129
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_4_b03",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      74,
+      98,
+      104,
+      24,
+      122,
+      134,
+      73,
+      56,
+      48
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_1_b03",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 50",
+    "grid": [
+      50,
+      80,
+      61,
+      33,
+      26,
+      27,
+      32,
+      63,
+      31
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_1_b08",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 50",
+    "grid": [
+      67,
+      64,
+      24,
+      34,
+      75,
+      21,
+      50,
+      41,
+      20
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_5_b08",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      70,
+      122,
+      150,
+      158,
+      17,
+      130,
+      100,
+      22,
+      172
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_2_b10",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      51,
+      73,
+      75,
+      81,
+      89,
+      63,
+      28,
+      67,
+      107
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_2_b04",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      88,
+      74,
+      48,
+      106,
+      66,
+      55,
+      54,
+      22,
+      46
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_3_b01",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 100",
+    "grid": [
+      138,
+      128,
+      133,
+      100,
+      68,
+      127,
+      74,
+      75,
+      118
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_4_b01",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 150",
+    "grid": [
+      197,
+      104,
+      136,
+      131,
+      196,
+      130,
+      113,
+      193,
+      150
+    ],
+    "correct_answers": [
+      8
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_4_b09",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      153,
+      120,
+      102,
+      82,
+      16,
+      28,
+      124,
+      172,
+      110
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_2_b07",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 75",
+    "grid": [
+      59,
+      109,
+      96,
+      99,
+      75,
+      89,
+      98,
+      85,
+      44
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_3_b10",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 100",
+    "grid": [
+      138,
+      87,
+      68,
+      129,
+      76,
+      123,
+      100,
+      59,
+      78
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_4_b02",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 150",
+    "grid": [
+      150,
+      188,
+      101,
+      199,
+      110,
+      128,
+      112,
+      118,
+      179
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_2_b09",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      43,
+      15,
+      92,
+      23,
+      117,
+      105,
+      83,
+      101,
+      95
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_1_b04",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      57,
+      17,
+      25,
+      19,
+      51,
+      28,
+      43,
+      47,
+      29
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_3_b05",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 100",
+    "grid": [
+      65,
+      135,
+      127,
+      134,
+      61,
+      133,
+      100,
+      143,
+      90
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_3_b03",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      140,
+      98,
+      144,
+      100,
+      48,
+      139,
+      40,
+      122,
+      32
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_2_b01",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 75",
+    "grid": [
+      75,
+      104,
+      108,
+      92,
+      37,
+      114,
+      62,
+      115,
+      106
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_3_b09",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 100",
+    "grid": [
+      90,
+      77,
+      139,
+      75,
+      100,
+      142,
+      56,
+      130,
+      140
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_4_b06",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      180,
+      136,
+      162,
+      22,
+      72,
+      8,
+      115,
+      76,
+      106
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_2_b03",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      12,
+      14,
+      50,
+      112,
+      69,
+      34,
+      44,
+      40,
+      76
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_2_b10",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 75",
+    "grid": [
+      107,
+      55,
+      112,
+      106,
+      99,
+      94,
+      42,
+      39,
+      75
+    ],
+    "correct_answers": [
+      8
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_1_b05",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      22,
+      81,
+      57,
+      91,
+      63,
+      73,
+      89,
+      99,
+      77
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_1_b03",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      77,
+      87,
+      83,
+      97,
+      15,
+      13,
+      44,
+      95,
+      27
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_4_b10",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 150",
+    "grid": [
+      193,
+      114,
+      163,
+      150,
+      181,
+      190,
+      169,
+      107,
+      119
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_3_b04",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 100",
+    "grid": [
+      130,
+      61,
+      59,
+      100,
+      138,
+      120,
+      124,
+      84,
+      77
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_4_b09",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 150",
+    "grid": [
+      193,
+      121,
+      177,
+      110,
+      105,
+      150,
+      111,
+      166,
+      118
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_4_b07",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 150",
+    "grid": [
+      134,
+      198,
+      126,
+      185,
+      138,
+      167,
+      131,
+      150,
+      176
+    ],
+    "correct_answers": [
+      7
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_4_b08",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      110,
+      114,
+      98,
+      38,
+      66,
+      178,
+      30,
+      39,
+      14
+    ],
+    "correct_answers": [
+      7
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_3_b09",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      148,
+      82,
+      64,
+      22,
+      112,
+      134,
+      56,
+      88,
+      115
+    ],
+    "correct_answers": [
+      8
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_5_b01",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 175",
+    "grid": [
+      227,
+      229,
+      136,
+      207,
+      216,
+      148,
+      213,
+      129,
+      175
+    ],
+    "correct_answers": [
+      8
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_3_b06",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      10,
+      46,
+      131,
+      98,
+      142,
+      80,
+      56,
+      114,
+      72
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_1_b07",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      83,
+      5,
+      95,
+      24,
+      31,
+      81,
+      71,
+      99,
+      73
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_2_b08",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 75",
+    "grid": [
+      36,
+      46,
+      50,
+      75,
+      65,
+      49,
+      40,
+      87,
+      96
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_5_b04",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 175",
+    "grid": [
+      163,
+      129,
+      137,
+      140,
+      208,
+      175,
+      148,
+      188,
+      223
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_5_b08",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 175",
+    "grid": [
+      209,
+      227,
+      206,
+      136,
+      175,
+      147,
+      146,
+      148,
+      161
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_1_b02",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 50",
+    "grid": [
+      28,
+      67,
+      36,
+      50,
+      59,
+      70,
+      76,
+      62,
+      69
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_5_b02",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      120,
+      188,
+      124,
+      184,
+      81,
+      38,
+      36,
+      130,
+      192
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_4_b05",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 150",
+    "grid": [
+      110,
+      114,
+      118,
+      138,
+      150,
+      135,
+      200,
+      115,
+      130
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_5_b03",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 175",
+    "grid": [
+      133,
+      194,
+      212,
+      159,
+      175,
+      137,
+      230,
+      153,
+      191
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_3_b08",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      19,
+      41,
+      77,
+      103,
+      139,
+      13,
+      120,
+      123,
+      65
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_4_b07",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      109,
+      121,
+      145,
+      169,
+      143,
+      153,
+      101,
+      180,
+      115
+    ],
+    "correct_answers": [
+      7
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_3_b07",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 100",
+    "grid": [
+      128,
+      75,
+      144,
+      131,
+      70,
+      62,
+      100,
+      59,
+      111
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_2_b04",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 75",
+    "grid": [
+      45,
+      75,
+      88,
+      55,
+      89,
+      85,
+      52,
+      65,
+      64
+    ],
+    "correct_answers": [
+      1
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_2_b05",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 75",
+    "grid": [
+      114,
+      64,
+      49,
+      110,
+      75,
+      60,
+      93,
+      94,
+      37
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_2_b02",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      27,
+      63,
+      41,
+      40,
+      53,
+      13,
+      57,
+      69,
+      107
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_5_b05",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      60,
+      126,
+      10,
+      133,
+      8,
+      48,
+      108,
+      98,
+      174
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_closest_5_b09",
+    "type": "closest",
+    "difficulty": "medium",
+    "instruction": "Find the number closest to 175",
+    "grid": [
+      125,
+      133,
+      218,
+      201,
+      208,
+      141,
+      224,
+      175,
+      205
+    ],
+    "correct_answers": [
+      7
+    ],
+    "estimated_solve_time_ms": 2000,
+    "difficulty_score": 5
+  },
+  {
+    "id": "med_odd_2_b05",
+    "type": "odd_one_out",
+    "difficulty": "medium",
+    "instruction": "Find the odd one out",
+    "grid": [
+      33,
+      89,
+      55,
+      19,
+      58,
+      11,
+      69,
+      111,
+      21
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 2200,
+    "difficulty_score": 5
+  }
+]

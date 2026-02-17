@@ -13,7 +13,10 @@ import { setGameSessionData } from '@/lib/game-session-store';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { useSharedValue } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { triggerHeartShake } from '@/components/game/hearts-display';
 
 export default function GameScreen() {
   const { mode, difficulty: difficultyParam } = useLocalSearchParams<{ mode: string; difficulty?: string }>();
@@ -22,10 +25,11 @@ export default function GameScreen() {
   const theme = Colors[colorScheme ?? 'light'];
 
   const gameMode = (mode as GameMode) || 'classic';
-  const difficulty = (['easy', 'medium', 'hard'].includes(difficultyParam ?? '') ? difficultyParam : undefined) as Difficulty | undefined;
+  const difficulty: Difficulty = (['easy', 'medium', 'hard'].includes(difficultyParam ?? '') ? difficultyParam : 'easy') as Difficulty;
   const { state, tapCell, timerProgress, elapsedSeconds, isReady, resumeTimer } = useGameEngine(gameMode, difficulty);
   const { bestScores } = useProfile();
 
+  const heartShake = useSharedValue(0);
   const [feedbackMap, setFeedbackMap] = useState<Record<number, TileFeedback>>({});
   const [inputDisabled, setInputDisabled] = useState(false);
   const prevGridRef = useRef(state.currentGrid);
@@ -87,11 +91,12 @@ export default function GameScreen() {
   const handleTap = useCallback((index: number) => {
     if (inputDisabled) return;
 
-    const isCorrect = state.currentGrid.correctIndices.includes(index);
+    const isCorrect = state.currentGrid.correctAnswers.includes(index);
     setInputDisabled(true);
     setFeedbackMap({ [index]: isCorrect ? 'correct' : 'wrong' });
 
     if (!isCorrect) {
+      triggerHeartShake(heartShake);
       setTimeout(() => {
         setFeedbackMap({});
         setInputDisabled(false);
@@ -99,7 +104,7 @@ export default function GameScreen() {
     }
 
     tapCell(index);
-  }, [state.currentGrid, tapCell, inputDisabled]);
+  }, [state.currentGrid, tapCell, inputDisabled, heartShake]);
 
   const handleExit = useCallback(() => {
     router.replace('/');
@@ -122,12 +127,13 @@ export default function GameScreen() {
         hearts={state.hearts}
         showHearts={gameMode !== 'blitz'}
         onExit={handleExit}
+        heartShake={heartShake}
       />
 
       {/* Instruction */}
       <View style={styles.instructionContainer}>
         <Text style={[styles.instruction, { color: theme.onSurface }]}>
-          {state.currentChallenge.instruction}
+          {state.currentInstruction}
         </Text>
       </View>
 
@@ -150,7 +156,7 @@ export default function GameScreen() {
       <View style={styles.statsContainer}>
         <StatsBar
           score={state.score}
-          bestScore={bestScores[gameMode] ?? 0}
+          bestScore={bestScores[gameMode]?.[difficulty] ?? 0}
           elapsedSeconds={elapsedSeconds}
         />
       </View>
@@ -166,7 +172,7 @@ export default function GameScreen() {
       {showBanner && (
         <ChallengeBanner
           challengeNumber={state.challengeIndex + 1}
-          instruction={state.currentChallenge.instruction}
+          instruction={state.currentInstruction}
           onDismiss={handleBannerDismiss}
         />
       )}

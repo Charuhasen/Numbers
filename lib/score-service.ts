@@ -1,4 +1,4 @@
-import { GameEvent, GameMode } from '@/engine/types';
+import { Difficulty, GameEvent, GameMode } from '@/engine/types';
 import { supabase } from '@/lib/supabase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -6,6 +6,7 @@ const PENDING_SCORES_KEY = 'taptapmath_pending_scores';
 
 interface ScoreSubmission {
   mode: GameMode;
+  difficulty: Difficulty;
   events: GameEvent[];
   roundReached: number;
 }
@@ -32,11 +33,13 @@ function toSnakeCaseEvents(events: GameEvent[]): object[] {
 /** Submit a game score via the submit_game_score RPC. */
 export async function submitGameScore(
   mode: GameMode,
+  difficulty: Difficulty,
   events: GameEvent[],
   roundReached: number,
 ): Promise<SubmitResult> {
   const { data, error } = await supabase.rpc('submit_game_score', {
     p_mode: mode,
+    p_difficulty: difficulty,
     p_events: toSnakeCaseEvents(events),
     p_round_reached: roundReached,
   });
@@ -75,6 +78,7 @@ export async function processPendingScores(): Promise<number> {
     try {
       await submitGameScore(
         submission.mode,
+        submission.difficulty,
         submission.events,
         submission.roundReached,
       );

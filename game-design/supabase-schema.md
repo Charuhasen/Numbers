@@ -69,15 +69,19 @@ create table public.scores (
   user_id uuid references public.profiles(id) on delete cascade not null,
   score int not null check (score >= 0),
   mode text not null check (mode in ('classic', 'blitz', 'daily')),
+  difficulty text not null default 'easy' check (difficulty in ('easy', 'medium', 'hard')),
   round_reached int not null check (round_reached >= 0),
   bits_earned int not null default 0 check (bits_earned >= 0),
-  played_at timestamp with time zone default timezone('utc'::text, now()) not null
+  played_at timestamp with time zone default timezone('utc'::text, now()) not null,
+
+  -- One best-score row per user per mode per difficulty
+  constraint scores_user_mode_difficulty_unique unique (user_id, mode, difficulty)
 );
 
--- Indexes for leaderboard queries
-create index idx_scores_classic_leaderboard on public.scores(mode, score desc) where mode = 'classic';
-create index idx_scores_blitz_leaderboard on public.scores(mode, score desc) where mode = 'blitz';
-create index idx_scores_daily_leaderboard on public.scores(mode, played_at desc, score desc) where mode = 'daily';
+-- Indexes for leaderboard queries (include difficulty for filtering)
+create index idx_scores_classic_leaderboard on public.scores(difficulty, score desc) where mode = 'classic';
+create index idx_scores_blitz_leaderboard on public.scores(difficulty, score desc) where mode = 'blitz';
+create index idx_scores_daily_leaderboard on public.scores(difficulty, played_at desc, score desc) where mode = 'daily';
 create index idx_scores_user on public.scores(user_id);
 
 -- RLS
@@ -294,11 +298,13 @@ Server-side score validation and submission. The client sends game events; the s
 create or replace function public.submit_game_score(
   p_mode text,
   p_events jsonb,           -- Array of game events: [{"type":"correct","grid_index":0,"time_remaining":4.2}, ...]
-  p_round_reached int
+  p_round_reached int,
+  p_difficulty text default 'easy'  -- 'easy' | 'medium' | 'hard'
 )
 returns json
 language plpgsql
 security definer
+set search_path = public
 as $$
 declare
   v_user_id uuid;
@@ -307,6 +313,10 @@ declare
   v_event jsonb;
   v_base_points int := 100;
   v_score_id uuid;
+  v_existing_id uuid;
+  v_existing_score int;
+  v_existing_played_at timestamptz;
+  v_is_new_best boolean := false;
 begin
   v_user_id := auth.uid();
   if v_user_id is null then
@@ -316,6 +326,11 @@ begin
   -- Validate mode
   if p_mode not in ('classic', 'blitz', 'daily') then
     raise exception 'Invalid mode: %', p_mode;
+  end if;
+
+  -- Validate difficulty
+  if p_difficulty not in ('easy', 'medium', 'hard') then
+    raise exception 'Invalid difficulty: %', p_difficulty;
   end if;
 
   -- Replay events and calculate score server-side
@@ -335,42 +350,65 @@ begin
   -- Calculate bits earned
   v_bits_earned := floor(v_calculated_score / 10.0)::int;
 
-  -- Daily mode: check one attempt per day
-  if p_mode = 'daily' then
-    if exists (
-      select 1 from public.scores
-      where user_id = v_user_id
-        and mode = 'daily'
-        and played_at::date = current_date
-    ) then
-      raise exception 'Daily challenge already attempted today';
-    end if;
+  -- Lock existing row for this user+mode+difficulty (if any)
+  select id, score, played_at into v_existing_id, v_existing_score, v_existing_played_at
+  from public.scores
+  where user_id = v_user_id and mode = p_mode and difficulty = p_difficulty
+  for update;
+
+  -- Daily mode: one attempt per day
+  if p_mode = 'daily' and v_existing_id is not null and v_existing_played_at::date = current_date then
+    raise exception 'Daily challenge already attempted today';
   end if;
 
-  -- Insert validated score
-  insert into public.scores (user_id, score, mode, round_reached, bits_earned)
-  values (v_user_id, v_calculated_score, p_mode, p_round_reached, v_bits_earned)
-  returning id into v_score_id;
+  if v_existing_id is null then
+    -- First time playing this mode+difficulty
+    insert into public.scores (user_id, score, mode, difficulty, round_reached, bits_earned)
+    values (v_user_id, v_calculated_score, p_mode, p_difficulty, p_round_reached, v_bits_earned)
+    returning id into v_score_id;
+    v_is_new_best := true;
+  elsif v_calculated_score > v_existing_score then
+    -- New best score
+    update public.scores
+    set score = v_calculated_score,
+        round_reached = p_round_reached,
+        bits_earned = v_bits_earned,
+        played_at = timezone('utc'::text, now())
+    where id = v_existing_id;
+    v_score_id := v_existing_id;
+    v_is_new_best := true;
+  else
+    -- Not a new best — for daily, still update played_at to mark today's attempt
+    if p_mode = 'daily' then
+      update public.scores
+      set played_at = timezone('utc'::text, now())
+      where id = v_existing_id;
+    end if;
+    v_score_id := v_existing_id;
+  end if;
 
-  -- Credit bits to profile
+  -- Always credit bits
   update public.profiles
   set bits = bits + v_bits_earned
   where id = v_user_id;
 
-  -- Log transaction
+  -- Always log transaction
   insert into public.transactions (user_id, type, details)
   values (v_user_id, 'bits_earned', jsonb_build_object(
     'score_id', v_score_id,
     'score', v_calculated_score,
     'bits_earned', v_bits_earned,
-    'mode', p_mode
+    'mode', p_mode,
+    'difficulty', p_difficulty,
+    'is_new_best', v_is_new_best
   ));
 
   return json_build_object(
     'success', true,
     'score', v_calculated_score,
     'bits_earned', v_bits_earned,
-    'score_id', v_score_id
+    'score_id', v_score_id,
+    'is_new_best', v_is_new_best
   );
 end;
 $$;

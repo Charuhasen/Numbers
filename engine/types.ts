@@ -15,6 +15,7 @@ export type GamePhase = 'playing' | 'gameOver';
 
 export type GameEventType = 'correct' | 'wrong' | 'timeout' | 'grid_skip';
 
+/** @deprecated Rule-based generation replaced by pre-generated boards. */
 export interface GridRules {
   min_value: number;
   max_value: number;
@@ -24,6 +25,7 @@ export interface GridRules {
   required_selections: number;
 }
 
+/** @deprecated Rule-based generation replaced by pre-generated boards. */
 export interface Challenge {
   id: string;
   instruction: string;
@@ -32,10 +34,24 @@ export interface Challenge {
   rules: GridRules;
 }
 
+export interface Board {
+  id: string;
+  type: ChallengeType;
+  difficulty: Difficulty;
+  instruction: string;
+  grid: number[];             // length 9
+  correct_answers: number[];  // indices of correct answers
+  estimated_solve_time_ms: number;
+  difficulty_score: number;
+}
+
 export interface Grid {
-  numbers: number[];       // length 9
-  correctIndices: number[]; // always 1 correct answer
-  challenge: Challenge;
+  numbers: number[];          // from board.grid
+  correctAnswers: number[];   // from board.correct_answers
+  boardId: string;            // track which board was used
+  instruction: string;        // from board.instruction
+  type: ChallengeType;        // from board.type
+  estimatedSolveTimeMs: number; // from board.estimated_solve_time_ms
 }
 
 export interface GameEvent {
@@ -55,11 +71,12 @@ export interface GameState {
   bitsEarned: number;
   phase: GamePhase;
   currentGrid: Grid;
-  currentChallenge: Challenge;
+  currentChallengeType: ChallengeType;
+  currentInstruction: string;
   events: GameEvent[];
 }
 
 export type GameAction =
   | { type: 'TAP_CELL'; index: number; timeRemaining: number }
   | { type: 'TIMEOUT' }
-  | { type: 'ADVANCE_GRID'; nextGrid: Grid; nextChallenge?: Challenge };
+  | { type: 'ADVANCE_GRID'; nextGrid: Grid; nextChallengeType?: ChallengeType; nextInstruction?: string };

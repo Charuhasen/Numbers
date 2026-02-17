@@ -1,0 +1,2202 @@
+[
+  {
+    "id": "easy_lowest_5_b09",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      51,
+      74,
+      69,
+      55,
+      73,
+      54,
+      70,
+      56,
+      24
+    ],
+    "correct_answers": [
+      8
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_4_b05",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      32,
+      20,
+      15,
+      19,
+      21,
+      8,
+      12,
+      10,
+      11
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_5_b04",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      49,
+      44,
+      50,
+      57,
+      42,
+      33,
+      29,
+      76,
+      36
+    ],
+    "correct_answers": [
+      7
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_4_b06",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      32,
+      10,
+      8,
+      22,
+      16,
+      18,
+      21,
+      9,
+      7
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_5_b04",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      42,
+      32,
+      48,
+      35,
+      29,
+      12,
+      43,
+      40,
+      58
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_3_b06",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      33,
+      50,
+      52,
+      37,
+      43,
+      38,
+      18,
+      41,
+      35
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_1_b02",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      27,
+      30,
+      36,
+      28,
+      35,
+      21,
+      20,
+      8,
+      38
+    ],
+    "correct_answers": [
+      7
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_4_b03",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      27,
+      17,
+      37,
+      15,
+      12,
+      24,
+      23,
+      19,
+      26
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_1_b06",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      49,
+      24,
+      37,
+      29,
+      19,
+      21,
+      22,
+      34,
+      35
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_1_b10",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      29,
+      30,
+      46,
+      17,
+      19,
+      21,
+      28,
+      36,
+      25
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_3_b02",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      80,
+      49,
+      65,
+      62,
+      45,
+      40,
+      46,
+      53,
+      60
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_2_b08",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      35,
+      18,
+      33,
+      40,
+      28,
+      36,
+      37,
+      42,
+      32
+    ],
+    "correct_answers": [
+      1
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_5_b06",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      40,
+      64,
+      38,
+      60,
+      42,
+      88,
+      54,
+      67,
+      41
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_5_b08",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      52,
+      72,
+      66,
+      57,
+      86,
+      69,
+      81,
+      78,
+      37
+    ],
+    "correct_answers": [
+      8
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_3_b07",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      60,
+      24,
+      29,
+      26,
+      32,
+      20,
+      34,
+      30,
+      35
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_2_b04",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      31,
+      38,
+      32,
+      48,
+      36,
+      58,
+      34,
+      29,
+      33
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_4_b09",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      16,
+      24,
+      25,
+      34,
+      18,
+      19,
+      9,
+      20,
+      14
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_5_b07",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      50,
+      52,
+      26,
+      61,
+      49,
+      55,
+      48,
+      62,
+      46
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_5_b03",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      40,
+      50,
+      53,
+      69,
+      85,
+      43,
+      65,
+      57,
+      38
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_5_b05",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      55,
+      57,
+      49,
+      42,
+      84,
+      59,
+      54,
+      45,
+      47
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_1_b01",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      19,
+      12,
+      28,
+      29,
+      22,
+      31,
+      2,
+      20,
+      24
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_3_b09",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      45,
+      42,
+      46,
+      50,
+      40,
+      66,
+      41,
+      38,
+      47
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_1_b01",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      47,
+      35,
+      24,
+      19,
+      36,
+      18,
+      30,
+      26,
+      22
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_4_b07",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      11,
+      26,
+      13,
+      23,
+      21,
+      2,
+      12,
+      18,
+      22
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_1_b08",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      32,
+      11,
+      22,
+      24,
+      33,
+      25,
+      36,
+      27,
+      26
+    ],
+    "correct_answers": [
+      1
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_3_b05",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      44,
+      39,
+      47,
+      43,
+      38,
+      34,
+      50,
+      40,
+      69
+    ],
+    "correct_answers": [
+      8
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_3_b04",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      62,
+      56,
+      77,
+      43,
+      50,
+      47,
+      57,
+      53,
+      55
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_2_b06",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      35,
+      45,
+      50,
+      44,
+      42,
+      20,
+      46,
+      49,
+      52
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_2_b05",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      32,
+      58,
+      44,
+      30,
+      38,
+      43,
+      23,
+      34,
+      27
+    ],
+    "correct_answers": [
+      1
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_3_b02",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      56,
+      50,
+      25,
+      47,
+      54,
+      60,
+      41,
+      43,
+      49
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_3_b03",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      47,
+      32,
+      40,
+      62,
+      41,
+      23,
+      46,
+      29,
+      38
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_5_b10",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      43,
+      91,
+      49,
+      71,
+      51,
+      73,
+      53,
+      55,
+      69
+    ],
+    "correct_answers": [
+      1
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_1_b04",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      38,
+      20,
+      50,
+      22,
+      35,
+      25,
+      40,
+      24,
+      23
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_2_b02",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      25,
+      32,
+      28,
+      37,
+      21,
+      27,
+      24,
+      56,
+      46
+    ],
+    "correct_answers": [
+      7
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_3_b06",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      31,
+      67,
+      41,
+      43,
+      48,
+      46,
+      32,
+      44,
+      28
+    ],
+    "correct_answers": [
+      1
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_5_b02",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      75,
+      56,
+      26,
+      60,
+      55,
+      39,
+      25,
+      30,
+      59
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_5_b07",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      37,
+      25,
+      28,
+      41,
+      42,
+      39,
+      29,
+      74,
+      38
+    ],
+    "correct_answers": [
+      7
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_2_b08",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      37,
+      20,
+      33,
+      15,
+      40,
+      50,
+      16,
+      23,
+      24
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_5_b09",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      62,
+      96,
+      47,
+      71,
+      55,
+      78,
+      66,
+      59,
+      49
+    ],
+    "correct_answers": [
+      1
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_4_b07",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      34,
+      26,
+      10,
+      23,
+      24,
+      18,
+      9,
+      21,
+      19
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_3_b01",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      80,
+      49,
+      53,
+      58,
+      54,
+      43,
+      51,
+      55,
+      47
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_2_b01",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      37,
+      11,
+      27,
+      30,
+      24,
+      46,
+      43,
+      26,
+      38
+    ],
+    "correct_answers": [
+      1
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_3_b10",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      51,
+      52,
+      43,
+      55,
+      58,
+      62,
+      24,
+      40,
+      47
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_3_b07",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      46,
+      18,
+      34,
+      38,
+      45,
+      39,
+      33,
+      49,
+      35
+    ],
+    "correct_answers": [
+      1
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_3_b05",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      34,
+      31,
+      43,
+      40,
+      37,
+      33,
+      30,
+      36,
+      13
+    ],
+    "correct_answers": [
+      8
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_2_b05",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      37,
+      35,
+      26,
+      28,
+      24,
+      8,
+      21,
+      32,
+      36
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_1_b06",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      10,
+      31,
+      35,
+      27,
+      39,
+      40,
+      26,
+      34,
+      22
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_3_b04",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      46,
+      44,
+      66,
+      55,
+      49,
+      28,
+      43,
+      45,
+      50
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_4_b02",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      19,
+      28,
+      25,
+      26,
+      21,
+      16,
+      37,
+      15,
+      29
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_1_b04",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      36,
+      20,
+      10,
+      28,
+      38,
+      24,
+      32,
+      29,
+      34
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_3_b08",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      47,
+      38,
+      40,
+      49,
+      36,
+      31,
+      10,
+      29,
+      33
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_2_b03",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      29,
+      23,
+      15,
+      44,
+      27,
+      34,
+      9,
+      25,
+      24
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_2_b02",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      41,
+      36,
+      40,
+      15,
+      38,
+      32,
+      43,
+      26,
+      35
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_5_b06",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      54,
+      77,
+      53,
+      50,
+      28,
+      59,
+      72,
+      58,
+      46
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_2_b10",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      42,
+      19,
+      52,
+      48,
+      31,
+      37,
+      43,
+      32,
+      53
+    ],
+    "correct_answers": [
+      1
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_1_b08",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      8,
+      18,
+      9,
+      35,
+      23,
+      17,
+      10,
+      25,
+      14
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_3_b03",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      56,
+      49,
+      46,
+      44,
+      16,
+      32,
+      42,
+      36,
+      51
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_5_b02",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      65,
+      41,
+      15,
+      35,
+      59,
+      56,
+      36,
+      60,
+      37
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_5_b01",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      30,
+      60,
+      76,
+      58,
+      48,
+      33,
+      46,
+      38,
+      29
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_1_b02",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      16,
+      45,
+      34,
+      20,
+      25,
+      31,
+      35,
+      28,
+      23
+    ],
+    "correct_answers": [
+      1
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_1_b05",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      24,
+      33,
+      34,
+      32,
+      17,
+      23,
+      7,
+      20,
+      35
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_4_b08",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      18,
+      26,
+      25,
+      17,
+      1,
+      21,
+      11,
+      22,
+      14
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_1_b10",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      31,
+      22,
+      32,
+      24,
+      17,
+      4,
+      20,
+      14,
+      19
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_2_b10",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      36,
+      25,
+      52,
+      24,
+      19,
+      34,
+      18,
+      27,
+      20
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_1_b05",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      36,
+      23,
+      39,
+      19,
+      32,
+      49,
+      28,
+      30,
+      34
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_4_b05",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      28,
+      18,
+      4,
+      15,
+      19,
+      24,
+      14,
+      22,
+      16
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_4_b06",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      36,
+      30,
+      21,
+      28,
+      32,
+      35,
+      11,
+      27,
+      26
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_1_b09",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      13,
+      18,
+      31,
+      41,
+      30,
+      14,
+      17,
+      15,
+      16
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_4_b08",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      16,
+      30,
+      25,
+      18,
+      28,
+      40,
+      15,
+      31,
+      27
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_4_b01",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      25,
+      19,
+      24,
+      36,
+      12,
+      13,
+      27,
+      16,
+      18
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_2_b07",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      33,
+      43,
+      54,
+      31,
+      19,
+      20,
+      28,
+      21,
+      36
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_2_b09",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      43,
+      36,
+      37,
+      39,
+      28,
+      35,
+      16,
+      31,
+      47
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_2_b03",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      27,
+      20,
+      31,
+      45,
+      32,
+      38,
+      10,
+      28,
+      34
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_3_b10",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      49,
+      36,
+      47,
+      34,
+      38,
+      50,
+      27,
+      66,
+      28
+    ],
+    "correct_answers": [
+      7
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_1_b03",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      21,
+      19,
+      23,
+      39,
+      38,
+      28,
+      22,
+      37,
+      49
+    ],
+    "correct_answers": [
+      8
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_2_b04",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      29,
+      49,
+      38,
+      47,
+      42,
+      39,
+      35,
+      14,
+      24
+    ],
+    "correct_answers": [
+      7
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_5_b05",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      80,
+      77,
+      52,
+      30,
+      72,
+      58,
+      62,
+      53,
+      46
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_2_b06",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      23,
+      14,
+      17,
+      25,
+      30,
+      28,
+      38,
+      21,
+      49
+    ],
+    "correct_answers": [
+      8
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_4_b10",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      17,
+      10,
+      14,
+      20,
+      13,
+      30,
+      12,
+      15,
+      18
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_4_b04",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      19,
+      20,
+      29,
+      30,
+      21,
+      22,
+      23,
+      5,
+      14
+    ],
+    "correct_answers": [
+      7
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_1_b03",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      5,
+      34,
+      17,
+      22,
+      25,
+      23,
+      35,
+      15,
+      26
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_3_b08",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      62,
+      36,
+      47,
+      27,
+      23,
+      29,
+      24,
+      28,
+      32
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_5_b10",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      31,
+      49,
+      56,
+      50,
+      60,
+      35,
+      55,
+      15,
+      62
+    ],
+    "correct_answers": [
+      7
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_2_b01",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      16,
+      38,
+      14,
+      35,
+      49,
+      36,
+      20,
+      24,
+      17
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_4_b01",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      20,
+      24,
+      8,
+      31,
+      28,
+      18,
+      19,
+      21,
+      29
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_4_b09",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      12,
+      20,
+      23,
+      25,
+      24,
+      34,
+      37,
+      30,
+      21
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_1_b07",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      31,
+      26,
+      40,
+      42,
+      32,
+      38,
+      14,
+      35,
+      30
+    ],
+    "correct_answers": [
+      6
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_5_b03",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      29,
+      56,
+      57,
+      11,
+      45,
+      61,
+      60,
+      52,
+      42
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_4_b03",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      19,
+      29,
+      8,
+      33,
+      22,
+      25,
+      24,
+      30,
+      27
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_2_b07",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      40,
+      46,
+      49,
+      52,
+      47,
+      18,
+      44,
+      41,
+      53
+    ],
+    "correct_answers": [
+      5
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_5_b08",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      42,
+      84,
+      55,
+      38,
+      60,
+      35,
+      62,
+      44,
+      46
+    ],
+    "correct_answers": [
+      1
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_3_b01",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      63,
+      40,
+      44,
+      24,
+      52,
+      59,
+      61,
+      50,
+      60
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_4_b02",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      23,
+      28,
+      37,
+      24,
+      12,
+      25,
+      29,
+      31,
+      20
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_1_b09",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      23,
+      4,
+      14,
+      28,
+      30,
+      21,
+      15,
+      31,
+      22
+    ],
+    "correct_answers": [
+      1
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_2_b09",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      37,
+      20,
+      22,
+      42,
+      34,
+      25,
+      29,
+      52,
+      31
+    ],
+    "correct_answers": [
+      7
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_3_b09",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      48,
+      49,
+      55,
+      43,
+      23,
+      46,
+      58,
+      51,
+      59
+    ],
+    "correct_answers": [
+      4
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_4_b04",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      21,
+      22,
+      37,
+      29,
+      16,
+      25,
+      19,
+      27,
+      13
+    ],
+    "correct_answers": [
+      2
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_highest_1_b07",
+    "type": "highest",
+    "difficulty": "easy",
+    "instruction": "Find the highest number",
+    "grid": [
+      14,
+      23,
+      25,
+      35,
+      24,
+      6,
+      10,
+      21,
+      5
+    ],
+    "correct_answers": [
+      3
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_4_b10",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      5,
+      16,
+      25,
+      19,
+      20,
+      29,
+      26,
+      21,
+      15
+    ],
+    "correct_answers": [
+      0
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  },
+  {
+    "id": "easy_lowest_5_b01",
+    "type": "lowest",
+    "difficulty": "easy",
+    "instruction": "Find the lowest number",
+    "grid": [
+      52,
+      42,
+      29,
+      47,
+      63,
+      43,
+      54,
+      14,
+      35
+    ],
+    "correct_answers": [
+      7
+    ],
+    "estimated_solve_time_ms": 960,
+    "difficulty_score": 1
+  }
+]

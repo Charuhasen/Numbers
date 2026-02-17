@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { processPendingScores } from '@/lib/score-service';
 import { useSession } from '@/context/ctx';
+import { Difficulty } from '@/engine/types';
 import { createContext, useCallback, useContext, useEffect, useState, type PropsWithChildren } from 'react';
 
 export interface Profile {
@@ -11,11 +12,20 @@ export interface Profile {
   avatarUrl: string | null;
 }
 
+type DifficultyScores = Record<Difficulty, number>;
+
 export interface BestScores {
-  classic: number;
-  blitz: number;
-  daily: number;
+  classic: DifficultyScores;
+  blitz: DifficultyScores;
+  daily: DifficultyScores;
 }
+
+const emptyDifficultyScores = (): DifficultyScores => ({ easy: 0, medium: 0, hard: 0 });
+const emptyBestScores = (): BestScores => ({
+  classic: emptyDifficultyScores(),
+  blitz: emptyDifficultyScores(),
+  daily: emptyDifficultyScores(),
+});
 
 interface ProfileContextValue {
   profile: Profile | null;
@@ -26,7 +36,7 @@ interface ProfileContextValue {
 
 const ProfileContext = createContext<ProfileContextValue>({
   profile: null,
-  bestScores: { classic: 0, blitz: 0, daily: 0 },
+  bestScores: emptyBestScores(),
   isLoading: true,
   refreshProfile: async () => {},
 });
@@ -38,13 +48,13 @@ export function useProfile() {
 export function ProfileProvider({ children }: PropsWithChildren) {
   const { session } = useSession();
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [bestScores, setBestScores] = useState<BestScores>({ classic: 0, blitz: 0, daily: 0 });
+  const [bestScores, setBestScores] = useState<BestScores>(emptyBestScores());
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchProfile = useCallback(async () => {
     if (!session?.user?.id) {
       setProfile(null);
-      setBestScores({ classic: 0, blitz: 0, daily: 0 });
+      setBestScores(emptyBestScores());
       setIsLoading(false);
       return;
     }
@@ -88,18 +98,19 @@ export function ProfileProvider({ children }: PropsWithChildren) {
       });
     }
 
-    // Fetch best scores
+    // Fetch best scores per mode+difficulty
     const scoresResult = await supabase
       .from('scores')
-      .select('mode, score')
+      .select('mode, difficulty, score')
       .eq('user_id', userId);
 
     if (scoresResult.data) {
-      const best: BestScores = { classic: 0, blitz: 0, daily: 0 };
+      const best: BestScores = emptyBestScores();
       for (const row of scoresResult.data) {
         const mode = row.mode as keyof BestScores;
-        if (mode in best && row.score > best[mode]) {
-          best[mode] = row.score;
+        const diff = (row.difficulty as Difficulty) || 'easy';
+        if (mode in best && row.score > best[mode][diff]) {
+          best[mode][diff] = row.score;
         }
       }
       setBestScores(best);
@@ -112,7 +123,7 @@ export function ProfileProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     if (!session?.user?.id) {
       setProfile(null);
-      setBestScores({ classic: 0, blitz: 0, daily: 0 });
+      setBestScores(emptyBestScores());
       setIsLoading(false);
       return;
     }

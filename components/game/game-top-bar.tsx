@@ -3,6 +3,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SharedValue } from 'react-native-reanimated';
 
 import { HeartsDisplay } from './hearts-display';
 
@@ -12,6 +13,7 @@ interface GameTopBarProps {
   hearts: number;
   showHearts: boolean;
   onExit: () => void;
+  heartShake?: SharedValue<number>;
 }
 
 export const GameTopBar = React.memo(function GameTopBar({
@@ -20,6 +22,7 @@ export const GameTopBar = React.memo(function GameTopBar({
   hearts,
   showHearts,
   onExit,
+  heartShake,
 }: GameTopBarProps) {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
@@ -70,7 +73,7 @@ export const GameTopBar = React.memo(function GameTopBar({
 
       {/* Right: Hearts */}
       <View style={styles.right}>
-        {showHearts && <HeartsDisplay current={hearts} />}
+        {showHearts && <HeartsDisplay current={hearts} shake={heartShake} />}
       </View>
     </View>
   );

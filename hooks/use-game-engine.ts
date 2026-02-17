@@ -1,32 +1,56 @@
-import { ChallengePool, getNextChallenge, loadChallengePool } from '@/engine/challenge-pool';
-import { createInitialState, getTimerDuration } from '@/engine/game-init';
-import { generateGrid } from '@/engine/grid-generator';
+import { BoardPool, getNextBoard, loadBoardPool } from '@/engine/board-pool';
+import { createInitialState } from '@/engine/game-init';
 import { gameReducer } from '@/engine/game-reducer';
-import { ChallengeType, Difficulty, GameMode, GameState } from '@/engine/types';
+import { Board, ChallengeType, Difficulty, GameMode, GameState, Grid } from '@/engine/types';
 import * as Haptics from 'expo-haptics';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useSharedValue } from 'react-native-reanimated';
 
-export function useGameEngine(mode: GameMode, difficulty?: Difficulty) {
-  const pool = useMemo<ChallengePool>(() => loadChallengePool(), []);
-  const recentTypesRef = useRef<ChallengeType[]>([]);
+/**
+ * Derive the actual timer duration (seconds) from a board's estimated solve
+ * time and the current grid position within the round (0-4).
+ *
+ * Formula: base = solveEstimate/1000 + 3s buffer, then decay 0.5s per grid.
+ * Clamped to [2s, 8s].
+ */
+function getTimerForGrid(estimatedSolveTimeMs: number, gridIndex: number): number {
+  const baseSec = estimatedSolveTimeMs / 1000 + 3.0;
+  const decayed = baseSec - gridIndex * 0.5;
+  return Math.min(Math.max(decayed, 2.0), 8.0);
+}
 
-  // Generate first challenge and grid
+function boardToGrid(board: Board): Grid {
+  return {
+    numbers: board.grid,
+    correctAnswers: board.correct_answers,
+    boardId: board.id,
+    instruction: board.instruction,
+    type: board.type,
+    estimatedSolveTimeMs: board.estimated_solve_time_ms,
+  };
+}
+
+export function useGameEngine(mode: GameMode, difficulty?: Difficulty) {
+  const pool = useMemo<BoardPool>(() => loadBoardPool(), []);
+  const recentTypesRef = useRef<ChallengeType[]>([]);
+  const recentBoardIdsRef = useRef<string[]>([]);
+
+  // Generate first board
   const initialData = useMemo(() => {
-    const challenge = getNextChallenge(0, mode, [], pool, difficulty);
-    recentTypesRef.current = [challenge.type];
-    const grid = generateGrid(challenge);
-    return { challenge, grid };
+    const board = getNextBoard(0, mode, [], [], pool, difficulty);
+    recentTypesRef.current = [board.type];
+    recentBoardIdsRef.current = [board.id];
+    return { board };
   }, [mode, pool, difficulty]);
 
   const [state, dispatch] = useReducer(
     gameReducer,
-    createInitialState(mode, initialData.challenge, initialData.grid),
+    createInitialState(mode, initialData.board),
   );
 
-  // Timer shared value for the animated bar (1.0 → 0.0)
+  // Timer shared value for the animated bar (1.0 -> 0.0)
   const timerProgress = useSharedValue(1);
-  const timerDuration = getTimerDuration(state.gridIndex);
+  const timerDuration = getTimerForGrid(state.currentGrid.estimatedSolveTimeMs, state.gridIndex);
 
   // Refs for timer management (avoids re-renders)
   const timerStartRef = useRef<number>(Date.now());
@@ -51,34 +75,46 @@ export function useGameEngine(mode: GameMode, difficulty?: Difficulty) {
     setIsReady(true);
   }, []);
 
-  // Generate next grid (and potentially next challenge)
+  // Generate next grid (and potentially next challenge type)
   const generateNextGridData = useCallback(() => {
     const s = stateRef.current;
     const nextGridIndex = s.gridIndex + 1;
 
     if (nextGridIndex >= 5) {
-      // New challenge
+      // New challenge round — pick a new board with type variety
       const nextChallengeIndex = s.challengeIndex + 1;
-      const nextChallenge = getNextChallenge(
+      const nextBoard = getNextBoard(
         nextChallengeIndex,
         mode,
         recentTypesRef.current,
+        recentBoardIdsRef.current,
         pool,
         difficulty,
       );
-      recentTypesRef.current = [...recentTypesRef.current.slice(-2), nextChallenge.type];
-      const nextGrid = generateGrid(nextChallenge);
-      return { nextGrid, nextChallenge };
+      recentTypesRef.current = [...recentTypesRef.current.slice(-2), nextBoard.type];
+      recentBoardIdsRef.current = [...recentBoardIdsRef.current, nextBoard.id];
+      const nextGrid = boardToGrid(nextBoard);
+      return { nextGrid, nextChallengeType: nextBoard.type, nextInstruction: nextBoard.instruction };
     }
 
-    // Same challenge, new grid
-    const nextGrid = generateGrid(s.currentChallenge);
+    // Same challenge type, new board (same type constraint)
+    const nextBoard = getNextBoard(
+      s.challengeIndex,
+      mode,
+      // Don't filter by recent types — stay on same challenge type within a round
+      [],
+      recentBoardIdsRef.current,
+      pool,
+      difficulty,
+    );
+    recentBoardIdsRef.current = [...recentBoardIdsRef.current, nextBoard.id];
+    const nextGrid = boardToGrid(nextBoard);
     return { nextGrid };
   }, [mode, pool, difficulty]);
 
   // Reset timer for a new grid
-  const resetTimer = useCallback((gridIdx: number) => {
-    const duration = getTimerDuration(gridIdx);
+  const resetTimer = useCallback((solveTimeMs: number, gridIndex: number) => {
+    const duration = getTimerForGrid(solveTimeMs, gridIndex);
     timerDurationRef.current = duration;
     timerStartRef.current = Date.now();
     pausedElapsedRef.current = 0;
@@ -108,13 +144,12 @@ export function useGameEngine(mode: GameMode, difficulty?: Difficulty) {
 
     const s = stateRef.current;
     const isNewChallenge = s.gridIndex + 1 >= 5;
-
-    const { nextGrid, nextChallenge } = generateNextGridData();
-    dispatch({ type: 'ADVANCE_GRID', nextGrid, nextChallenge });
-
-    // Calculate the next gridIndex for timer reset
     const nextGridIndex = isNewChallenge ? 0 : s.gridIndex + 1;
-    resetTimer(nextGridIndex);
+
+    const { nextGrid, nextChallengeType, nextInstruction } = generateNextGridData();
+    dispatch({ type: 'ADVANCE_GRID', nextGrid, nextChallengeType, nextInstruction });
+
+    resetTimer(nextGrid.estimatedSolveTimeMs, nextGridIndex);
 
     // Pause timer if a new challenge is starting (banner will resume it)
     if (isNewChallenge) {
@@ -185,7 +220,7 @@ export function useGameEngine(mode: GameMode, difficulty?: Difficulty) {
     const duration = timerDurationRef.current;
     const timeRemaining = Math.max(0, duration - elapsed);
 
-    const isCorrect = s.currentGrid.correctIndices.includes(index);
+    const isCorrect = s.currentGrid.correctAnswers.includes(index);
 
     dispatch({ type: 'TAP_CELL', index, timeRemaining });
 

@@ -48,7 +48,7 @@ export default function GameOverScreen() {
 
     try {
       setSubmissionStatus('submitting');
-      const result = await submitGameScore(sessionData.mode, sessionData.events, sessionData.challengeIndex);
+      const result = await submitGameScore(sessionData.mode, sessionData.difficulty, sessionData.events, sessionData.challengeIndex);
       clearGameSessionData();
       setSubmissionStatus('success');
 
@@ -61,6 +61,7 @@ export default function GameOverScreen() {
       if (sessionData) {
         await queuePendingScore({
           mode: sessionData.mode,
+          difficulty: sessionData.difficulty,
           events: sessionData.events,
           roundReached: sessionData.challengeIndex,
         });

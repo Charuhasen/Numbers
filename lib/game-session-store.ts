@@ -7,7 +7,7 @@ export interface GameSessionData {
   challengeIndex: number;
   elapsedSeconds: number;
   events: GameEvent[];
-  difficulty?: Difficulty;
+  difficulty: Difficulty;
 }
 
 let sessionData: GameSessionData | null = null;
