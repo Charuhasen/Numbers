@@ -17,14 +17,12 @@ type DifficultyScores = Record<Difficulty, number>;
 export interface BestScores {
   classic: DifficultyScores;
   blitz: DifficultyScores;
-  daily: DifficultyScores;
 }
 
 const emptyDifficultyScores = (): DifficultyScores => ({ easy: 0, medium: 0, hard: 0 });
 const emptyBestScores = (): BestScores => ({
   classic: emptyDifficultyScores(),
   blitz: emptyDifficultyScores(),
-  daily: emptyDifficultyScores(),
 });
 
 interface ProfileContextValue {

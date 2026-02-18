@@ -21,7 +21,6 @@ export default function HomeScreen() {
 
   const [classicDifficulty, setClassicDifficulty] = useState<Difficulty>('easy');
   const [blitzDifficulty, setBlitzDifficulty] = useState<Difficulty>('easy');
-  const [dailyDifficulty, setDailyDifficulty] = useState<Difficulty>('easy');
 
   // Refresh profile data whenever this screen comes into focus
   useFocusEffect(
@@ -42,10 +41,6 @@ export default function HomeScreen() {
   const handlePlayBlitz = () => {
     router.push(`/game/blitz?difficulty=${blitzDifficulty}`);
   };
-  const handlePlayDaily = () => {
-    router.push(`/game/daily?difficulty=${dailyDifficulty}`);
-  };
-
   const handleSettingsPress = () => {
     Alert.alert('Settings', 'Profile & settings coming soon.');
   };
@@ -82,16 +77,6 @@ export default function HomeScreen() {
             iconName="bolt"
             difficulty={blitzDifficulty}
             onDifficultyChange={setBlitzDifficulty}
-          />
-
-          <ModeCard
-            title="Daily"
-            description="New puzzles every 24h."
-            bestScore={bestScores.daily[dailyDifficulty]}
-            onPlayPress={handlePlayDaily}
-            iconName="calendar-today"
-            difficulty={dailyDifficulty}
-            onDifficultyChange={setDailyDifficulty}
           />
         </View>
 

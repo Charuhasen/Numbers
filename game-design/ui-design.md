@@ -134,7 +134,6 @@ The most important screen. Every element is designed for zero distraction during
 **Center:**
 - Primary label: "CHALLENGE 3 OF 5" — `labelMedium`, `onSurfaceVariant`, uppercase, +1.5 letter spacing.
   - Classic: "CHALLENGE {challengeIndex + 1}" (no "of" — endless)
-  - Daily: "CHALLENGE {challengeIndex + 1} OF 10"
   - Blitz: "BLITZ" (static label)
 - Below: Grid progress dots — 5 small circles (8dp diameter, 6dp gap).
   - Completed grids: filled `primary`
@@ -143,7 +142,7 @@ The most important screen. Every element is designed for zero distraction during
   - Resets to all empty on new challenge.
 
 **Right:** Hearts row.
-- Classic/Daily: 3 heart icons (16dp each, 4dp gap).
+- Classic: 3 heart icons (16dp each, 4dp gap).
   - Active: filled `heart` color
   - Lost: `heartEmpty` color, slightly smaller (scale 0.85)
   - Heart loss: heart shrinks + fades out (200ms ease-out)
@@ -157,7 +156,6 @@ The most important screen. Every element is designed for zero distraction during
   - e.g. "Pick the Highest Number"
 - Secondary: `labelMedium`, `onSurfaceVariant`, uppercase, +1.5 letter spacing.
   - Classic: "ROUND {challengeIndex + 1}" (the current round number)
-  - Daily: "LEVEL {challengeIndex + 1} OF 10"
   - Blitz: show nothing (the timer is the focus)
 
 **Spacing:** 32dp below top bar, 8dp between primary and secondary, 24dp below secondary to timer.
@@ -237,7 +235,7 @@ The most important screen. Every element is designed for zero distraction during
 **Right column — Time:**
 - Label: "TIME" — `labelMedium`, `onSurfaceVariant`, uppercase
 - Value: `titleMedium`, `onSurface`, bold — e.g. "0:45"
-- Classic/Daily: shows elapsed session time (counting up)
+- Classic: shows elapsed session time (counting up)
 - Blitz: shows remaining global time (counting down), color shifts to `error` under 10s
 
 ## 2.7 Potion Tray
@@ -283,13 +281,6 @@ Differences from standard:
 - **Stats bar time column:** Shows global countdown prominently, matches timer bar.
 - **Potion tray:** Not shown (no potions in Blitz). Stats bar sits at the bottom.
 
-## 3.3 Daily Mode
-
-Differences from standard:
-- **Top bar center:** "CHALLENGE {n} OF 10"
-- **Timer bar:** Standard per-grid timer.
-- All other elements identical to Classic.
-
 ---
 
 # 4. Home Screen
@@ -320,11 +311,6 @@ Differences from standard:
 │  │  Best: 1,420    ▸ PLAY            │  │
 │  └────────────────────────────────────┘  │
 │                                          │
-│  ┌────────────────────────────────────┐  │
-│  │  DAILY CHALLENGE                  │  │
-│  │  Same puzzle for everyone.        │  │
-│  │  Today: Not attempted  ▸ PLAY     │  │
-│  └────────────────────────────────────┘  │
 │                                          │
 ├──────────────────────────────────────────┤
 │  [🏆 Leaderboard]  [👤 Profile]  [🛒]  │  ← Bottom Nav
@@ -360,10 +346,6 @@ Three cards stacked vertically, 12dp gap.
 - Bottom row (8dp above bottom): Best score label + "PLAY" button
   - Best score: `labelMedium`, `onSurfaceVariant` — e.g. "Best: 2,800"
   - "PLAY" button: text button, `primary` color, `labelLarge`, bold. Right-aligned with subtle arrow icon.
-
-**Daily card variation:**
-- If already attempted today: "PLAY" replaced with "COMPLETED" in `onSurfaceVariant`, non-tappable
-- Shows today's score if completed: "Today: 1,840"
 
 **Tap → opens potion selection bottom sheet (except Blitz, which skips to game).**
 
@@ -482,7 +464,6 @@ Slides up when a player taps "PLAY" on a mode card (except Blitz).
 **Title:** Mode-specific.
 - Classic: "GAME OVER" — `headlineMedium`, `onSurface`
 - Blitz: "TIME'S UP"
-- Daily: "DAILY COMPLETE"
 
 **Score:** `displayLarge` equivalent (48sp), `onSurface`, bold, centered. Count-up animation from 0 (800ms ease-out).
 
@@ -561,7 +542,7 @@ Slides up when a player taps "PLAY" on a mode card (except Blitz).
 ├──────────────────────────────────────────┤
 │ ← Back          LEADERBOARD              │  ← App Bar
 ├──────────────────────────────────────────┤
-│  [Classic]  [Blitz]  [Daily]             │  ← Mode Tabs
+│  [Classic]  [Blitz]                       │  ← Mode Tabs
 ├──────────────────────────────────────────┤
 │  [🌍 Global]  [🏳 Regional]              │  ← Scope Toggle
 ├──────────────────────────────────────────┤
@@ -627,7 +608,6 @@ Slides up when a player taps "PLAY" on a mode card (except Blitz).
 │  Games Played: 48                        │
 │  Best Classic: 2,840                     │
 │  Best Blitz: 1,420                       │
-│  Daily Streak: 3 days                    │
 ├──────────────────────────────────────────┤
 │  INVENTORY                               │
 │  [Potion grid — same as bottom sheet]    │

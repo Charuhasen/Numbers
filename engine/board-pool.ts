@@ -4,9 +4,6 @@ import blitzMedium from '@/assets/boards/blitz/medium.json';
 import classicEasy from '@/assets/boards/classic/easy.json';
 import classicHard from '@/assets/boards/classic/hard.json';
 import classicMedium from '@/assets/boards/classic/medium.json';
-import dailyEasy from '@/assets/boards/daily/easy.json';
-import dailyHard from '@/assets/boards/daily/hard.json';
-import dailyMedium from '@/assets/boards/daily/medium.json';
 import { Board, ChallengeType, Difficulty, GameMode } from './types';
 
 export interface BoardPool {
@@ -25,11 +22,6 @@ const BOARD_POOLS: Record<GameMode, BoardPool> = {
     easy: blitzEasy as Board[],
     medium: blitzMedium as Board[],
     hard: blitzHard as Board[],
-  },
-  daily: {
-    easy: dailyEasy as Board[],
-    medium: dailyMedium as Board[],
-    hard: dailyHard as Board[],
   },
 };
 

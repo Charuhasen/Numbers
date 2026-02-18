@@ -139,7 +139,7 @@ class GameState {
 
 enum GamePhase { playing, gameOver }
 
-enum GameMode { classic, blitz, daily }
+enum GameMode { classic, blitz }
 
 /// Recorded during gameplay, sent to submit_game_score RPC at session end.
 class GameEvent {
@@ -182,14 +182,6 @@ class ActivePotionEffects {
 * **Scoring:** Standard formula (100 base + time bonus per correct grid). Time bonus uses global time remaining, not per-grid time. `(globalTimeRemaining * 10).round()` bonus per correct answer — rewards speed.
 * **Leaderboard:** Ranked by player's best total score within 60 seconds.
 
-### Daily Mode
-* **Hearts:** 3
-* **Session:** Fixed sequence of 10 challenges. Same seed for all players on a given day.
-* **Difficulty:** Curated mix (3 easy, 4 medium, 3 hard).
-* **Scoring:** Standard formula.
-* **Leaderboard:** Separate daily leaderboard, resets at midnight UTC.
-* **Attempts:** One attempt per day. Failed attempt still counts.
-
 ---
 
 ## 4.3 App Lifecycle (Backgrounding)
@@ -201,7 +193,7 @@ class ActivePotionEffects {
 * If the player returns and hearts > 0, the game continues from wherever the timer left off.
 * If hearts reached 0 while backgrounded, the player returns to the Game Over screen.
 * **No save/restore on app kill.** If the OS kills the app mid-game, the session is lost. The player starts fresh next time.
-* Blitz mode: the 60s global timer keeps running. Backgrounding wastes your time.
+* Blitz: the 60s global timer keeps running. Backgrounding wastes your time.
 * This prevents pause-abuse (pausing to think about the answer).
 
 **Implementation:** Use `WidgetsBindingObserver.didChangeAppLifecycleState`. On `paused`/`inactive`, do nothing — let the timer `Ticker` continue. On `resumed`, sync the timer with elapsed real time.
@@ -238,7 +230,7 @@ double calculateTime({
 ### Timeout Behaviour
 
 * Timer expires → Move to **next grid** immediately.
-* **Penalty:** Deduct 1 Heart (Classic/Daily only. Blitz: no penalty, just time loss).
+* **Penalty:** Deduct 1 Heart (Classic only. Blitz: no penalty, just time loss).
 * If this was the 5th grid (index 4), advance to next challenge.
 
 ---
@@ -246,11 +238,10 @@ double calculateTime({
 ## 4.5 Gameplay Rules (Confirmed)
 
 ### Wrong Answer
-* **Action:** Deduct 1 Heart (unless Second Chance potion is active — absorb and consume it).
+* **Action:** Deduct 1 Heart (unless Second Chance potion is active — absorb and consume it). Blitz: no heart deduction.
 * **Timer:** Keeps running. No pause, no reset.
 * **State:** Stay on current grid. User must try again.
 * **Feedback:** Heavy Haptic + Error Sound.
-* **Blitz exception:** No heart deduction, timer keeps running.
 
 ### Correct Answer
 * **Action:** Add Score.
@@ -259,7 +250,7 @@ double calculateTime({
 * **Feedback:** Medium Haptic + Success Chime.
 
 ### Timeout
-* **Action:** Deduct 1 Heart (Classic/Daily). No deduction in Blitz.
+* **Action:** Deduct 1 Heart (Classic). No deduction in Blitz.
 * **State:** Move to next grid immediately.
 * **Feedback:** Heavy Haptic + Error Sound.
 
@@ -271,9 +262,9 @@ double calculateTime({
 
 ### Scoring Formula
 * **Base:** 100 points per correct grid.
-* **Bonus (Classic/Daily):** `(timeRemaining * 10).round()` points (per-grid timer).
+* **Bonus (Classic):** `(timeRemaining * 10).round()` points (per-grid timer).
 * **Bonus (Blitz):** `(globalTimeRemaining * 10).round()` points (global 60s timer). Rewards answering early in the session.
-* **Grid Skip potion (Classic/Daily):** Awards base 100 points + max possible time bonus for that grid index.
+* **Grid Skip potion (Classic):** Awards base 100 points + max possible time bonus for that grid index.
 * **Grid Skip potion (Blitz):** Awards base 100 points + `(globalTimeRemaining * 10).round()` bonus.
 
 ### Bits Earning
@@ -318,8 +309,6 @@ double calculateTime({
 
 **Blitz Mode:** Fixed at Medium tier parameters throughout.
 
-**Daily Mode:** Curated per-challenge — difficulty is set per challenge in the daily seed.
-
 ---
 
 ## 4.8 Challenge Sequencing
@@ -332,10 +321,6 @@ double calculateTime({
 ### Blitz Mode
 * Random selection from all 6 types at Medium difficulty.
 * No sequencing constraints — pure speed.
-
-### Daily Mode
-* Fixed sequence determined by daily seed (date-based).
-* All players see the same 10 challenges in the same order.
 
 ---
 
@@ -559,10 +544,6 @@ List<int> generateGrid(Challenge challenge, int gridIndex) {
 }
 ```
 
-### Deterministic Mode (Daily Challenges)
-
-For Daily Mode, grid generation uses a seeded random (`Random(dailySeed + challengeIndex + gridIndex)`) so all players see identical grids.
-
 ---
 
 # 7. Flutter UI Design
@@ -593,7 +574,7 @@ When a player taps a mode on the Home screen:
 * `/` — Splash (auto-redirect to `/auth` or `/home`)
 * `/auth` — Login screen
 * `/home` — Mode selection, quick stats, play button per mode
-* `/game/:mode` — Game screen (Classic, Blitz, Daily). Receives selected potions via `extra` route state.
+* `/game/:mode` — Game screen (Classic, Blitz). Receives selected potions via `extra` route state.
 * `/game-over` — Results screen (score, bits, round, potions dropped)
 * `/leaderboard/:mode` — Leaderboard by mode (global + regional tabs)
 * `/profile` — Profile + inventory + settings (audio/haptics toggles)
@@ -708,7 +689,7 @@ Apple App Store Review Guideline 5.1.1(v) requires apps with account creation to
 
 * Server-authoritative (scores validated via RPC — see Supabase schema)
 * Score submitted at end of session via `submit_game_score` RPC
-* Mode-specific leaderboards (Classic, Blitz, Daily)
+* Mode-specific leaderboards (Classic, Blitz)
 * **Best score per player:** Each player appears once with their highest score for that mode. The `get_leaderboard` RPC uses `DISTINCT ON (user_id)` to deduplicate.
 
 ### Queries (via Supabase RPC)
@@ -716,8 +697,6 @@ Apple App Store Review Guideline 5.1.1(v) requires apps with account creation to
 * **Global leaderboard:** Top 100 by mode (best per player), paginated.
 * **Regional leaderboard:** Top 100 filtered by `country_code` (best per player), paginated.
 * **Player rank:** Player's own rank within global + regional (based on their best score).
-* **Daily leaderboard:** Resets at midnight UTC. Only today's scores. Each player appears once (one attempt per day enforced by RPC).
-
 ---
 
 # 11. Data Persistence
@@ -750,8 +729,6 @@ Apple App Store Review Guideline 5.1.1(v) requires apps with account creation to
 * **Potion drops earned offline** are also queued and synced.
 * **Inventory mutations** (potion use) are tracked locally and reconciled on sync.
 * **Store purchases** require network (cannot buy offline).
-* **Daily mode** requires network to fetch the daily seed and to ensure one-attempt enforcement.
-
 ### Conflict Resolution
 
 * Scores: append-only, no conflicts.
@@ -793,8 +770,6 @@ Apple App Store Review Guideline 5.1.1(v) requires apps with account creation to
 * Potion drop logic (probability, milestone guarantees, rarity scaling, Fortune Tonic modifier)
 * Bits calculation
 * Difficulty tier selection based on challenge index
-* Daily seed determinism (same seed = same grids)
-
 ### Widget Tests
 
 * Grid tap interactions (correct, wrong, sum_to_n two-tap)
@@ -814,7 +789,6 @@ Apple App Store Review Guideline 5.1.1(v) requires apps with account creation to
 # 16. Monetisation-Ready Hooks (Optional)
 
 * Potion store (bits-based purchasing)
-* Daily challenges (engagement driver)
 * Cosmetic themes (future)
 * Ads integration (future — rewarded ads for bonus bits)
 * IAP for bits packs (future — `store_items.price_fiat`)
@@ -853,8 +827,7 @@ Apple App Store Review Guideline 5.1.1(v) requires apps with account creation to
 7. Potion engine logic (all 8 potions, effects, drops)
 8. Supabase auth (Google + Apple)
 9. Score submission RPC + leaderboards
-10. Daily challenge mode (seed system)
-11. Blitz mode
+10. Blitz mode
 12. Store + bits economy
 13. Offline queue + sync
 14. Audio & haptics polish
@@ -913,7 +886,6 @@ Potions are consumable items that offer strategic advantages.
 * **Fortune Tonic modifier:** +5% Legendary (subtracted from Rare).
 * **Dropped potions** are added to inventory immediately (or queued for sync if offline).
 * **Blitz mode:** No potion drops (session is too short).
-* **Daily mode:** Potion drops enabled, same rules as Classic.
 
 ---
 
@@ -927,7 +899,6 @@ Track the following events for product decisions:
 * Potion used (type, round, context)
 * Potion dropped (type, rarity, round)
 * Store purchase (SKU, bits spent)
-* Daily challenge attempt (score, completion)
 * Session duration
 
 Implementation: Supabase `analytics_events` table or third-party (Mixpanel, Firebase Analytics). Deferred to post-MVP.

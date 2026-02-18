@@ -23,7 +23,7 @@ npx tsc --noEmit                        # TypeScript type checking
 
 ## Project Overview
 
-TapTapMath is a React Native (Expo) mobile game where players solve number-based challenges on 3x3 grids under time pressure. Three game modes: **Classic** (endless, 3 hearts, progressive difficulty), **Blitz** (60-second sprint, no hearts, no per-grid timer), and **Daily** (10 curated challenges, same seed for all players, one attempt per day). Players earn bits (currency) from scores, collect consumable potions via drops, and compete on mode-specific leaderboards (best score per player). Targets iOS (App Store), Android (Play Store), and web.
+TapTapMath is a React Native (Expo) mobile game where players solve number-based challenges on 3x3 grids under time pressure. Two game modes: **Classic** (endless, 3 hearts, progressive difficulty) and **Blitz** (60-second sprint, no hearts, no per-grid timer). Players earn bits (currency) from scores, collect consumable potions via drops, and compete on mode-specific leaderboards (best score per player). Targets iOS (App Store), Android (Play Store), and web.
 
 **Current state:** Fresh Expo project (SDK 54) scaffolded from the default template. No game features implemented yet.
 
@@ -128,7 +128,6 @@ No state management library is installed yet. Recommended approach:
 |---|---|---|---|---|
 | Classic | 3 | Endless until death | Per-grid (6s→2s decay) | Yes |
 | Blitz | None | 60-second global countdown | Global 60s only, no per-grid timer | No |
-| Daily | 3 | 10 fixed challenges, same seed for all | Per-grid (6s→2s decay) | Yes |
 
 ## Game Engine Rules (Critical)
 
@@ -152,13 +151,13 @@ ActivePotionEffects: secondChanceActive, fortuneTonicRoundsLeft, timerFrozen,
 
 | Event | Hearts | Grid | Score | Timer |
 |---|---|---|---|---|
-| Correct (Classic/Daily) | No change | Next grid | +100 + (timeRemaining * 10).round() | Reset to next grid's time |
+| Correct (Classic) | No change | Next grid | +100 + (timeRemaining * 10).round() | Reset to next grid's time |
 | Correct (Blitz) | N/A | Next grid | +100 + (globalTimeRemaining * 10).round() | Global keeps counting down |
 | Wrong answer | -1 (absorbed if Second Chance active) | Stay | No change | Keeps running |
-| Timeout | -1 (Classic/Daily only) | Next grid | No change | Reset to next grid's time |
+| Timeout | -1 (Classic only) | Next grid | No change | Reset to next grid's time |
 | Game over (0 hearts) | Check Revive potion first | — | Final | — |
 
-### Timer: `Math.max(6.0 - gridIndex * 1.0, 2.0)` seconds (Classic/Daily). Keeps running on wrong answer. Blitz uses global 60s only.
+### Timer: `Math.max(6.0 - gridIndex * 1.0, 2.0)` seconds (Classic). Keeps running on wrong answer. Blitz uses global 60s only.
 
 ### App Lifecycle: Timer does NOT pause on app backgrounding. No save/restore on app kill. Prevents pause-abuse. Use `AppState` listener from React Native.
 
@@ -181,14 +180,14 @@ ActivePotionEffects: secondChanceActive, fortuneTonicRoundsLeft, timerFrozen,
 | `prime` | Find the prime number | Hard |
 | `sum_to_n` | Find two numbers that sum to N | Hard (2 taps required) |
 
-Grid: 3x3, 9 numbers, 1 correct + 8 plausible distractors. No duplicates. Daily mode uses seeded RNG for deterministic grids.
+Grid: 3x3, 9 numbers, 1 correct + 8 plausible distractors. No duplicates.
 
 ### Board Generation Rules (Non-Negotiable)
 
 Each board has 1 instruction and 5 grids. **Every grid must have exactly one correct answer that satisfies the instruction.** No grid may contain ambiguous answers (e.g., two numbers ending in 5 when the instruction is "Find the number ending in 5").
 
 - Challenge rules are embedded directly in `scripts/generate-boards.ts` — no external template files.
-- Boards are output per mode: `assets/boards/{classic,blitz,daily}/{easy,medium,hard}.json`.
+- Boards are output per mode: `assets/boards/{classic,blitz}/{easy,medium,hard}.json`.
 - The `validateBoard()` function in the generation script **must validate every challenge type**. When adding a new challenge type:
   1. Add a generator function that produces `{ grid, correctAnswers }`.
   2. Add a corresponding validation case in `validateBoard()` that verifies the correct answer is valid AND no other cell in the grid also satisfies the condition.
@@ -206,7 +205,7 @@ Each board has 1 instruction and 5 grids. **Every grid must have exactly one cor
 
 ## Supabase Backend
 
-### Tables: `profiles`, `scores`, `inventory`, `challenges`, `store_items`, `transactions`, `daily_challenges`
+### Tables: `profiles`, `scores`, `inventory`, `challenges`, `store_items`, `transactions`
 
 ### Security — Server-Authoritative (Non-Negotiable)
 
@@ -219,7 +218,6 @@ Each board has 1 instruction and 5 grids. **Every grid must have exactly one cor
 - **Leaderboards:** `get_leaderboard` RPC returns best score per player using `DISTINCT ON`.
 - **Account deletion:** `delete_own_account` RPC + Supabase Edge Function (required for Apple App Store compliance).
 - `handle_new_user` trigger auto-creates `profiles` + `inventory` on signup.
-- Daily mode: `submit_game_score` enforces one attempt per day.
 
 ### RPC Functions (7): `submit_game_score`, `purchase_item_with_bits`, `grant_potion_drop`, `consume_potion`, `get_leaderboard`, `handle_new_user` (trigger), `delete_own_account`
 
@@ -234,7 +232,7 @@ Each board has 1 instruction and 5 grids. **Every grid must have exactly one cor
 ## Offline Support
 
 - Fixed challenges always available offline.
-- AI challenges and daily mode require network.
+- AI challenges require network.
 - Scores and potion drops earned offline are queued locally and synced on reconnect via RPC.
 - Store purchases require network.
 - Conflict resolution: server state is authoritative. Client sends deltas, server applies.
@@ -257,7 +255,7 @@ app/
 │   └── profile.tsx          # Profile + settings + account deletion
 ├── game/
 │   ├── _layout.tsx
-│   ├── [mode].tsx           # Game screen (classic/blitz/daily)
+│   ├── [mode].tsx           # Game screen (classic/blitz)
 │   └── game-over.tsx        # Game over screen
 └── modal.tsx                # Reusable modal
 ```
@@ -288,7 +286,7 @@ Auth redirect guard in root `_layout.tsx`. Potion selection via bottom sheet mod
 
 ## Testing Strategy
 
-- **Unit tests (mandatory, pure TypeScript):** Game engine, timer logic, grid generation, scoring (Classic + Blitz formulas), all 8 potions, drop logic, bits calculation, difficulty tiers, daily seed determinism, game event recording.
+- **Unit tests (mandatory, pure TypeScript):** Game engine, timer logic, grid generation, scoring (Classic + Blitz formulas), all 8 potions, drop logic, bits calculation, difficulty tiers, game event recording.
 - **Component tests:** Grid taps (including sum_to_n two-tap), timer expiry, hearts, potion tray, potion selection bottom sheet, navigation.
 - **E2E tests:** Full game session, auth flow, offline→online sync, account deletion (Detox or Maestro).
 
@@ -296,7 +294,7 @@ Auth redirect guard in root `_layout.tsx`. Potion selection via bottom sheet mod
 
 Always consult these before implementing:
 
-- `game-design/high-level-design.md` — Complete architecture, game rules, all 3 modes, scoring, 6 challenge types with JSON format, potion system, difficulty tiers, app lifecycle, offline support, error handling, account deletion
-- `game-design/supabase-schema.md` — 7 tables, RLS policies, 7 RPC functions, security model summary
+- `game-design/high-level-design.md` — Complete architecture, game rules, 2 modes (Classic + Blitz), scoring, 6 challenge types with JSON format, potion system, difficulty tiers, app lifecycle, offline support, error handling, account deletion
+- `game-design/supabase-schema.md` — 6 tables, RLS policies, 7 RPC functions, security model summary
 - `game-design/ui-design.md` — UI design specifications
 - `game-design/UI/` — UI reference assets
