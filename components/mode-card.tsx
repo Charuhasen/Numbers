@@ -1,6 +1,4 @@
-import { DifficultySelector } from '@/components/difficulty-selector';
 import { Colors } from '@/constants/theme';
-import { Difficulty } from '@/engine/types';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
@@ -13,11 +11,9 @@ interface ModeCardProps {
   onPlayPress: () => void;
   isDaily?: boolean;
   iconName: keyof typeof MaterialIcons.glyphMap;
-  difficulty: Difficulty;
-  onDifficultyChange: (d: Difficulty) => void;
 }
 
-export function ModeCard({ title, description, bestScore, onPlayPress, iconName, difficulty, onDifficultyChange }: ModeCardProps) {
+export function ModeCard({ title, description, bestScore, onPlayPress, iconName }: ModeCardProps) {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
 
@@ -41,10 +37,6 @@ export function ModeCard({ title, description, bestScore, onPlayPress, iconName,
         >
           <Text style={styles.playText}>PLAY</Text>
         </TouchableOpacity>
-
-        <View style={styles.difficultyRow}>
-          <DifficultySelector value={difficulty} onChange={onDifficultyChange} />
-        </View>
       </View>
 
       {/* Decorative background icon */}
@@ -104,9 +96,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     letterSpacing: 1,
-  },
-  difficultyRow: {
-    marginTop: 12,
   },
   iconBackground: {
     position: 'absolute',

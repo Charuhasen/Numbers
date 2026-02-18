@@ -1,5 +1,4 @@
 import { useSession } from '@/context/ctx';
-import { Difficulty } from '@/engine/types';
 import { processPendingScores } from '@/lib/score-service';
 import { supabase } from '@/lib/supabase';
 import { createContext, useCallback, useContext, useEffect, useState, type PropsWithChildren } from 'react';
@@ -12,15 +11,12 @@ export interface Profile {
   avatarUrl: string | null;
 }
 
-type DifficultyScores = Record<Difficulty, number>;
-
 export interface BestScores {
-  classic: DifficultyScores;
+  classic: number;
 }
 
-const emptyDifficultyScores = (): DifficultyScores => ({ easy: 0, medium: 0, hard: 0 });
 const emptyBestScores = (): BestScores => ({
-  classic: emptyDifficultyScores(),
+  classic: 0,
 });
 
 interface ProfileContextValue {
@@ -94,19 +90,18 @@ export function ProfileProvider({ children }: PropsWithChildren) {
       });
     }
 
-    // Fetch best scores per mode+difficulty
+    // Fetch best scores per mode (max across all difficulties)
     const scoresResult = await supabase
       .from('scores')
-      .select('mode, difficulty, score')
+      .select('mode, score')
       .eq('user_id', userId);
 
     if (scoresResult.data) {
       const best: BestScores = emptyBestScores();
       for (const row of scoresResult.data) {
         const mode = row.mode as keyof BestScores;
-        const diff = (row.difficulty as Difficulty) || 'easy';
-        if (mode in best && row.score > best[mode][diff]) {
-          best[mode][diff] = row.score;
+        if (mode in best && row.score > best[mode]) {
+          best[mode] = row.score;
         }
       }
       setBestScores(best);

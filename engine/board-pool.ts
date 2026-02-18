@@ -45,9 +45,8 @@ export function getNextBoard(
   recentTypes: ChallengeType[],
   recentBoardIds: string[],
   pool: BoardPool,
-  difficultyOverride?: Difficulty,
 ): Board {
-  const tiers = difficultyOverride ? [difficultyOverride] : getDifficultyTier(challengeIndex, mode);
+  const tiers = getDifficultyTier(challengeIndex, mode);
 
   // Collect all boards from allowed tiers
   const candidates: Board[] = [];

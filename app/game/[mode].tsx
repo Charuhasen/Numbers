@@ -6,7 +6,7 @@ import { StatsBar } from '@/components/game/stats-bar';
 import { TimerBar } from '@/components/game/timer-bar';
 import { Colors, Spacing } from '@/constants/theme';
 import { useProfile } from '@/context/profile-ctx';
-import { Difficulty, GameMode } from '@/engine/types';
+import { GameMode } from '@/engine/types';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useGameEngine } from '@/hooks/use-game-engine';
 import { setGameSessionData } from '@/lib/game-session-store';
@@ -19,14 +19,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { triggerHeartShake } from '@/components/game/hearts-display';
 
 export default function GameScreen() {
-  const { mode, difficulty: difficultyParam } = useLocalSearchParams<{ mode: string; difficulty?: string }>();
+  const { mode } = useLocalSearchParams<{ mode: string }>();
   const router = useRouter();
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
 
   const gameMode = (mode as GameMode) || 'classic';
-  const difficulty: Difficulty = (['easy', 'medium', 'hard'].includes(difficultyParam ?? '') ? difficultyParam : 'easy') as Difficulty;
-  const { state, tapCell, timerProgress, elapsedSeconds, isReady, resumeTimer } = useGameEngine(gameMode, difficulty);
+  const { state, tapCell, timerProgress, elapsedSeconds, isReady, resumeTimer } = useGameEngine(gameMode);
   const { bestScores } = useProfile();
 
   const heartShake = useSharedValue(0);
@@ -71,7 +70,6 @@ export default function GameScreen() {
           challengeIndex: state.challengeIndex,
           elapsedSeconds,
           events: state.events,
-          difficulty,
         });
         router.replace({
           pathname: '/game/game-over',
@@ -156,7 +154,7 @@ export default function GameScreen() {
       <View style={styles.statsContainer}>
         <StatsBar
           score={state.score}
-          bestScore={bestScores[gameMode]?.[difficulty] ?? 0}
+          bestScore={bestScores[gameMode] ?? 0}
           elapsedSeconds={elapsedSeconds}
         />
       </View>

@@ -1,4 +1,4 @@
-import { Difficulty, GameEvent, GameMode } from '@/engine/types';
+import { GameEvent, GameMode } from '@/engine/types';
 
 export interface GameSessionData {
   mode: GameMode;
@@ -7,7 +7,6 @@ export interface GameSessionData {
   challengeIndex: number;
   elapsedSeconds: number;
   events: GameEvent[];
-  difficulty: Difficulty;
 }
 
 let sessionData: GameSessionData | null = null;

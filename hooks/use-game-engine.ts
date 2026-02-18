@@ -1,7 +1,7 @@
 import { BoardPool, getNextBoard, loadBoardPool } from '@/engine/board-pool';
 import { createInitialState } from '@/engine/game-init';
 import { gameReducer } from '@/engine/game-reducer';
-import { Board, ChallengeType, Difficulty, GameMode, GameState, Grid } from '@/engine/types';
+import { Board, ChallengeType, GameMode, GameState, Grid } from '@/engine/types';
 import * as Haptics from 'expo-haptics';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useSharedValue } from 'react-native-reanimated';
@@ -30,18 +30,18 @@ function boardToGrid(board: Board, gridIndex: number): Grid {
   };
 }
 
-export function useGameEngine(mode: GameMode, difficulty?: Difficulty) {
+export function useGameEngine(mode: GameMode) {
   const pool = useMemo<BoardPool>(() => loadBoardPool(mode), [mode]);
   const recentTypesRef = useRef<ChallengeType[]>([]);
   const recentBoardIdsRef = useRef<string[]>([]);
 
   // Generate first board
   const initialData = useMemo(() => {
-    const board = getNextBoard(0, mode, [], [], pool, difficulty);
+    const board = getNextBoard(0, mode, [], [], pool);
     recentTypesRef.current = [board.type];
     recentBoardIdsRef.current = [board.id];
     return { board };
-  }, [mode, pool, difficulty]);
+  }, [mode, pool]);
 
   const currentBoardRef = useRef<Board>(initialData.board);
 
@@ -91,7 +91,6 @@ export function useGameEngine(mode: GameMode, difficulty?: Difficulty) {
         recentTypesRef.current,
         recentBoardIdsRef.current,
         pool,
-        difficulty,
       );
       currentBoardRef.current = nextBoard;
       recentTypesRef.current = [...recentTypesRef.current.slice(-2), nextBoard.type];
@@ -103,7 +102,7 @@ export function useGameEngine(mode: GameMode, difficulty?: Difficulty) {
     // Same challenge type, NEXT grid from the SAME board
     const nextGrid = boardToGrid(currentBoardRef.current, nextGridIndex);
     return { nextGrid };
-  }, [mode, pool, difficulty]);
+  }, [mode, pool]);
 
   // Reset timer for a new grid
   const resetTimer = useCallback((solveTimeMs: number, gridIndex: number) => {

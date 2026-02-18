@@ -3,12 +3,11 @@ import { PlayerInfoRow } from '@/components/player-info-row';
 import { Colors } from '@/constants/theme';
 import { useSession } from '@/context/ctx';
 import { useProfile } from '@/context/profile-ctx';
-import { Difficulty } from '@/engine/types';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -18,8 +17,6 @@ export default function HomeScreen() {
   const { session } = useSession();
   const { profile, bestScores, refreshProfile } = useProfile();
   const router = useRouter();
-
-  const [classicDifficulty, setClassicDifficulty] = useState<Difficulty>('easy');
 
   // Refresh profile data whenever this screen comes into focus
   useFocusEffect(
@@ -35,7 +32,7 @@ export default function HomeScreen() {
   const displayName = fullName.split(/\s+/)[0];
 
   const handlePlayClassic = () => {
-    router.push(`/game/classic?difficulty=${classicDifficulty}`);
+    router.push('/game/classic');
   };
   const handleSettingsPress = () => {
     Alert.alert('Settings', 'Profile & settings coming soon.');
@@ -58,11 +55,9 @@ export default function HomeScreen() {
           <ModeCard
             title="Classic"
             description="The standard mental challenge."
-            bestScore={bestScores.classic[classicDifficulty]}
+            bestScore={bestScores.classic}
             onPlayPress={handlePlayClassic}
             iconName="calculate"
-            difficulty={classicDifficulty}
-            onDifficultyChange={setClassicDifficulty}
           />
 
         </View>
