@@ -181,9 +181,20 @@ ActivePotionEffects: secondChanceActive, fortuneTonicRoundsLeft, timerFrozen,
 | `prime` | Find the prime number | Hard |
 | `sum_to_n` | Find two numbers that sum to N | Hard (2 taps required) |
 
-Grid: 3x3, 9 numbers, 1 correct + 8 plausible distractors (or 2 correct + 7 for sum_to_n). No duplicates. Daily mode uses seeded RNG for deterministic grids.
+Grid: 3x3, 9 numbers, 1 correct + 8 plausible distractors. No duplicates. Daily mode uses seeded RNG for deterministic grids.
 
-Challenge JSON files: `assets/challenges/{easy,medium,hard}.json`. Each contains an array of `{id, instruction, type, difficulty, rules: {min_value, max_value, distractor_min_delta, distractor_max_delta, target_value, required_selections}}`. Same format as Supabase `challenges.config` JSONB — shared parser.
+### Board Generation Rules (Non-Negotiable)
+
+Each board has 1 instruction and 5 grids. **Every grid must have exactly one correct answer that satisfies the instruction.** No grid may contain ambiguous answers (e.g., two numbers ending in 5 when the instruction is "Find the number ending in 5").
+
+- Challenge rules are embedded directly in `scripts/generate-boards.ts` — no external template files.
+- Boards are output per mode: `assets/boards/{classic,blitz,daily}/{easy,medium,hard}.json`.
+- The `validateBoard()` function in the generation script **must validate every challenge type**. When adding a new challenge type:
+  1. Add a generator function that produces `{ grid, correctAnswers }`.
+  2. Add a corresponding validation case in `validateBoard()` that verifies the correct answer is valid AND no other cell in the grid also satisfies the condition.
+  3. Add the type to `estimateSolveTime()` and `getDifficultyScore()`.
+- After generation, run the script and verify 0 warnings about under-generated boards.
+- Run `npx tsc --noEmit` after regeneration to confirm type-check passes.
 
 ## Potion System
 

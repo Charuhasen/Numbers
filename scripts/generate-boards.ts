@@ -328,9 +328,8 @@ const generators: Record<
     } else {
       // Find the number ending in targetVal (0 or 5)
       const digit = targetVal;
-      const valid = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-        .map((n) => n * 10 + digit)
-        .filter((n) => n > 0);
+      const valid = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        .map((n) => n * 10 + digit);
       correct = valid[randInt(0, valid.length - 1)];
       used.add(correct);
       const distractors: number[] = [];
@@ -392,6 +391,30 @@ function validateBoard(board: Board, challenge: Challenge): boolean {
       case 'prime': {
         if (!isPrime(correctVal)) return false;
         if (!grid.every((n, i) => i === correctIdx || !isPrime(n))) return false;
+        break;
+      }
+      case 'match': {
+        const target = challenge.rules.target_value;
+        if (target === undefined || correctVal !== target) return false;
+        // No other cell should have the target
+        if (grid.some((n, i) => i !== correctIdx && n === target)) return false;
+        break;
+      }
+      case 'property': {
+        const tv = challenge.rules.target_value ?? 0;
+        if (tv === 10) {
+          // single-digit: answer must be < 10, all others >= 10
+          if (correctVal >= 10) return false;
+          if (grid.some((n, i) => i !== correctIdx && n < 10)) return false;
+        } else if (tv === 11) {
+          // two-digit: answer in [10,99], all others outside that range
+          if (correctVal < 10 || correctVal >= 100) return false;
+          if (grid.some((n, i) => i !== correctIdx && n >= 10 && n < 100)) return false;
+        } else {
+          // ending in digit: answer ends in digit, no others do
+          if (correctVal % 10 !== tv) return false;
+          if (grid.some((n, i) => i !== correctIdx && n % 10 === tv)) return false;
+        }
         break;
       }
     }
