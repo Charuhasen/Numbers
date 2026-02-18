@@ -4,11 +4,10 @@ import { Colors } from '@/constants/theme';
 import { useSession } from '@/context/ctx';
 import { useProfile } from '@/context/profile-ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { MaterialIcons } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useCallback } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
@@ -48,6 +47,8 @@ export default function HomeScreen() {
           username={displayName}
           bits={profile?.bits ?? 0}
           onSettingsPress={handleSettingsPress}
+          onRankingsPress={() => Alert.alert('Rankings', 'Coming soon!')}
+          onPotionsPress={() => Alert.alert('Potions', 'Coming soon!')}
         />
 
         {/* Mode Cards */}
@@ -60,36 +61,6 @@ export default function HomeScreen() {
             iconName="calculate"
           />
 
-        </View>
-
-        {/* Quick Access Section */}
-        <View style={styles.quickAccessSection}>
-          <Text style={[styles.sectionTitle, { color: `${theme.primary}99` }]}>QUICK ACCESS</Text>
-          <View style={styles.quickAccessGrid}>
-            <TouchableOpacity
-              style={[styles.quickActionButton, { backgroundColor: `${theme.surfaceVariant}B3` }]}
-              activeOpacity={0.7}
-            >
-              <View style={[styles.iconCircle, { backgroundColor: `${theme.primary}1A` }]}>
-                <MaterialIcons name="emoji-events" size={24} color={theme.primary} />
-              </View>
-              <Text style={[styles.quickActionText, { color: theme.onSurface }]}>Rankings</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.quickActionButton, { backgroundColor: `${theme.surfaceVariant}B3` }]}
-              activeOpacity={0.7}
-            >
-              <View style={[styles.iconCircle, { backgroundColor: `${theme.primary}1A` }]}>
-                <MaterialIcons name="science" size={24} color={theme.primary} />
-              </View>
-              <Text style={[styles.quickActionText, { color: theme.onSurface }]}>My Potions</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.footerSpacing}>
-          <View style={[styles.footerDivider, { backgroundColor: `${theme.primary}33` }]} />
         </View>
 
       </ScrollView>
@@ -106,49 +77,5 @@ const styles = StyleSheet.create({
   },
   section: {
     marginTop: 8,
-  },
-  quickAccessSection: {
-    paddingHorizontal: 24,
-    marginTop: 24,
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 10,
-    fontWeight: '900',
-    letterSpacing: 2.4,
-    marginBottom: 16,
-    paddingHorizontal: 4,
-  },
-  quickAccessGrid: {
-    flexDirection: 'row',
-    gap: 16,
-  },
-  quickActionButton: {
-    flex: 1,
-    padding: 20,
-    borderRadius: 16,
-    alignItems: 'center',
-    gap: 12,
-  },
-  iconCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  quickActionText: {
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  footerSpacing: {
-    marginTop: 32,
-    alignItems: 'center',
-    paddingBottom: 40,
-  },
-  footerDivider: {
-    width: 32,
-    height: 4,
-    borderRadius: 2,
   },
 });
