@@ -19,10 +19,10 @@ function getTimerForGrid(estimatedSolveTimeMs: number, gridIndex: number): numbe
   return Math.min(Math.max(decayed, 2.0), 8.0);
 }
 
-function boardToGrid(board: Board): Grid {
+function boardToGrid(board: Board, gridIndex: number): Grid {
   return {
-    numbers: board.grid,
-    correctAnswers: board.correct_answers,
+    numbers: board.grids[gridIndex].grid,
+    correctAnswers: board.grids[gridIndex].correct_answers,
     boardId: board.id,
     instruction: board.instruction,
     type: board.type,
@@ -31,7 +31,7 @@ function boardToGrid(board: Board): Grid {
 }
 
 export function useGameEngine(mode: GameMode, difficulty?: Difficulty) {
-  const pool = useMemo<BoardPool>(() => loadBoardPool(), []);
+  const pool = useMemo<BoardPool>(() => loadBoardPool(mode), [mode]);
   const recentTypesRef = useRef<ChallengeType[]>([]);
   const recentBoardIdsRef = useRef<string[]>([]);
 
@@ -42,6 +42,8 @@ export function useGameEngine(mode: GameMode, difficulty?: Difficulty) {
     recentBoardIdsRef.current = [board.id];
     return { board };
   }, [mode, pool, difficulty]);
+
+  const currentBoardRef = useRef<Board>(initialData.board);
 
   const [state, dispatch] = useReducer(
     gameReducer,
@@ -91,24 +93,15 @@ export function useGameEngine(mode: GameMode, difficulty?: Difficulty) {
         pool,
         difficulty,
       );
+      currentBoardRef.current = nextBoard;
       recentTypesRef.current = [...recentTypesRef.current.slice(-2), nextBoard.type];
       recentBoardIdsRef.current = [...recentBoardIdsRef.current, nextBoard.id];
-      const nextGrid = boardToGrid(nextBoard);
+      const nextGrid = boardToGrid(nextBoard, 0);
       return { nextGrid, nextChallengeType: nextBoard.type, nextInstruction: nextBoard.instruction };
     }
 
-    // Same challenge type, new board (same type constraint)
-    const nextBoard = getNextBoard(
-      s.challengeIndex,
-      mode,
-      // Don't filter by recent types — stay on same challenge type within a round
-      [],
-      recentBoardIdsRef.current,
-      pool,
-      difficulty,
-    );
-    recentBoardIdsRef.current = [...recentBoardIdsRef.current, nextBoard.id];
-    const nextGrid = boardToGrid(nextBoard);
+    // Same challenge type, NEXT grid from the SAME board
+    const nextGrid = boardToGrid(currentBoardRef.current, nextGridIndex);
     return { nextGrid };
   }, [mode, pool, difficulty]);
 

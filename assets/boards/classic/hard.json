@@ -1,0 +1,4502 @@
+[
+  {
+    "id": "hard_prime_5_b10",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          908,
+          732,
+          351,
+          979,
+          488,
+          776,
+          640,
+          283,
+          707
+        ],
+        "correct_answers": [
+          7
+        ]
+      },
+      {
+        "grid": [
+          675,
+          419,
+          760,
+          505,
+          435,
+          955,
+          518,
+          256,
+          724
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          323,
+          277,
+          537,
+          408,
+          870,
+          736,
+          756,
+          464,
+          524
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          368,
+          357,
+          233,
+          896,
+          502,
+          228,
+          794,
+          366,
+          882
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          532,
+          836,
+          347,
+          356,
+          544,
+          627,
+          767,
+          253,
+          282
+        ],
+        "correct_answers": [
+          2
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_4_b05",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          238,
+          656,
+          315,
+          103,
+          698,
+          361,
+          712,
+          699,
+          558
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          642,
+          556,
+          625,
+          214,
+          326,
+          229,
+          475,
+          744,
+          722
+        ],
+        "correct_answers": [
+          5
+        ]
+      },
+      {
+        "grid": [
+          648,
+          142,
+          658,
+          502,
+          539,
+          293,
+          210,
+          531,
+          675
+        ],
+        "correct_answers": [
+          5
+        ]
+      },
+      {
+        "grid": [
+          109,
+          240,
+          295,
+          161,
+          261,
+          497,
+          492,
+          318,
+          356
+        ],
+        "correct_answers": [
+          0
+        ]
+      },
+      {
+        "grid": [
+          741,
+          191,
+          228,
+          575,
+          355,
+          160,
+          492,
+          305,
+          475
+        ],
+        "correct_answers": [
+          1
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_4_b03",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          281,
+          718,
+          206,
+          360,
+          629,
+          159,
+          169,
+          216,
+          355
+        ],
+        "correct_answers": [
+          0
+        ]
+      },
+      {
+        "grid": [
+          745,
+          470,
+          331,
+          285,
+          108,
+          262,
+          549,
+          603,
+          699
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          402,
+          157,
+          261,
+          678,
+          422,
+          237,
+          430,
+          737,
+          692
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          706,
+          250,
+          430,
+          101,
+          119,
+          456,
+          605,
+          150,
+          561
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          246,
+          179,
+          381,
+          572,
+          129,
+          319,
+          351,
+          183,
+          260
+        ],
+        "correct_answers": [
+          1
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_1_b01",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          83,
+          45,
+          50,
+          39,
+          14,
+          15,
+          48,
+          90,
+          80
+        ],
+        "correct_answers": [
+          0
+        ]
+      },
+      {
+        "grid": [
+          62,
+          18,
+          54,
+          63,
+          9,
+          49,
+          36,
+          78,
+          37
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          87,
+          57,
+          12,
+          18,
+          10,
+          49,
+          69,
+          83,
+          86
+        ],
+        "correct_answers": [
+          7
+        ]
+      },
+      {
+        "grid": [
+          51,
+          15,
+          87,
+          84,
+          25,
+          69,
+          53,
+          14,
+          21
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          87,
+          45,
+          26,
+          61,
+          93,
+          80,
+          77,
+          8,
+          25
+        ],
+        "correct_answers": [
+          3
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_1_b06",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          69,
+          50,
+          96,
+          45,
+          41,
+          99,
+          16,
+          15,
+          94
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          35,
+          62,
+          7,
+          87,
+          48,
+          4,
+          69,
+          65,
+          16
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          30,
+          8,
+          97,
+          4,
+          26,
+          51,
+          57,
+          85,
+          38
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          76,
+          44,
+          22,
+          19,
+          96,
+          51,
+          30,
+          81,
+          64
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          64,
+          94,
+          55,
+          79,
+          68,
+          56,
+          34,
+          96,
+          57
+        ],
+        "correct_answers": [
+          3
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_4_b04",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          702,
+          370,
+          297,
+          642,
+          142,
+          347,
+          399,
+          345,
+          225
+        ],
+        "correct_answers": [
+          5
+        ]
+      },
+      {
+        "grid": [
+          141,
+          668,
+          268,
+          352,
+          251,
+          707,
+          732,
+          309,
+          555
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          268,
+          252,
+          338,
+          649,
+          265,
+          379,
+          567,
+          104,
+          580
+        ],
+        "correct_answers": [
+          5
+        ]
+      },
+      {
+        "grid": [
+          728,
+          528,
+          134,
+          244,
+          139,
+          671,
+          357,
+          338,
+          580
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          618,
+          290,
+          379,
+          646,
+          426,
+          460,
+          162,
+          387,
+          664
+        ],
+        "correct_answers": [
+          2
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_3_b07",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          289,
+          225,
+          205,
+          103,
+          185,
+          495,
+          177,
+          332,
+          380
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          94,
+          234,
+          261,
+          141,
+          310,
+          320,
+          202,
+          428,
+          103
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          471,
+          451,
+          131,
+          442,
+          497,
+          350,
+          386,
+          108,
+          413
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          222,
+          107,
+          270,
+          88,
+          338,
+          303,
+          212,
+          111,
+          122
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          153,
+          215,
+          415,
+          459,
+          272,
+          209,
+          388,
+          74,
+          53
+        ],
+        "correct_answers": [
+          8
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_1_b08",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          90,
+          85,
+          41,
+          74,
+          14,
+          48,
+          63,
+          58,
+          44
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          81,
+          98,
+          70,
+          95,
+          37,
+          55,
+          76,
+          45,
+          78
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          19,
+          26,
+          9,
+          57,
+          92,
+          40,
+          6,
+          86,
+          56
+        ],
+        "correct_answers": [
+          0
+        ]
+      },
+      {
+        "grid": [
+          28,
+          9,
+          75,
+          92,
+          69,
+          43,
+          14,
+          35,
+          22
+        ],
+        "correct_answers": [
+          5
+        ]
+      },
+      {
+        "grid": [
+          22,
+          26,
+          14,
+          77,
+          59,
+          27,
+          33,
+          45,
+          87
+        ],
+        "correct_answers": [
+          4
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_4_b02",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          416,
+          112,
+          317,
+          303,
+          194,
+          319,
+          623,
+          612,
+          310
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          427,
+          100,
+          746,
+          230,
+          127,
+          202,
+          355,
+          424,
+          316
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          371,
+          265,
+          514,
+          319,
+          174,
+          283,
+          407,
+          642,
+          422
+        ],
+        "correct_answers": [
+          5
+        ]
+      },
+      {
+        "grid": [
+          442,
+          314,
+          276,
+          379,
+          230,
+          696,
+          747,
+          662,
+          285
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          526,
+          416,
+          332,
+          315,
+          154,
+          384,
+          650,
+          277,
+          458
+        ],
+        "correct_answers": [
+          7
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_5_b09",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          268,
+          627,
+          379,
+          687,
+          651,
+          245,
+          674,
+          411,
+          524
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          734,
+          925,
+          867,
+          253,
+          815,
+          874,
+          374,
+          291,
+          281
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          449,
+          586,
+          220,
+          943,
+          525,
+          858,
+          998,
+          296,
+          662
+        ],
+        "correct_answers": [
+          0
+        ]
+      },
+      {
+        "grid": [
+          855,
+          602,
+          888,
+          354,
+          970,
+          843,
+          461,
+          895,
+          225
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          453,
+          429,
+          742,
+          539,
+          286,
+          206,
+          816,
+          503,
+          582
+        ],
+        "correct_answers": [
+          7
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_5_b03",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          484,
+          731,
+          350,
+          353,
+          462,
+          278,
+          744,
+          934,
+          437
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          984,
+          762,
+          390,
+          270,
+          337,
+          511,
+          579,
+          589,
+          325
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          305,
+          430,
+          942,
+          790,
+          331,
+          671,
+          958,
+          636,
+          308
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          252,
+          864,
+          384,
+          873,
+          272,
+          313,
+          742,
+          616,
+          646
+        ],
+        "correct_answers": [
+          5
+        ]
+      },
+      {
+        "grid": [
+          627,
+          710,
+          362,
+          974,
+          664,
+          984,
+          379,
+          786,
+          913
+        ],
+        "correct_answers": [
+          6
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_2_b09",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          82,
+          113,
+          176,
+          130,
+          122,
+          98,
+          135,
+          78,
+          106
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          133,
+          92,
+          160,
+          66,
+          118,
+          83,
+          184,
+          30,
+          108
+        ],
+        "correct_answers": [
+          5
+        ]
+      },
+      {
+        "grid": [
+          16,
+          133,
+          200,
+          20,
+          33,
+          162,
+          97,
+          86,
+          122
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          93,
+          129,
+          188,
+          177,
+          168,
+          104,
+          138,
+          76,
+          31
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          182,
+          12,
+          171,
+          97,
+          108,
+          122,
+          25,
+          84,
+          129
+        ],
+        "correct_answers": [
+          3
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_1_b02",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          56,
+          16,
+          96,
+          43,
+          87,
+          21,
+          52,
+          9,
+          28
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          39,
+          25,
+          32,
+          42,
+          66,
+          81,
+          71,
+          78,
+          27
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          56,
+          24,
+          15,
+          46,
+          33,
+          86,
+          98,
+          73,
+          72
+        ],
+        "correct_answers": [
+          7
+        ]
+      },
+      {
+        "grid": [
+          77,
+          98,
+          74,
+          55,
+          68,
+          80,
+          7,
+          27,
+          32
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          36,
+          66,
+          57,
+          4,
+          22,
+          32,
+          15,
+          83,
+          68
+        ],
+        "correct_answers": [
+          7
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_5_b01",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          770,
+          570,
+          455,
+          790,
+          250,
+          896,
+          694,
+          316,
+          317
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          288,
+          312,
+          698,
+          860,
+          912,
+          417,
+          850,
+          684,
+          233
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          895,
+          925,
+          714,
+          779,
+          277,
+          506,
+          712,
+          224,
+          576
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          366,
+          382,
+          514,
+          537,
+          895,
+          288,
+          239,
+          629,
+          843
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          401,
+          516,
+          986,
+          551,
+          936,
+          528,
+          667,
+          213,
+          586
+        ],
+        "correct_answers": [
+          0
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_4_b08",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          605,
+          130,
+          171,
+          102,
+          429,
+          189,
+          634,
+          510,
+          373
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          418,
+          198,
+          314,
+          620,
+          239,
+          652,
+          319,
+          334,
+          386
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          280,
+          731,
+          323,
+          668,
+          103,
+          118,
+          175,
+          708,
+          471
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          393,
+          231,
+          331,
+          610,
+          637,
+          178,
+          667,
+          531,
+          730
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          516,
+          205,
+          362,
+          116,
+          486,
+          128,
+          263,
+          346,
+          316
+        ],
+        "correct_answers": [
+          6
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_3_b08",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          418,
+          237,
+          500,
+          106,
+          227,
+          326,
+          404,
+          493,
+          446
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          301,
+          89,
+          494,
+          338,
+          278,
+          470,
+          72,
+          288,
+          366
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          261,
+          432,
+          470,
+          344,
+          292,
+          294,
+          481,
+          291,
+          241
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          155,
+          308,
+          312,
+          69,
+          465,
+          469,
+          97,
+          318,
+          357
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          362,
+          490,
+          376,
+          354,
+          101,
+          418,
+          332,
+          270,
+          471
+        ],
+        "correct_answers": [
+          4
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_4_b10",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          388,
+          121,
+          244,
+          658,
+          131,
+          154,
+          386,
+          590,
+          182
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          266,
+          367,
+          712,
+          689,
+          132,
+          300,
+          303,
+          520,
+          374
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          249,
+          556,
+          687,
+          512,
+          203,
+          278,
+          186,
+          519,
+          353
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          241,
+          320,
+          444,
+          130,
+          362,
+          129,
+          287,
+          497,
+          231
+        ],
+        "correct_answers": [
+          0
+        ]
+      },
+      {
+        "grid": [
+          662,
+          620,
+          370,
+          159,
+          277,
+          746,
+          358,
+          702,
+          376
+        ],
+        "correct_answers": [
+          4
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_2_b03",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          80,
+          146,
+          66,
+          46,
+          129,
+          98,
+          169,
+          34,
+          163
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          164,
+          19,
+          70,
+          66,
+          33,
+          39,
+          86,
+          169,
+          145
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          161,
+          30,
+          68,
+          168,
+          190,
+          60,
+          43,
+          10,
+          24
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          167,
+          40,
+          162,
+          44,
+          112,
+          170,
+          33,
+          18,
+          74
+        ],
+        "correct_answers": [
+          0
+        ]
+      },
+      {
+        "grid": [
+          146,
+          18,
+          164,
+          83,
+          140,
+          150,
+          174,
+          177,
+          99
+        ],
+        "correct_answers": [
+          3
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_3_b09",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          134,
+          444,
+          362,
+          138,
+          197,
+          225,
+          325,
+          75,
+          177
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          160,
+          385,
+          350,
+          360,
+          197,
+          445,
+          54,
+          86,
+          477
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          247,
+          283,
+          459,
+          77,
+          357,
+          279,
+          50,
+          207,
+          416
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          99,
+          140,
+          62,
+          106,
+          354,
+          129,
+          263,
+          232,
+          134
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          254,
+          197,
+          273,
+          56,
+          436,
+          405,
+          474,
+          84,
+          420
+        ],
+        "correct_answers": [
+          1
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_3_b02",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          139,
+          225,
+          224,
+          456,
+          70,
+          300,
+          364,
+          446,
+          362
+        ],
+        "correct_answers": [
+          0
+        ]
+      },
+      {
+        "grid": [
+          186,
+          304,
+          458,
+          61,
+          272,
+          244,
+          242,
+          91,
+          411
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          253,
+          54,
+          388,
+          284,
+          398,
+          486,
+          213,
+          341,
+          227
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          186,
+          215,
+          489,
+          202,
+          340,
+          476,
+          233,
+          394,
+          484
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          61,
+          477,
+          494,
+          472,
+          170,
+          306,
+          464,
+          108,
+          125
+        ],
+        "correct_answers": [
+          0
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_2_b05",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          86,
+          137,
+          132,
+          121,
+          72,
+          87,
+          136,
+          55,
+          143
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          31,
+          105,
+          112,
+          148,
+          134,
+          12,
+          20,
+          76,
+          130
+        ],
+        "correct_answers": [
+          0
+        ]
+      },
+      {
+        "grid": [
+          62,
+          16,
+          142,
+          53,
+          186,
+          153,
+          136,
+          110,
+          68
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          50,
+          15,
+          197,
+          171,
+          62,
+          95,
+          22,
+          190,
+          54
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          183,
+          84,
+          176,
+          140,
+          144,
+          27,
+          47,
+          185,
+          123
+        ],
+        "correct_answers": [
+          6
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_1_b09",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          19,
+          49,
+          92,
+          99,
+          98,
+          48,
+          30,
+          28,
+          81
+        ],
+        "correct_answers": [
+          0
+        ]
+      },
+      {
+        "grid": [
+          10,
+          99,
+          58,
+          21,
+          28,
+          69,
+          18,
+          91,
+          53
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          96,
+          76,
+          64,
+          18,
+          80,
+          56,
+          72,
+          7,
+          49
+        ],
+        "correct_answers": [
+          7
+        ]
+      },
+      {
+        "grid": [
+          35,
+          39,
+          88,
+          48,
+          60,
+          85,
+          73,
+          74,
+          99
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          5,
+          33,
+          55,
+          8,
+          36,
+          65,
+          44,
+          35,
+          78
+        ],
+        "correct_answers": [
+          0
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_5_b08",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          738,
+          567,
+          623,
+          737,
+          320,
+          903,
+          484,
+          366,
+          313
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          842,
+          573,
+          269,
+          207,
+          748,
+          310,
+          984,
+          565,
+          878
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          440,
+          443,
+          412,
+          589,
+          540,
+          980,
+          706,
+          465,
+          325
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          499,
+          903,
+          735,
+          411,
+          235,
+          894,
+          201,
+          672,
+          931
+        ],
+        "correct_answers": [
+          0
+        ]
+      },
+      {
+        "grid": [
+          790,
+          335,
+          457,
+          888,
+          265,
+          225,
+          357,
+          414,
+          220
+        ],
+        "correct_answers": [
+          2
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_4_b01",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          196,
+          498,
+          251,
+          400,
+          243,
+          248,
+          198,
+          642,
+          319
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          137,
+          667,
+          566,
+          440,
+          649,
+          589,
+          412,
+          724,
+          407
+        ],
+        "correct_answers": [
+          0
+        ]
+      },
+      {
+        "grid": [
+          531,
+          271,
+          161,
+          738,
+          346,
+          473,
+          111,
+          176,
+          254
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          144,
+          217,
+          436,
+          346,
+          454,
+          161,
+          127,
+          698,
+          128
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          303,
+          430,
+          567,
+          633,
+          712,
+          676,
+          167,
+          736,
+          214
+        ],
+        "correct_answers": [
+          6
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_5_b07",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          698,
+          229,
+          315,
+          406,
+          432,
+          201,
+          763,
+          558,
+          680
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          515,
+          329,
+          406,
+          233,
+          795,
+          505,
+          688,
+          393,
+          745
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          931,
+          415,
+          816,
+          985,
+          360,
+          833,
+          402,
+          594,
+          241
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          934,
+          395,
+          276,
+          616,
+          735,
+          842,
+          463,
+          308,
+          697
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          370,
+          820,
+          579,
+          614,
+          450,
+          894,
+          893,
+          211,
+          920
+        ],
+        "correct_answers": [
+          7
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_2_b02",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          119,
+          175,
+          182,
+          163,
+          84,
+          130,
+          111,
+          190,
+          188
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          15,
+          182,
+          92,
+          13,
+          35,
+          194,
+          166,
+          85,
+          65
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          150,
+          147,
+          160,
+          60,
+          106,
+          76,
+          181,
+          121,
+          116
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          90,
+          129,
+          72,
+          24,
+          135,
+          154,
+          84,
+          86,
+          17
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          84,
+          93,
+          58,
+          171,
+          36,
+          52,
+          147,
+          85,
+          23
+        ],
+        "correct_answers": [
+          8
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_3_b04",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          179,
+          371,
+          91,
+          350,
+          412,
+          111,
+          201,
+          448,
+          416
+        ],
+        "correct_answers": [
+          0
+        ]
+      },
+      {
+        "grid": [
+          407,
+          306,
+          434,
+          400,
+          460,
+          430,
+          80,
+          311,
+          410
+        ],
+        "correct_answers": [
+          7
+        ]
+      },
+      {
+        "grid": [
+          309,
+          221,
+          74,
+          447,
+          77,
+          362,
+          199,
+          496,
+          462
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          62,
+          403,
+          446,
+          190,
+          306,
+          218,
+          233,
+          272,
+          96
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          94,
+          52,
+          304,
+          199,
+          451,
+          488,
+          485,
+          459,
+          448
+        ],
+        "correct_answers": [
+          3
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_2_b08",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          141,
+          115,
+          177,
+          94,
+          152,
+          71,
+          169,
+          34,
+          78
+        ],
+        "correct_answers": [
+          5
+        ]
+      },
+      {
+        "grid": [
+          10,
+          120,
+          29,
+          66,
+          140,
+          102,
+          62,
+          58,
+          104
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          169,
+          156,
+          75,
+          140,
+          39,
+          56,
+          199,
+          166,
+          38
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          112,
+          90,
+          20,
+          45,
+          176,
+          79,
+          40,
+          80,
+          133
+        ],
+        "correct_answers": [
+          5
+        ]
+      },
+      {
+        "grid": [
+          169,
+          28,
+          13,
+          46,
+          106,
+          111,
+          185,
+          69,
+          12
+        ],
+        "correct_answers": [
+          2
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_2_b06",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          152,
+          74,
+          184,
+          150,
+          111,
+          76,
+          31,
+          156,
+          198
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          104,
+          113,
+          34,
+          198,
+          174,
+          77,
+          169,
+          200,
+          78
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          159,
+          71,
+          110,
+          160,
+          122,
+          62,
+          68,
+          85,
+          84
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          30,
+          60,
+          20,
+          26,
+          141,
+          161,
+          66,
+          117,
+          157
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          52,
+          147,
+          141,
+          13,
+          114,
+          49,
+          78,
+          134,
+          58
+        ],
+        "correct_answers": [
+          3
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_2_b01",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          123,
+          39,
+          51,
+          168,
+          146,
+          86,
+          68,
+          147,
+          109
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          191,
+          36,
+          161,
+          122,
+          30,
+          70,
+          76,
+          62,
+          33
+        ],
+        "correct_answers": [
+          0
+        ]
+      },
+      {
+        "grid": [
+          161,
+          164,
+          114,
+          96,
+          47,
+          168,
+          80,
+          72,
+          147
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          155,
+          92,
+          187,
+          167,
+          24,
+          126,
+          129,
+          18,
+          105
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          105,
+          155,
+          28,
+          39,
+          192,
+          92,
+          29,
+          169,
+          93
+        ],
+        "correct_answers": [
+          6
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_3_b05",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          259,
+          277,
+          52,
+          217,
+          228,
+          121,
+          62,
+          440,
+          352
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          62,
+          124,
+          248,
+          172,
+          137,
+          55,
+          212,
+          171,
+          318
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          196,
+          245,
+          492,
+          67,
+          275,
+          99,
+          441,
+          240,
+          55
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          469,
+          423,
+          218,
+          287,
+          167,
+          237,
+          136,
+          180,
+          282
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          231,
+          266,
+          462,
+          220,
+          51,
+          219,
+          208,
+          148,
+          157
+        ],
+        "correct_answers": [
+          8
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_2_b04",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          181,
+          105,
+          177,
+          84,
+          189,
+          88,
+          162,
+          94,
+          183
+        ],
+        "correct_answers": [
+          0
+        ]
+      },
+      {
+        "grid": [
+          141,
+          30,
+          16,
+          12,
+          152,
+          142,
+          169,
+          186,
+          61
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          170,
+          159,
+          39,
+          11,
+          94,
+          148,
+          194,
+          18,
+          117
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          50,
+          136,
+          89,
+          60,
+          30,
+          49,
+          75,
+          65,
+          189
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          145,
+          32,
+          115,
+          116,
+          21,
+          146,
+          66,
+          109,
+          60
+        ],
+        "correct_answers": [
+          7
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_1_b10",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          52,
+          67,
+          80,
+          78,
+          24,
+          26,
+          72,
+          60,
+          57
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          72,
+          86,
+          55,
+          13,
+          38,
+          66,
+          35,
+          75,
+          27
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          52,
+          98,
+          48,
+          84,
+          57,
+          51,
+          17,
+          72,
+          54
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          50,
+          90,
+          22,
+          66,
+          64,
+          7,
+          54,
+          52,
+          12
+        ],
+        "correct_answers": [
+          5
+        ]
+      },
+      {
+        "grid": [
+          46,
+          79,
+          74,
+          39,
+          54,
+          95,
+          8,
+          30,
+          26
+        ],
+        "correct_answers": [
+          1
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_5_b04",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          935,
+          413,
+          382,
+          351,
+          988,
+          457,
+          490,
+          201,
+          370
+        ],
+        "correct_answers": [
+          5
+        ]
+      },
+      {
+        "grid": [
+          366,
+          472,
+          750,
+          281,
+          868,
+          488,
+          921,
+          760,
+          752
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          792,
+          207,
+          263,
+          385,
+          358,
+          928,
+          842,
+          970,
+          765
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          753,
+          874,
+          286,
+          706,
+          836,
+          401,
+          851,
+          875,
+          789
+        ],
+        "correct_answers": [
+          5
+        ]
+      },
+      {
+        "grid": [
+          487,
+          462,
+          896,
+          533,
+          483,
+          450,
+          525,
+          546,
+          342
+        ],
+        "correct_answers": [
+          0
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_4_b07",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          406,
+          246,
+          508,
+          646,
+          140,
+          248,
+          562,
+          122,
+          269
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          209,
+          273,
+          699,
+          741,
+          188,
+          384,
+          181,
+          632,
+          628
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          257,
+          706,
+          155,
+          202,
+          434,
+          305,
+          126,
+          528,
+          452
+        ],
+        "correct_answers": [
+          0
+        ]
+      },
+      {
+        "grid": [
+          106,
+          402,
+          702,
+          562,
+          325,
+          700,
+          353,
+          472,
+          621
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          535,
+          113,
+          594,
+          267,
+          272,
+          608,
+          323,
+          159,
+          115
+        ],
+        "correct_answers": [
+          1
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_1_b07",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          62,
+          85,
+          63,
+          69,
+          37,
+          99,
+          72,
+          45,
+          8
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          80,
+          77,
+          70,
+          36,
+          90,
+          76,
+          78,
+          23,
+          49
+        ],
+        "correct_answers": [
+          7
+        ]
+      },
+      {
+        "grid": [
+          8,
+          85,
+          57,
+          28,
+          3,
+          24,
+          35,
+          58,
+          69
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          62,
+          81,
+          82,
+          84,
+          42,
+          9,
+          80,
+          67,
+          50
+        ],
+        "correct_answers": [
+          7
+        ]
+      },
+      {
+        "grid": [
+          34,
+          81,
+          98,
+          17,
+          94,
+          91,
+          49,
+          90,
+          77
+        ],
+        "correct_answers": [
+          3
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_4_b06",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          490,
+          143,
+          524,
+          105,
+          679,
+          349,
+          333,
+          728,
+          321
+        ],
+        "correct_answers": [
+          5
+        ]
+      },
+      {
+        "grid": [
+          358,
+          620,
+          147,
+          180,
+          179,
+          749,
+          625,
+          732,
+          522
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          165,
+          500,
+          588,
+          130,
+          313,
+          368,
+          177,
+          216,
+          495
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          303,
+          493,
+          365,
+          609,
+          606,
+          690,
+          139,
+          707,
+          488
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          729,
+          146,
+          672,
+          645,
+          452,
+          154,
+          313,
+          104,
+          745
+        ],
+        "correct_answers": [
+          6
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_2_b10",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          125,
+          152,
+          146,
+          199,
+          142,
+          145,
+          68,
+          200,
+          118
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          101,
+          27,
+          122,
+          68,
+          133,
+          184,
+          75,
+          123,
+          177
+        ],
+        "correct_answers": [
+          0
+        ]
+      },
+      {
+        "grid": [
+          119,
+          42,
+          198,
+          68,
+          151,
+          147,
+          35,
+          30,
+          58
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          55,
+          126,
+          14,
+          184,
+          154,
+          185,
+          104,
+          59,
+          195
+        ],
+        "correct_answers": [
+          7
+        ]
+      },
+      {
+        "grid": [
+          148,
+          81,
+          137,
+          183,
+          187,
+          195,
+          121,
+          130,
+          105
+        ],
+        "correct_answers": [
+          2
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_2_b07",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          104,
+          111,
+          26,
+          136,
+          198,
+          174,
+          38,
+          153,
+          157
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          169,
+          195,
+          28,
+          33,
+          142,
+          124,
+          154,
+          103,
+          15
+        ],
+        "correct_answers": [
+          7
+        ]
+      },
+      {
+        "grid": [
+          49,
+          156,
+          76,
+          60,
+          155,
+          194,
+          123,
+          86,
+          47
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          198,
+          170,
+          173,
+          51,
+          129,
+          85,
+          40,
+          160,
+          192
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          52,
+          116,
+          87,
+          97,
+          28,
+          148,
+          160,
+          175,
+          45
+        ],
+        "correct_answers": [
+          3
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_3_b10",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          216,
+          124,
+          100,
+          182,
+          79,
+          454,
+          261,
+          287,
+          422
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          320,
+          215,
+          149,
+          134,
+          319,
+          355,
+          329,
+          69,
+          54
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          145,
+          287,
+          390,
+          393,
+          372,
+          270,
+          197,
+          489,
+          255
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          153,
+          471,
+          483,
+          280,
+          262,
+          206,
+          162,
+          305,
+          181
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          273,
+          111,
+          176,
+          242,
+          177,
+          56,
+          132,
+          213,
+          311
+        ],
+        "correct_answers": [
+          8
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_5_b02",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          480,
+          674,
+          339,
+          798,
+          767,
+          494,
+          795,
+          397,
+          483
+        ],
+        "correct_answers": [
+          7
+        ]
+      },
+      {
+        "grid": [
+          832,
+          939,
+          582,
+          705,
+          635,
+          261,
+          874,
+          239,
+          994
+        ],
+        "correct_answers": [
+          7
+        ]
+      },
+      {
+        "grid": [
+          223,
+          636,
+          645,
+          576,
+          772,
+          922,
+          539,
+          248,
+          890
+        ],
+        "correct_answers": [
+          0
+        ]
+      },
+      {
+        "grid": [
+          781,
+          325,
+          724,
+          383,
+          458,
+          572,
+          462,
+          562,
+          832
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          825,
+          450,
+          520,
+          219,
+          725,
+          226,
+          351,
+          419,
+          288
+        ],
+        "correct_answers": [
+          7
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_1_b04",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          77,
+          74,
+          10,
+          45,
+          32,
+          18,
+          26,
+          8,
+          13
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          32,
+          84,
+          61,
+          8,
+          12,
+          68,
+          66,
+          62,
+          45
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          64,
+          95,
+          70,
+          35,
+          89,
+          69,
+          100,
+          6,
+          26
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          76,
+          70,
+          45,
+          57,
+          62,
+          31,
+          74,
+          78,
+          52
+        ],
+        "correct_answers": [
+          5
+        ]
+      },
+      {
+        "grid": [
+          87,
+          15,
+          51,
+          86,
+          62,
+          45,
+          5,
+          75,
+          66
+        ],
+        "correct_answers": [
+          6
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_5_b06",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          655,
+          658,
+          514,
+          222,
+          740,
+          537,
+          678,
+          491,
+          573
+        ],
+        "correct_answers": [
+          7
+        ]
+      },
+      {
+        "grid": [
+          420,
+          403,
+          726,
+          871,
+          233,
+          493,
+          391,
+          801,
+          453
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          328,
+          963,
+          264,
+          680,
+          684,
+          311,
+          427,
+          758,
+          888
+        ],
+        "correct_answers": [
+          5
+        ]
+      },
+      {
+        "grid": [
+          889,
+          925,
+          311,
+          483,
+          302,
+          436,
+          969,
+          940,
+          236
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          398,
+          845,
+          993,
+          212,
+          287,
+          731,
+          782,
+          281,
+          816
+        ],
+        "correct_answers": [
+          7
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_3_b03",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          77,
+          277,
+          301,
+          116,
+          129,
+          485,
+          58,
+          115,
+          472
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          465,
+          180,
+          309,
+          223,
+          445,
+          385,
+          143,
+          192,
+          334
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          153,
+          140,
+          107,
+          344,
+          198,
+          134,
+          253,
+          205,
+          430
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          185,
+          361,
+          88,
+          245,
+          149,
+          136,
+          350,
+          369,
+          340
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          417,
+          361,
+          473,
+          244,
+          55,
+          175,
+          57,
+          157,
+          176
+        ],
+        "correct_answers": [
+          7
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_3_b01",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          109,
+          161,
+          316,
+          177,
+          148,
+          240,
+          154,
+          375,
+          297
+        ],
+        "correct_answers": [
+          0
+        ]
+      },
+      {
+        "grid": [
+          122,
+          90,
+          370,
+          190,
+          54,
+          482,
+          52,
+          251,
+          295
+        ],
+        "correct_answers": [
+          7
+        ]
+      },
+      {
+        "grid": [
+          462,
+          273,
+          361,
+          202,
+          154,
+          139,
+          276,
+          65,
+          238
+        ],
+        "correct_answers": [
+          5
+        ]
+      },
+      {
+        "grid": [
+          413,
+          127,
+          308,
+          458,
+          344,
+          316,
+          58,
+          340,
+          361
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          89,
+          343,
+          232,
+          392,
+          98,
+          429,
+          378,
+          303,
+          146
+        ],
+        "correct_answers": [
+          0
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_4_b09",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          375,
+          281,
+          330,
+          494,
+          312,
+          267,
+          205,
+          246,
+          112
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          430,
+          728,
+          157,
+          654,
+          322,
+          684,
+          698,
+          674,
+          700
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          576,
+          556,
+          705,
+          620,
+          170,
+          241,
+          258,
+          679,
+          125
+        ],
+        "correct_answers": [
+          5
+        ]
+      },
+      {
+        "grid": [
+          296,
+          705,
+          254,
+          233,
+          364,
+          717,
+          540,
+          591,
+          572
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          384,
+          312,
+          135,
+          714,
+          195,
+          299,
+          331,
+          174,
+          116
+        ],
+        "correct_answers": [
+          6
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_5_b05",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          203,
+          298,
+          439,
+          637,
+          474,
+          975,
+          936,
+          694,
+          737
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          945,
+          630,
+          1000,
+          411,
+          575,
+          479,
+          927,
+          369,
+          824
+        ],
+        "correct_answers": [
+          5
+        ]
+      },
+      {
+        "grid": [
+          645,
+          479,
+          482,
+          799,
+          909,
+          554,
+          437,
+          950,
+          538
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          345,
+          943,
+          410,
+          249,
+          439,
+          501,
+          454,
+          716,
+          216
+        ],
+        "correct_answers": [
+          4
+        ]
+      },
+      {
+        "grid": [
+          346,
+          652,
+          662,
+          916,
+          562,
+          788,
+          281,
+          555,
+          806
+        ],
+        "correct_answers": [
+          6
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_3_b06",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          238,
+          269,
+          309,
+          475,
+          478,
+          303,
+          476,
+          236,
+          58
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          228,
+          156,
+          222,
+          154,
+          178,
+          112,
+          131,
+          52,
+          186
+        ],
+        "correct_answers": [
+          6
+        ]
+      },
+      {
+        "grid": [
+          175,
+          154,
+          406,
+          110,
+          361,
+          212,
+          262,
+          193,
+          358
+        ],
+        "correct_answers": [
+          7
+        ]
+      },
+      {
+        "grid": [
+          90,
+          73,
+          462,
+          370,
+          338,
+          290,
+          265,
+          217,
+          374
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          469,
+          177,
+          55,
+          237,
+          157,
+          80,
+          158,
+          62,
+          88
+        ],
+        "correct_answers": [
+          4
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_1_b03",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          42,
+          64,
+          17,
+          50,
+          39,
+          68,
+          99,
+          78,
+          36
+        ],
+        "correct_answers": [
+          2
+        ]
+      },
+      {
+        "grid": [
+          52,
+          86,
+          60,
+          17,
+          56,
+          96,
+          26,
+          44,
+          99
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          22,
+          65,
+          44,
+          53,
+          57,
+          54,
+          63,
+          34,
+          14
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          78,
+          60,
+          39,
+          98,
+          84,
+          96,
+          4,
+          19,
+          90
+        ],
+        "correct_answers": [
+          7
+        ]
+      },
+      {
+        "grid": [
+          93,
+          63,
+          32,
+          18,
+          69,
+          81,
+          27,
+          17,
+          70
+        ],
+        "correct_answers": [
+          7
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  },
+  {
+    "id": "hard_prime_1_b05",
+    "type": "prime",
+    "difficulty": "hard",
+    "instruction": "Find the prime number",
+    "grids": [
+      {
+        "grid": [
+          6,
+          49,
+          58,
+          43,
+          50,
+          40,
+          74,
+          12,
+          24
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          84,
+          29,
+          33,
+          64,
+          92,
+          40,
+          50,
+          45,
+          15
+        ],
+        "correct_answers": [
+          1
+        ]
+      },
+      {
+        "grid": [
+          72,
+          60,
+          12,
+          75,
+          99,
+          45,
+          58,
+          93,
+          2
+        ],
+        "correct_answers": [
+          8
+        ]
+      },
+      {
+        "grid": [
+          84,
+          14,
+          45,
+          43,
+          24,
+          22,
+          95,
+          72,
+          63
+        ],
+        "correct_answers": [
+          3
+        ]
+      },
+      {
+        "grid": [
+          26,
+          54,
+          97,
+          35,
+          42,
+          27,
+          63,
+          49,
+          91
+        ],
+        "correct_answers": [
+          2
+        ]
+      }
+    ],
+    "estimated_solve_time_ms": 3900,
+    "difficulty_score": 9
+  }
+]

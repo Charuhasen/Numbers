@@ -7,7 +7,9 @@ export type ChallengeType =
   | 'lowest'
   | 'closest'
   | 'odd_one_out'
-  | 'prime';
+  | 'prime'
+  | 'match'
+  | 'property';
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
@@ -39,8 +41,10 @@ export interface Board {
   type: ChallengeType;
   difficulty: Difficulty;
   instruction: string;
-  grid: number[];             // length 9
-  correct_answers: number[];  // indices of correct answers
+  grids: {
+    grid: number[];             // length 9
+    correct_answers: number[];  // indices of correct answers
+  }[];                          // Exactly 5 grids per board
   estimated_solve_time_ms: number;
   difficulty_score: number;
 }

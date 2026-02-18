@@ -1,6 +1,12 @@
-import easyBoards from '@/assets/boards/easy.json';
-import mediumBoards from '@/assets/boards/medium.json';
-import hardBoards from '@/assets/boards/hard.json';
+import blitzEasy from '@/assets/boards/blitz/easy.json';
+import blitzHard from '@/assets/boards/blitz/hard.json';
+import blitzMedium from '@/assets/boards/blitz/medium.json';
+import classicEasy from '@/assets/boards/classic/easy.json';
+import classicHard from '@/assets/boards/classic/hard.json';
+import classicMedium from '@/assets/boards/classic/medium.json';
+import dailyEasy from '@/assets/boards/daily/easy.json';
+import dailyHard from '@/assets/boards/daily/hard.json';
+import dailyMedium from '@/assets/boards/daily/medium.json';
 import { Board, ChallengeType, Difficulty, GameMode } from './types';
 
 export interface BoardPool {
@@ -9,12 +15,26 @@ export interface BoardPool {
   hard: Board[];
 }
 
-export function loadBoardPool(): BoardPool {
-  return {
-    easy: easyBoards as Board[],
-    medium: mediumBoards as Board[],
-    hard: hardBoards as Board[],
-  };
+const BOARD_POOLS: Record<GameMode, BoardPool> = {
+  classic: {
+    easy: classicEasy as Board[],
+    medium: classicMedium as Board[],
+    hard: classicHard as Board[],
+  },
+  blitz: {
+    easy: blitzEasy as Board[],
+    medium: blitzMedium as Board[],
+    hard: blitzHard as Board[],
+  },
+  daily: {
+    easy: dailyEasy as Board[],
+    medium: dailyMedium as Board[],
+    hard: dailyHard as Board[],
+  },
+};
+
+export function loadBoardPool(mode: GameMode): BoardPool {
+  return BOARD_POOLS[mode];
 }
 
 /**
@@ -85,15 +105,17 @@ export function validateBoardPool(pool: BoardPool): string[] {
   const errors: string[] = [];
   for (const tier of ['easy', 'medium', 'hard'] as const) {
     for (const board of pool[tier]) {
-      if (board.grid.length !== 9) {
-        errors.push(`${board.id}: grid length is ${board.grid.length}, expected 9`);
-      }
-      if (!board.correct_answers || board.correct_answers.length === 0) {
-        errors.push(`${board.id}: correct_answers is empty`);
-      }
-      for (const idx of board.correct_answers) {
-        if (idx < 0 || idx >= 9) {
-          errors.push(`${board.id}: correct_answers index ${idx} out of bounds`);
+      for (const entry of board.grids) {
+        if (entry.grid.length !== 9) {
+          errors.push(`${board.id}: grid length is ${entry.grid.length}, expected 9`);
+        }
+        if (!entry.correct_answers || entry.correct_answers.length === 0) {
+          errors.push(`${board.id}: correct_answers is empty`);
+        }
+        for (const idx of entry.correct_answers) {
+          if (idx < 0 || idx >= 9) {
+            errors.push(`${board.id}: correct_answers index ${idx} out of bounds`);
+          }
         }
       }
     }

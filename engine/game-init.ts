@@ -13,8 +13,8 @@ export function createInitialState(
     bitsEarned: 0,
     phase: 'playing',
     currentGrid: {
-      numbers: firstBoard.grid,
-      correctAnswers: firstBoard.correct_answers,
+      numbers: firstBoard.grids[0].grid,
+      correctAnswers: firstBoard.grids[0].correct_answers,
       boardId: firstBoard.id,
       instruction: firstBoard.instruction,
       type: firstBoard.type,

@@ -1,7 +1,10 @@
 /**
  * Board generation script.
- * Reads challenge templates from assets/challenges/*.json, generates
- * pre-validated board instances, and writes them to assets/boards/*.json.
+ * Challenge rules are embedded directly — no external template files needed.
+ * Generates boards per mode: assets/boards/{classic,blitz,daily}/{easy,medium,hard}.json
+ *
+ * Each mode gets the same board content but with an independent shuffle,
+ * so players can't memorize board order across modes.
  *
  * Usage: npx tsx scripts/generate-boards.ts
  */
@@ -13,8 +16,16 @@ import * as path from 'path';
 // Types (mirrored from engine/types.ts to keep script self-contained)
 // ---------------------------------------------------------------------------
 
-type ChallengeType = 'highest' | 'lowest' | 'closest' | 'odd_one_out' | 'prime';
+type ChallengeType =
+  | 'highest'
+  | 'lowest'
+  | 'closest'
+  | 'odd_one_out'
+  | 'prime'
+  | 'match'
+  | 'property';
 type Difficulty = 'easy' | 'medium' | 'hard';
+type GameMode = 'classic' | 'blitz' | 'daily';
 
 interface GridRules {
   min_value: number;
@@ -38,11 +49,52 @@ interface Board {
   type: ChallengeType;
   difficulty: Difficulty;
   instruction: string;
-  grid: number[];
-  correct_answers: number[];
+  grids: {
+    grid: number[];
+    correct_answers: number[];
+  }[];
   estimated_solve_time_ms: number;
   difficulty_score: number;
 }
+
+// ---------------------------------------------------------------------------
+// Embedded challenge templates (previously in assets/challenges/*.json)
+// ---------------------------------------------------------------------------
+
+const CHALLENGE_TEMPLATES: Record<Difficulty, Challenge[]> = {
+  easy: [
+    { id: 'easy_highest_1', instruction: 'Find the highest number', type: 'highest', difficulty: 'easy', rules: { min_value: 1, max_value: 50, distractor_min_delta: 10, distractor_max_delta: 30, required_selections: 1 } },
+    { id: 'easy_lowest_1', instruction: 'Find the lowest number', type: 'lowest', difficulty: 'easy', rules: { min_value: 1, max_value: 50, distractor_min_delta: 10, distractor_max_delta: 30, required_selections: 1 } },
+    { id: 'easy_match_1', instruction: 'Find the number 7', type: 'match', difficulty: 'easy', rules: { min_value: 1, max_value: 100, distractor_min_delta: 0, distractor_max_delta: 0, target_value: 7, required_selections: 1 } },
+    { id: 'easy_match_2', instruction: 'Find the number 42', type: 'match', difficulty: 'easy', rules: { min_value: 1, max_value: 100, distractor_min_delta: 0, distractor_max_delta: 0, target_value: 42, required_selections: 1 } },
+    { id: 'easy_prop_0', instruction: 'Find the number ending in 0', type: 'property', difficulty: 'easy', rules: { min_value: 1, max_value: 100, distractor_min_delta: 0, distractor_max_delta: 0, target_value: 0, required_selections: 1 } },
+    { id: 'easy_prop_5', instruction: 'Find the number ending in 5', type: 'property', difficulty: 'easy', rules: { min_value: 1, max_value: 100, distractor_min_delta: 0, distractor_max_delta: 0, target_value: 5, required_selections: 1 } },
+    { id: 'easy_prop_single', instruction: 'Find the single-digit number', type: 'property', difficulty: 'easy', rules: { min_value: 1, max_value: 100, distractor_min_delta: 0, distractor_max_delta: 0, target_value: 10, required_selections: 1 } },
+    { id: 'easy_prop_double', instruction: 'Find the two-digit number', type: 'property', difficulty: 'easy', rules: { min_value: 1, max_value: 100, distractor_min_delta: 0, distractor_max_delta: 0, target_value: 11, required_selections: 1 } },
+    { id: 'easy_odd', instruction: 'Find the odd one out', type: 'odd_one_out', difficulty: 'easy', rules: { min_value: 1, max_value: 50, distractor_min_delta: 0, distractor_max_delta: 0, required_selections: 1 } },
+    { id: 'easy_greatest', instruction: 'Find the greatest number', type: 'highest', difficulty: 'easy', rules: { min_value: 1, max_value: 80, distractor_min_delta: 10, distractor_max_delta: 30, required_selections: 1 } },
+    { id: 'easy_smallest', instruction: 'Find the smallest number', type: 'lowest', difficulty: 'easy', rules: { min_value: 1, max_value: 80, distractor_min_delta: 10, distractor_max_delta: 30, required_selections: 1 } },
+  ],
+  medium: [
+    { id: 'med_closest_1', instruction: 'Find the number closest to 50', type: 'closest', difficulty: 'medium', rules: { min_value: 1, max_value: 100, distractor_min_delta: 8, distractor_max_delta: 30, target_value: 50, required_selections: 1 } },
+    { id: 'med_closest_2', instruction: 'Find the number closest to 75', type: 'closest', difficulty: 'medium', rules: { min_value: 20, max_value: 130, distractor_min_delta: 10, distractor_max_delta: 40, target_value: 75, required_selections: 1 } },
+    { id: 'med_closest_3', instruction: 'Find the number closest to 100', type: 'closest', difficulty: 'medium', rules: { min_value: 40, max_value: 160, distractor_min_delta: 10, distractor_max_delta: 45, target_value: 100, required_selections: 1 } },
+    { id: 'med_closest_4', instruction: 'Find the number closest to 150', type: 'closest', difficulty: 'medium', rules: { min_value: 80, max_value: 220, distractor_min_delta: 12, distractor_max_delta: 50, target_value: 150, required_selections: 1 } },
+    { id: 'med_closest_5', instruction: 'Find the number closest to 175', type: 'closest', difficulty: 'medium', rules: { min_value: 100, max_value: 250, distractor_min_delta: 12, distractor_max_delta: 55, target_value: 175, required_selections: 1 } },
+    { id: 'med_odd_1', instruction: 'Find the odd one out', type: 'odd_one_out', difficulty: 'medium', rules: { min_value: 1, max_value: 100, distractor_min_delta: 3, distractor_max_delta: 8, required_selections: 1 } },
+    { id: 'med_odd_2', instruction: 'Find the odd one out', type: 'odd_one_out', difficulty: 'medium', rules: { min_value: 1, max_value: 120, distractor_min_delta: 3, distractor_max_delta: 8, required_selections: 1 } },
+    { id: 'med_odd_3', instruction: 'Find the odd one out', type: 'odd_one_out', difficulty: 'medium', rules: { min_value: 10, max_value: 150, distractor_min_delta: 4, distractor_max_delta: 8, required_selections: 1 } },
+    { id: 'med_odd_4', instruction: 'Find the odd one out', type: 'odd_one_out', difficulty: 'medium', rules: { min_value: 1, max_value: 180, distractor_min_delta: 3, distractor_max_delta: 8, required_selections: 1 } },
+    { id: 'med_odd_5', instruction: 'Find the odd one out', type: 'odd_one_out', difficulty: 'medium', rules: { min_value: 5, max_value: 200, distractor_min_delta: 3, distractor_max_delta: 8, required_selections: 1 } },
+  ],
+  hard: [
+    { id: 'hard_prime_1', instruction: 'Find the prime number', type: 'prime', difficulty: 'hard', rules: { min_value: 2, max_value: 100, distractor_min_delta: 1, distractor_max_delta: 3, required_selections: 1 } },
+    { id: 'hard_prime_2', instruction: 'Find the prime number', type: 'prime', difficulty: 'hard', rules: { min_value: 10, max_value: 200, distractor_min_delta: 1, distractor_max_delta: 3, required_selections: 1 } },
+    { id: 'hard_prime_3', instruction: 'Find the prime number', type: 'prime', difficulty: 'hard', rules: { min_value: 50, max_value: 500, distractor_min_delta: 1, distractor_max_delta: 3, required_selections: 1 } },
+    { id: 'hard_prime_4', instruction: 'Find the prime number', type: 'prime', difficulty: 'hard', rules: { min_value: 100, max_value: 750, distractor_min_delta: 1, distractor_max_delta: 3, required_selections: 1 } },
+    { id: 'hard_prime_5', instruction: 'Find the prime number', type: 'prime', difficulty: 'hard', rules: { min_value: 200, max_value: 1000, distractor_min_delta: 1, distractor_max_delta: 3, required_selections: 1 } },
+  ],
+};
 
 // ---------------------------------------------------------------------------
 // Helpers (ported from engine/grid-generator.ts)
@@ -221,12 +273,78 @@ function generatePrime(challenge: Challenge): { grid: number[]; correctAnswers: 
   return { grid: numbers, correctAnswers: [numbers.indexOf(correct)] };
 }
 
-const generators: Record<ChallengeType, (c: Challenge) => { grid: number[]; correctAnswers: number[] }> = {
+const generators: Record<
+  ChallengeType,
+  (c: Challenge) => { grid: number[]; correctAnswers: number[] }
+> = {
   highest: generateHighest,
   lowest: generateLowest,
   closest: generateClosest,
   odd_one_out: generateOddOneOut,
   prime: generatePrime,
+  match: (c) => {
+    const target = c.rules.target_value ?? randInt(1, 100);
+    const nums = [target];
+    while (nums.length < 9) {
+      const n = randInt(1, 100);
+      if (!nums.includes(n)) nums.push(n);
+    }
+    shuffleArray(nums);
+    return { grid: nums, correctAnswers: [nums.indexOf(target)] };
+  },
+  property: (c) => {
+    const targetVal = c.rules.target_value ?? 0;
+    const used = new Set<number>();
+    let correct: number;
+
+    if (targetVal === 10) {
+      // Find the single-digit number
+      correct = randInt(1, 9);
+      used.add(correct);
+      const distractors: number[] = [];
+      while (distractors.length < 8) {
+        const d = randInt(10, 99);
+        if (!used.has(d)) {
+          used.add(d);
+          distractors.push(d);
+        }
+      }
+      const grid = shuffleArray([correct, ...distractors]);
+      return { grid, correctAnswers: [grid.indexOf(correct)] };
+    } else if (targetVal === 11) {
+      // Find the two-digit number
+      correct = randInt(10, 99);
+      used.add(correct);
+      const distractors: number[] = [];
+      while (distractors.length < 8) {
+        const d = randInt(1, 9);
+        if (!used.has(d)) {
+          used.add(d);
+          distractors.push(d);
+        }
+      }
+      const grid = shuffleArray([correct, ...distractors]);
+      return { grid, correctAnswers: [grid.indexOf(correct)] };
+    } else {
+      // Find the number ending in targetVal (0 or 5)
+      const digit = targetVal;
+      const valid = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        .map((n) => n * 10 + digit)
+        .filter((n) => n > 0);
+      correct = valid[randInt(0, valid.length - 1)];
+      used.add(correct);
+      const distractors: number[] = [];
+      while (distractors.length < 8) {
+        const d = randInt(1, 100);
+        if (d % 10 !== digit && !used.has(d)) {
+          used.add(d);
+          distractors.push(d);
+        }
+      }
+      const grid = shuffleArray([correct, ...distractors]);
+      return { grid, correctAnswers: [grid.indexOf(correct)] };
+    }
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -234,39 +352,52 @@ const generators: Record<ChallengeType, (c: Challenge) => { grid: number[]; corr
 // ---------------------------------------------------------------------------
 
 function validateBoard(board: Board, challenge: Challenge): boolean {
-  // Basic shape checks
-  if (board.grid.length !== 9) return false;
-  if (board.correct_answers.length !== 1) return false;
-  if (new Set(board.grid).size !== 9) return false; // no duplicates
+  if (board.grids.length !== 5) return false;
 
-  const correctIdx = board.correct_answers[0];
-  if (correctIdx < 0 || correctIdx >= 9) return false;
-  const correctVal = board.grid[correctIdx];
+  for (const entry of board.grids) {
+    const { grid, correct_answers } = entry;
+    // Basic shape checks
+    if (grid.length !== 9) return false;
+    if (correct_answers.length !== 1) return false;
+    if (new Set(grid).size !== 9) return false; // no duplicates
 
-  switch (board.type) {
-    case 'highest':
-      return board.grid.every((n) => n <= correctVal);
-    case 'lowest':
-      return board.grid.every((n) => n >= correctVal);
-    case 'closest': {
-      const target = challenge.rules.target_value!;
-      const correctDist = Math.abs(correctVal - target);
-      return board.grid.every((n, i) =>
-        i === correctIdx || Math.abs(n - target) > correctDist,
-      );
+    const correctIdx = correct_answers[0];
+    if (correctIdx < 0 || correctIdx >= 9) return false;
+    const correctVal = grid[correctIdx];
+
+    switch (board.type) {
+      case 'highest':
+        if (!grid.every((n) => n <= correctVal)) return false;
+        break;
+      case 'lowest':
+        if (!grid.every((n) => n >= correctVal)) return false;
+        break;
+      case 'closest': {
+        const target = challenge.rules.target_value!;
+        const correctDist = Math.abs(correctVal - target);
+        if (
+          !grid.every(
+            (n, i) => i === correctIdx || Math.abs(n - target) > correctDist,
+          )
+        )
+          return false;
+        break;
+      }
+      case 'odd_one_out': {
+        const correctParity = correctVal % 2;
+        const others = grid.filter((_, i) => i !== correctIdx);
+        if (!others.every((n) => n % 2 !== correctParity)) return false;
+        break;
+      }
+      case 'prime': {
+        if (!isPrime(correctVal)) return false;
+        if (!grid.every((n, i) => i === correctIdx || !isPrime(n))) return false;
+        break;
+      }
     }
-    case 'odd_one_out': {
-      const correctParity = correctVal % 2;
-      const others = board.grid.filter((_, i) => i !== correctIdx);
-      return others.every((n) => n % 2 !== correctParity);
-    }
-    case 'prime': {
-      if (!isPrime(correctVal)) return false;
-      return board.grid.every((n, i) => i === correctIdx || !isPrime(n));
-    }
-    default:
-      return false;
   }
+
+  return true;
 }
 
 // ---------------------------------------------------------------------------
@@ -280,6 +411,8 @@ function estimateSolveTime(type: ChallengeType, difficulty: Difficulty): number 
     closest: 2000,
     odd_one_out: 2200,
     prime: 3000,
+    match: 1000,
+    property: 1500,
   };
   const multiplier: Record<Difficulty, number> = {
     easy: 0.8,
@@ -296,6 +429,8 @@ function getDifficultyScore(type: ChallengeType, difficulty: Difficulty): number
     closest: 5,
     odd_one_out: 5,
     prime: 8,
+    match: 1,
+    property: 2,
   };
   const offset: Record<Difficulty, number> = { easy: -1, medium: 0, hard: 1 };
   return Math.max(1, Math.min(10, base[type] + offset[difficulty]));
@@ -322,24 +457,30 @@ function generateBoards(challenges: Challenge[]): Board[] {
     let generated = 0;
     for (let attempt = 0; attempt < BOARDS_PER_TEMPLATE * MAX_RETRIES && generated < BOARDS_PER_TEMPLATE; attempt++) {
       try {
-        const { grid, correctAnswers } = gen(challenge);
-        const gridKey = grid.join(',');
-        if (seenGrids.has(gridKey)) continue;
+        const grids: { grid: number[]; correct_answers: number[] }[] = [];
+        for (let g = 0; g < 5; g++) {
+          const { grid, correctAnswers } = gen(challenge);
+          grids.push({ grid, correct_answers: correctAnswers });
+        }
 
         const board: Board = {
           id: `${challenge.id}_b${String(generated + 1).padStart(2, '0')}`,
           type: challenge.type,
           difficulty: challenge.difficulty,
           instruction: challenge.instruction,
-          grid,
-          correct_answers: correctAnswers,
-          estimated_solve_time_ms: estimateSolveTime(challenge.type, challenge.difficulty),
-          difficulty_score: getDifficultyScore(challenge.type, challenge.difficulty),
+          grids,
+          estimated_solve_time_ms: estimateSolveTime(
+            challenge.type,
+            challenge.difficulty,
+          ),
+          difficulty_score: getDifficultyScore(
+            challenge.type,
+            challenge.difficulty,
+          ),
         };
 
         if (!validateBoard(board, challenge)) continue;
 
-        seenGrids.add(gridKey);
         boards.push(board);
         generated++;
       } catch {
@@ -356,31 +497,42 @@ function generateBoards(challenges: Challenge[]): Board[] {
 }
 
 // ---------------------------------------------------------------------------
-// Run
+// Run — generate per mode with independent shuffles
 // ---------------------------------------------------------------------------
 
+const MODES: GameMode[] = ['classic', 'blitz', 'daily'];
+const DIFFICULTIES: Difficulty[] = ['easy', 'medium', 'hard'];
+
 const root = path.resolve(__dirname, '..');
-const challengesDir = path.join(root, 'assets', 'challenges');
 const boardsDir = path.join(root, 'assets', 'boards');
 
-if (!fs.existsSync(boardsDir)) {
-  fs.mkdirSync(boardsDir, { recursive: true });
-}
+// Generate boards once per difficulty (shared across modes)
+const boardsByDifficulty: Record<Difficulty, Board[]> = {} as Record<Difficulty, Board[]>;
 
-for (const tier of ['easy', 'medium', 'hard'] as const) {
-  const challengePath = path.join(challengesDir, `${tier}.json`);
-  const challenges: Challenge[] = JSON.parse(fs.readFileSync(challengePath, 'utf-8'));
-
+for (const tier of DIFFICULTIES) {
+  const challenges = CHALLENGE_TEMPLATES[tier];
   console.log(`\nGenerating ${tier} boards from ${challenges.length} templates...`);
   const boards = generateBoards(challenges);
   console.log(`  -> ${boards.length} boards generated`);
+  boardsByDifficulty[tier] = boards;
+}
 
-  // Shuffle to avoid predictable ordering
-  shuffleArray(boards);
+// Write per-mode directories with independent shuffles
+for (const mode of MODES) {
+  const modeDir = path.join(boardsDir, mode);
+  if (!fs.existsSync(modeDir)) {
+    fs.mkdirSync(modeDir, { recursive: true });
+  }
 
-  const outPath = path.join(boardsDir, `${tier}.json`);
-  fs.writeFileSync(outPath, JSON.stringify(boards, null, 2) + '\n');
-  console.log(`  -> Written to ${outPath}`);
+  for (const tier of DIFFICULTIES) {
+    // Deep copy and independently shuffle for this mode
+    const boards = boardsByDifficulty[tier].map((b) => ({ ...b }));
+    shuffleArray(boards);
+
+    const outPath = path.join(modeDir, `${tier}.json`);
+    fs.writeFileSync(outPath, JSON.stringify(boards, null, 2) + '\n');
+    console.log(`  -> Written ${mode}/${tier}.json (${boards.length} boards)`);
+  }
 }
 
 console.log('\nDone!');
