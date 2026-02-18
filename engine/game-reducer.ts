@@ -37,13 +37,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           timestamp: Date.now(),
         };
 
-        // Blitz: no heart loss
-        if (mode === 'blitz') {
-          return {
-            ...state,
-            events: [...state.events, event],
-          };
-        }
 
         const newHearts = state.hearts - 1;
         if (newHearts <= 0) {
@@ -73,13 +66,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         timestamp: Date.now(),
       };
 
-      // Blitz: no heart loss on timeout (shouldn't happen since no per-grid timer, but safety)
-      if (state.mode === 'blitz') {
-        return {
-          ...state,
-          events: [...state.events, event],
-        };
-      }
 
       const newHearts = state.hearts - 1;
       if (newHearts <= 0) {

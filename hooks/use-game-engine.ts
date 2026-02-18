@@ -188,7 +188,7 @@ export function useGameEngine(mode: GameMode, difficulty?: Difficulty) {
         // Check if game over after timeout (stateRef will update on next render)
         // We need to check hearts directly since dispatch is async
         const s = stateRef.current;
-        if (s.hearts - 1 > 0 || s.mode === 'blitz') {
+        if (s.hearts - 1 > 0) {
           advanceGrid();
         }
       }

@@ -20,7 +20,6 @@ export default function HomeScreen() {
   const router = useRouter();
 
   const [classicDifficulty, setClassicDifficulty] = useState<Difficulty>('easy');
-  const [blitzDifficulty, setBlitzDifficulty] = useState<Difficulty>('easy');
 
   // Refresh profile data whenever this screen comes into focus
   useFocusEffect(
@@ -37,9 +36,6 @@ export default function HomeScreen() {
 
   const handlePlayClassic = () => {
     router.push(`/game/classic?difficulty=${classicDifficulty}`);
-  };
-  const handlePlayBlitz = () => {
-    router.push(`/game/blitz?difficulty=${blitzDifficulty}`);
   };
   const handleSettingsPress = () => {
     Alert.alert('Settings', 'Profile & settings coming soon.');
@@ -69,15 +65,6 @@ export default function HomeScreen() {
             onDifficultyChange={setClassicDifficulty}
           />
 
-          <ModeCard
-            title="Blitz"
-            description="Fast-paced arithmetic."
-            bestScore={bestScores.blitz[blitzDifficulty]}
-            onPlayPress={handlePlayBlitz}
-            iconName="bolt"
-            difficulty={blitzDifficulty}
-            onDifficultyChange={setBlitzDifficulty}
-          />
         </View>
 
         {/* Quick Access Section */}

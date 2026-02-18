@@ -125,7 +125,7 @@ export default function GameScreen() {
         challengeIndex={state.challengeIndex}
         gridIndex={state.gridIndex}
         hearts={state.hearts}
-        showHearts={gameMode !== 'blitz'}
+        showHearts={true}
         onExit={handleExit}
         heartShake={heartShake}
       />

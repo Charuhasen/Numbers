@@ -1,7 +1,7 @@
-import { supabase } from '@/lib/supabase';
-import { processPendingScores } from '@/lib/score-service';
 import { useSession } from '@/context/ctx';
 import { Difficulty } from '@/engine/types';
+import { processPendingScores } from '@/lib/score-service';
+import { supabase } from '@/lib/supabase';
 import { createContext, useCallback, useContext, useEffect, useState, type PropsWithChildren } from 'react';
 
 export interface Profile {
@@ -16,13 +16,11 @@ type DifficultyScores = Record<Difficulty, number>;
 
 export interface BestScores {
   classic: DifficultyScores;
-  blitz: DifficultyScores;
 }
 
 const emptyDifficultyScores = (): DifficultyScores => ({ easy: 0, medium: 0, hard: 0 });
 const emptyBestScores = (): BestScores => ({
   classic: emptyDifficultyScores(),
-  blitz: emptyDifficultyScores(),
 });
 
 interface ProfileContextValue {

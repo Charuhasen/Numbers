@@ -1,6 +1,3 @@
-import blitzEasy from '@/assets/boards/blitz/easy.json';
-import blitzHard from '@/assets/boards/blitz/hard.json';
-import blitzMedium from '@/assets/boards/blitz/medium.json';
 import classicEasy from '@/assets/boards/classic/easy.json';
 import classicHard from '@/assets/boards/classic/hard.json';
 import classicMedium from '@/assets/boards/classic/medium.json';
@@ -18,11 +15,6 @@ const BOARD_POOLS: Record<GameMode, BoardPool> = {
     medium: classicMedium as Board[],
     hard: classicHard as Board[],
   },
-  blitz: {
-    easy: blitzEasy as Board[],
-    medium: blitzMedium as Board[],
-    hard: blitzHard as Board[],
-  },
 };
 
 export function loadBoardPool(mode: GameMode): BoardPool {
@@ -33,8 +25,7 @@ export function loadBoardPool(mode: GameMode): BoardPool {
  * Classic difficulty scaling based on challenge index (0-based).
  * 1-5 -> Easy, 6-10 -> Easy+Medium, 11-15 -> Medium, 16-20 -> Medium+Hard, 21+ -> Hard
  */
-function getDifficultyTier(challengeIndex: number, mode: GameMode): Difficulty[] {
-  if (mode === 'blitz') return ['medium'];
+function getDifficultyTier(challengeIndex: number, _mode: GameMode): Difficulty[] {
 
   const n = challengeIndex + 1;
 

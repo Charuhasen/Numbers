@@ -1,6 +1,6 @@
 // Game engine types — zero React/RN imports
 
-export type GameMode = 'classic' | 'blitz';
+export type GameMode = 'classic';
 
 export type ChallengeType =
   | 'highest'
