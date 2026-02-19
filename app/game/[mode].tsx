@@ -25,7 +25,20 @@ export default function GameScreen() {
   const theme = Colors[colorScheme ?? 'light'];
 
   const gameMode = (mode as GameMode) || 'classic';
-  const { state, tapCell, timerProgress, elapsedSeconds, isReady, resumeTimer } = useGameEngine(gameMode);
+
+  // Called by the engine whenever the correct answer should be revealed
+  // (wrong tap or timeout). Highlights the correct tile(s) in green and
+  // locks input so the player can't tap during the reveal window.
+  const handleRevealCorrect = useCallback((correctIndices: number[]) => {
+    setInputDisabled(true);
+    setFeedbackMap((prev) => {
+      const update = { ...prev };
+      for (const idx of correctIndices) update[idx] = 'correct';
+      return update;
+    });
+  }, []);
+
+  const { state, tapCell, timerProgress, elapsedSeconds, isReady, resumeTimer } = useGameEngine(gameMode, handleRevealCorrect);
   const { bestScores } = useProfile();
 
   const heartShake = useSharedValue(0);

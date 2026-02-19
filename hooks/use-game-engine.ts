@@ -17,7 +17,7 @@ function boardToGrid(board: Board, gridIndex: number): Grid {
   };
 }
 
-export function useGameEngine(mode: GameMode) {
+export function useGameEngine(mode: GameMode, onRevealCorrect: (indices: number[]) => void) {
   const pool = useMemo<Board[]>(() => loadBoardPool(mode), [mode]);
   const recentTypesRef = useRef<ChallengeType[]>([]);
   const recentBoardIdsRef = useRef<string[]>([]);
@@ -167,15 +167,20 @@ export function useGameEngine(mode: GameMode) {
       timerProgress.value = progress;
 
       if (remaining <= 0 && !isAdvancingRef.current) {
-        // Timer expired
+        // Block re-entry during the reveal window
+        isAdvancingRef.current = true;
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
         dispatch({ type: 'TIMEOUT' });
 
-        // Check if game over after timeout (stateRef will update on next render)
-        // We need to check hearts directly since dispatch is async
+        // Reveal the correct answer, then advance after a short pause
         const s = stateRef.current;
+        onRevealCorrect(s.currentGrid.correctAnswers);
+
         if (s.hearts - 1 > 0) {
-          advanceGrid();
+          setTimeout(() => {
+            isAdvancingRef.current = false;
+            advanceGrid();
+          }, 600);
         }
       }
     }, 100);
@@ -212,12 +217,13 @@ export function useGameEngine(mode: GameMode) {
       }, 300);
     } else {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-      // Lose a heart then advance — delay lets the wrong feedback animate
+      // Reveal the correct answer, then advance after the player has seen it
+      onRevealCorrect(s.currentGrid.correctAnswers);
       setTimeout(() => {
         if (stateRef.current.phase !== 'gameOver') {
           advanceGrid();
         }
-      }, 400);
+      }, 600);
     }
   }, [advanceGrid]);
 
