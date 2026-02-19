@@ -42,5 +42,8 @@ app-example
 # generated native folders
 /ios
 /android
+
+
 /scripts
 /script
+/game-design    

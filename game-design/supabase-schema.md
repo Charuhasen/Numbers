@@ -16,6 +16,7 @@ It follows Supabase best practices:
 | :--- | :--- | :--- |
 | `profiles` | User metadata (username, avatar, country, bits currency). Extends `auth.users`. | Read all, update own (non-currency fields only). |
 | `scores` | Game session results for leaderboards. | Read all. No direct insert — use `submit_game_score` RPC. |
+| `game_sessions` | Server-issued session tokens for anti-cheat timing validation. | Read own only. No direct insert — use `start_game_session` RPC. |
 | `inventory` | User's current potion counts. | Read own only. No direct update — use RPC. |
 | `challenges` | AI-generated or curated challenge templates. | Read all. Admin insert only. |
 | `store_items` | Purchasable items catalog (potions, bundles). | Read active only. Admin insert/update. |
@@ -58,7 +59,33 @@ create policy "Users can update their own non-currency profile fields."
   );
 ```
 
-### 2.2 `scores`
+### 2.2 `game_sessions`
+
+Server-issued session tokens. **No direct client insert** — tokens are issued via `start_game_session` RPC. Used by `submit_game_score` to prevent instant replay attacks and enforce minimum game duration.
+
+```sql
+create table public.game_sessions (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  mode text not null check (mode in ('classic', 'blitz')),
+  started_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  submitted_at timestamp with time zone,       -- null = not yet submitted (one-time use)
+  expires_at timestamp with time zone default (timezone('utc'::text, now()) + interval '4 hours') not null
+);
+
+-- Indexes
+create index idx_game_sessions_user_active on public.game_sessions(user_id, started_at desc)
+  where submitted_at is null;
+create index idx_game_sessions_expires on public.game_sessions(expires_at);
+
+-- RLS
+alter table public.game_sessions enable row level security;
+create policy "Users can view their own game sessions."
+  on public.game_sessions for select using (auth.uid() = user_id);
+-- No client insert/update/delete. Only RPC (security definer) can mutate.
+```
+
+### 2.3 `scores`
 
 Used for Leaderboards. **No direct client insert** — scores are submitted via `submit_game_score` RPC which validates the game session.
 
@@ -263,15 +290,33 @@ create trigger on_auth_user_created
   for each row execute procedure public.handle_new_user();
 ```
 
-### 4.2 `submit_game_score`
+### 4.2 `start_game_session`
 
-Server-side score validation and submission. The client sends game events; the server replays and calculates the score.
+Issues a server-signed session token before a game begins. The token is tied to the authenticated user and records `started_at`. `submit_game_score` uses this to enforce minimum game duration (≥ 5 s) and prevent replay attacks. Rate-limited to 3 unsubmitted sessions per 10 minutes.
+
+```sql
+create or replace function public.start_game_session(p_mode text)
+returns json
+language plpgsql
+security definer
+set search_path = public
+as $$
+-- Returns: {"session_id": "<uuid>"}
+-- Client stores session_id and passes it to submit_game_score.
+-- If offline, client omits session_id; score still submits but without timing validation.
+$$;
+```
+
+### 4.3 `submit_game_score`
+
+Server-side score validation and submission. The client sends game events; the server replays and calculates the score. Accepts an optional `p_session_id` (from `start_game_session`) to validate timing.
 
 ```sql
 create or replace function public.submit_game_score(
   p_mode text,
-  p_events jsonb,       -- Array of game events: [{"type":"correct","grid_index":0,"time_remaining":4.2}, ...]
-  p_round_reached int
+  p_events jsonb,            -- Array of game events: [{"type":"correct","grid_index":0,"time_remaining":4.2}, ...]
+  p_round_reached int,
+  p_session_id uuid default null  -- Session token from start_game_session (null for offline games)
 )
 returns json
 language plpgsql
@@ -368,7 +413,7 @@ end;
 $$;
 ```
 
-### 4.3 `purchase_item_with_bits`
+### 4.4 `purchase_item_with_bits`
 
 Secure transactional purchase based on SKU. Uses `FOR UPDATE` to prevent race conditions.
 
@@ -440,7 +485,7 @@ end;
 $$;
 ```
 
-### 4.4 `grant_potion_drop`
+### 4.5 `grant_potion_drop`
 
 Called by the client after a round to record a potion drop. Server validates and applies.
 
@@ -492,7 +537,7 @@ end;
 $$;
 ```
 
-### 4.5 `consume_potion`
+### 4.6 `consume_potion`
 
 Called when a player uses a potion during a game session.
 
@@ -549,7 +594,7 @@ end;
 $$;
 ```
 
-### 4.6 `get_leaderboard`
+### 4.7 `get_leaderboard`
 
 Efficient paginated leaderboard query with player rank.
 
@@ -625,7 +670,7 @@ end;
 $$;
 ```
 
-### 4.7 `delete_user_account`
+### 4.8 `delete_user_account`
 
 Required for Apple App Store compliance (Guideline 5.1.1(v)). Deletes all user data. All tables use `ON DELETE CASCADE`, so deleting the profile row cascades to scores, inventory, and transactions.
 
@@ -672,8 +717,9 @@ $$;
 | Operation | Method | Why |
 |---|---|---|
 | Read profiles/scores/challenges/store | Direct SELECT via RLS | Public read is safe |
-| Read own inventory/transactions | Direct SELECT via RLS | Scoped to own user |
-| Submit game score | `submit_game_score` RPC | Server replays events, calculates score, prevents fake scores |
+| Read own inventory/transactions/sessions | Direct SELECT via RLS | Scoped to own user |
+| Start game session | `start_game_session` RPC | Issues a server-signed one-time token; rate-limited to 3/10 min |
+| Submit game score | `submit_game_score` RPC | Server replays events, validates session timing, bounds-checks time_remaining, prevents fake scores |
 | Purchase item | `purchase_item_with_bits` RPC | Atomic balance check + deduction with `FOR UPDATE` lock |
 | Earn bits | Part of `submit_game_score` RPC | Only granted alongside validated scores |
 | Grant potion drop | `grant_potion_drop` RPC | Server validates potion type against whitelist |
@@ -682,3 +728,4 @@ $$;
 | Delete account | `delete_own_account` RPC + Edge Function | Cascades via `ON DELETE CASCADE`. Auth deletion via Admin API. |
 | Update inventory directly | **BLOCKED** | No client update policy. RPC only. |
 | Insert scores directly | **BLOCKED** | No client insert policy. RPC only. |
+| Insert game sessions directly | **BLOCKED** | No client insert policy. RPC only. |

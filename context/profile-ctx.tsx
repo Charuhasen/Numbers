@@ -132,6 +132,7 @@ export function ProfileProvider({ children }: PropsWithChildren) {
           mode: staleSession.mode,
           events: staleSession.events,
           roundReached: staleSession.challengeIndex,
+          sessionId: staleSession.sessionId ?? null,
         });
         await clearGameSessionData();
       }

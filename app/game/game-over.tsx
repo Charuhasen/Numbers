@@ -48,7 +48,12 @@ export default function GameOverScreen() {
 
     try {
       setSubmissionStatus('submitting');
-      const result = await submitGameScore(sessionData.mode, sessionData.events, sessionData.challengeIndex);
+      const result = await submitGameScore(
+        sessionData.mode,
+        sessionData.events,
+        sessionData.challengeIndex,
+        sessionData.sessionId ?? null,
+      );
       await clearGameSessionData();
       setSubmissionStatus('success');
 
@@ -62,6 +67,7 @@ export default function GameOverScreen() {
         mode: sessionData.mode,
         events: sessionData.events,
         roundReached: sessionData.challengeIndex,
+        sessionId: sessionData.sessionId ?? null,
       });
       await clearGameSessionData();
       setSubmissionStatus('error');

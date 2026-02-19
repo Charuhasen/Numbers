@@ -10,6 +10,7 @@ import { GameMode } from '@/engine/types';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useGameEngine } from '@/hooks/use-game-engine';
 import { setGameSessionData } from '@/lib/game-session-store';
+import { startGameSession } from '@/lib/score-service';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
@@ -40,6 +41,17 @@ export default function GameScreen() {
 
   const { state, tapCell, timerProgress, timerDuration, elapsedSeconds, isReady, resumeTimer } = useGameEngine(gameMode, handleRevealCorrect);
   const { bestScores } = useProfile();
+
+  // Session token: requested once from the server when the game screen is ready.
+  // Null if the player is offline — the score will still submit but without timing validation.
+  const sessionIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!isReady) return;
+    startGameSession(gameMode).then((id) => {
+      sessionIdRef.current = id;
+    });
+  }, [isReady, gameMode]);
 
   const heartShake = useSharedValue(0);
   const [feedbackMap, setFeedbackMap] = useState<Record<number, TileFeedback>>({});
@@ -84,6 +96,7 @@ export default function GameScreen() {
           challengeIndex: state.challengeIndex,
           elapsedSeconds,
           events: state.events,
+          sessionId: sessionIdRef.current,
         });
         router.replace({
           pathname: '/game/game-over',

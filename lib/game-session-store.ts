@@ -10,6 +10,8 @@ export interface GameSessionData {
   challengeIndex: number;
   elapsedSeconds: number;
   events: GameEvent[];
+  /** Server-issued session token from start_game_session RPC. Null for offline games. */
+  sessionId: string | null;
 }
 
 /** Persist session to AsyncStorage so it survives app kills. */

@@ -8,6 +8,7 @@ interface ScoreSubmission {
   mode: GameMode;
   events: GameEvent[];
   roundReached: number;
+  sessionId: string | null;
 }
 
 export interface SubmitResult {
@@ -29,17 +30,37 @@ function toSnakeCaseEvents(events: GameEvent[]): object[] {
   }));
 }
 
+/**
+ * Request a server-issued session token before starting a game.
+ * Returns the session_id UUID, or null if the call fails (offline / not authed).
+ */
+export async function startGameSession(mode: GameMode): Promise<string | null> {
+  try {
+    const { data, error } = await supabase.rpc('start_game_session', {
+      p_mode: mode,
+    });
+    if (error || !data?.session_id) return null;
+    return data.session_id as string;
+  } catch {
+    return null;
+  }
+}
+
 /** Submit a game score via the submit_game_score RPC. */
 export async function submitGameScore(
   mode: GameMode,
   events: GameEvent[],
   roundReached: number,
+  sessionId: string | null = null,
 ): Promise<SubmitResult> {
-  const { data, error } = await supabase.rpc('submit_game_score', {
+  const params: Record<string, unknown> = {
     p_mode: mode,
     p_events: toSnakeCaseEvents(events),
     p_round_reached: roundReached,
-  });
+  };
+  if (sessionId) params.p_session_id = sessionId;
+
+  const { data, error } = await supabase.rpc('submit_game_score', params);
 
   if (error) throw error;
 
@@ -77,6 +98,7 @@ export async function processPendingScores(): Promise<number> {
         submission.mode,
         submission.events,
         submission.roundReached,
+        submission.sessionId ?? null,
       );
       processed++;
     } catch {

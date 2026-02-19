@@ -210,7 +210,8 @@ Each board has 1 instruction and 5 grids. **Every grid must have exactly one cor
 ### Security — Server-Authoritative (Non-Negotiable)
 
 - **RLS is mandatory on every table.** Never disable it.
-- **Scores:** No direct client insert. `submit_game_score` RPC replays game events server-side to calculate score. Prevents fake scores.
+- **Session tokens:** Call `start_game_session(mode)` RPC before each game starts. Returns a one-time `session_id` UUID stored in a ref. Passed to `submit_game_score` at session end. Server validates: session belongs to user, not yet submitted, minimum 5 s elapsed. Rate-limited to 3 unsubmitted sessions per 10 minutes. Offline games pass `session_id: null` — score still submits but without timing validation.
+- **Scores:** No direct client insert. `submit_game_score` RPC replays game events server-side to calculate score. Also validates `time_remaining` bounds (0–10 s) and correct-event count against `round_reached`. Prevents fake scores.
 - **Currency (bits):** Protected by RLS check constraint on `profiles`. Only mutated via RPC.
 - **Inventory:** No direct client update. All mutations via RPC (`grant_potion_drop`, `consume_potion`, `purchase_item_with_bits`).
 - **Purchases:** `purchase_item_with_bits` uses `SELECT ... FOR UPDATE` to prevent double-spend.
@@ -219,7 +220,7 @@ Each board has 1 instruction and 5 grids. **Every grid must have exactly one cor
 - **Account deletion:** `delete_own_account` RPC + Supabase Edge Function (required for Apple App Store compliance).
 - `handle_new_user` trigger auto-creates `profiles` + `inventory` on signup.
 
-### RPC Functions (7): `submit_game_score`, `purchase_item_with_bits`, `grant_potion_drop`, `consume_potion`, `get_leaderboard`, `handle_new_user` (trigger), `delete_own_account`
+### RPC Functions (8): `start_game_session`, `submit_game_score`, `purchase_item_with_bits`, `grant_potion_drop`, `consume_potion`, `get_leaderboard`, `handle_new_user` (trigger), `delete_own_account`
 
 ### Auth Flow
 
