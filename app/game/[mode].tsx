@@ -96,10 +96,6 @@ export default function GameScreen() {
 
     if (!isCorrect) {
       triggerHeartShake(heartShake);
-      setTimeout(() => {
-        setFeedbackMap({});
-        setInputDisabled(false);
-      }, 400);
     }
 
     tapCell(index);

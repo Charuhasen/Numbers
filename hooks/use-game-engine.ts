@@ -205,7 +205,6 @@ export function useGameEngine(mode: GameMode) {
 
     if (isCorrect) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      // Brief delay for feedback, then advance
       setTimeout(() => {
         if (stateRef.current.phase !== 'gameOver') {
           advanceGrid();
@@ -213,6 +212,12 @@ export function useGameEngine(mode: GameMode) {
       }, 300);
     } else {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+      // Lose a heart then advance — delay lets the wrong feedback animate
+      setTimeout(() => {
+        if (stateRef.current.phase !== 'gameOver') {
+          advanceGrid();
+        }
+      }, 400);
     }
   }, [advanceGrid]);
 
