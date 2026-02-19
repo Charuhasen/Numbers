@@ -69,7 +69,6 @@ create table public.scores (
   score int not null check (score >= 0),
   mode text not null check (mode in ('classic', 'blitz')),
   round_reached int not null check (round_reached >= 0),
-  bits_earned int not null default 0 check (bits_earned >= 0),
   played_at timestamp with time zone default timezone('utc'::text, now()) not null,
 
   -- One best-score row per user per mode
@@ -325,8 +324,8 @@ begin
 
   if v_existing_id is null then
     -- First score for this mode
-    insert into public.scores (user_id, score, mode, round_reached, bits_earned)
-    values (v_user_id, v_calculated_score, p_mode, p_round_reached, v_bits_earned)
+    insert into public.scores (user_id, score, mode, round_reached)
+    values (v_user_id, v_calculated_score, p_mode, p_round_reached)
     returning id into v_score_id;
     v_is_new_best := true;
   elsif v_calculated_score > v_existing_score then
@@ -334,7 +333,6 @@ begin
     update public.scores
     set score         = v_calculated_score,
         round_reached = p_round_reached,
-        bits_earned   = v_bits_earned,
         played_at     = timezone('utc'::text, now())
     where id = v_existing_id;
     v_score_id := v_existing_id;

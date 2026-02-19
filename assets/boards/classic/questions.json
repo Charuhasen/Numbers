@@ -4,6 +4,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number greater than 50",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -94,6 +96,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number between 70 and 90",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -184,6 +188,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a multiple of 3",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -274,6 +280,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find a multiple of 2",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -364,6 +372,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number smaller than 60",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -454,6 +464,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the single-digit number",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -544,6 +556,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that is 10 more than 30",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -634,6 +648,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 5",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -724,6 +740,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 2",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -814,6 +832,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find an odd number",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -904,6 +924,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number greater than 40",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -994,6 +1016,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number less than 15",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -1084,6 +1108,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number 42",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -1174,6 +1200,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number greater than 40",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -1264,6 +1292,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 8",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -1354,6 +1384,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 8 × 2",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -1444,6 +1476,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number between 70 and 90",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -1534,6 +1568,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number 42",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -1624,6 +1660,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the second lowest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -1714,6 +1752,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that is 10 more than 30",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -1804,6 +1844,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number that starts with 1",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -1894,6 +1936,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find an even number",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -1984,6 +2028,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find an odd number",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -2074,6 +2120,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number with repeated digits",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -2164,6 +2212,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number with three digits",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -2254,6 +2304,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that is 10 more than 30",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -2344,6 +2396,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number containing the digit 9",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -2434,6 +2488,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the two-digit number",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -2524,6 +2580,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number divisible by 10",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -2614,6 +2672,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find an odd number",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -2704,6 +2764,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number 7",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -2794,6 +2856,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number with repeated digits",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -2884,6 +2948,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number divisible by 10",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -2974,6 +3040,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that is 10 more than 30",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -3064,6 +3132,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the two-digit number",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -3154,6 +3224,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number divisible by 10",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -3244,6 +3316,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number containing the digit 9",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -3334,6 +3408,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number between 30 and 40",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -3424,6 +3500,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the smallest odd number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -3514,6 +3592,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a multiple of 3",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -3604,6 +3684,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find a multiple of 2",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -3694,6 +3776,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the smallest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -3784,6 +3868,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number divisible by 4",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -3874,6 +3960,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number containing the digit 9",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -3964,6 +4052,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find an odd number",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -4054,6 +4144,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 8",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -4144,6 +4236,8 @@
     "type": "closest",
     "difficulty": "easy",
     "instruction": "Find the number closest to 25",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -4234,6 +4328,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 8",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -4324,6 +4420,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number divisible by 4",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -4414,6 +4512,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number between 30 and 40",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -4504,6 +4604,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number with repeated digits",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -4594,6 +4696,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 0",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -4684,6 +4788,8 @@
     "type": "highest",
     "difficulty": "easy",
     "instruction": "Find the highest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -4774,6 +4880,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 0",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -4864,6 +4972,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find an odd number",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -4954,6 +5064,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number with three digits",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -5044,6 +5156,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number greater than 40",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -5134,6 +5248,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the single-digit number",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -5224,6 +5340,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find an odd number",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -5314,6 +5432,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number 42",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -5404,6 +5524,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number greater than 50",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -5494,6 +5616,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 2",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -5584,6 +5708,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number containing the digit 9",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -5674,6 +5800,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 9 + 6",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -5764,6 +5892,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find an even number",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -5854,6 +5984,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number smaller than 60",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -5944,6 +6076,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a multiple of 5",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -6034,6 +6168,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number that starts with 5",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -6124,6 +6260,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find a number equal to half of 20",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -6214,6 +6352,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that is 5 less than 25",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -6304,6 +6444,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number divisible by 10",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -6394,6 +6536,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number divisible by 4",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -6484,6 +6628,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the single-digit number",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -6574,6 +6720,8 @@
     "type": "highest",
     "difficulty": "easy",
     "instruction": "Find the highest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -6664,6 +6812,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find an even number",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -6754,6 +6904,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that is 10 more than 30",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -6844,6 +6996,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number less than 15",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -6934,6 +7088,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the single-digit number",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -7024,6 +7180,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 9 + 6",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -7114,6 +7272,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number between 30 and 40",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -7204,6 +7364,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a multiple of 3",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -7294,6 +7456,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the second lowest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -7384,6 +7548,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number between 20 and 30",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -7474,6 +7640,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number between 20 and 30",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -7564,6 +7732,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 9 + 6",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -7654,6 +7824,8 @@
     "type": "closest",
     "difficulty": "easy",
     "instruction": "Find the number closest to 25",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -7744,6 +7916,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a multiple of 3",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -7834,6 +8008,8 @@
     "type": "highest",
     "difficulty": "easy",
     "instruction": "Find the largest even number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -7924,6 +8100,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the middle number (not highest or lowest)",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -8014,6 +8192,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the smallest odd number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -8104,6 +8284,8 @@
     "type": "closest",
     "difficulty": "easy",
     "instruction": "Find the number closest to 25",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -8194,6 +8376,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number less than 15",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -8284,6 +8468,8 @@
     "type": "highest",
     "difficulty": "easy",
     "instruction": "Find the largest even number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -8374,6 +8560,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the smallest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -8464,6 +8652,8 @@
     "type": "closest",
     "difficulty": "easy",
     "instruction": "Find the number closest to 25",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -8554,6 +8744,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 8 × 2",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -8644,6 +8836,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the middle number (not highest or lowest)",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -8734,6 +8928,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number between 70 and 90",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -8824,6 +9020,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the lowest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -8914,6 +9112,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number greater than 50",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -9004,6 +9204,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the smallest odd number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -9094,6 +9296,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that is 5 less than 25",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -9184,6 +9388,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number with three digits",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -9274,6 +9480,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number divisible by 10",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -9364,6 +9572,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 0",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -9454,6 +9664,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 8",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -9544,6 +9756,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the smallest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -9634,6 +9848,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the lowest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -9724,6 +9940,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number 7",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -9814,6 +10032,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number smaller than 60",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -9904,6 +10124,8 @@
     "type": "highest",
     "difficulty": "easy",
     "instruction": "Find the largest even number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -9994,6 +10216,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that is 5 less than 25",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -10084,6 +10308,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number greater than 50",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -10174,6 +10400,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number 42",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -10264,6 +10492,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number that starts with 1",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -10354,6 +10584,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 8",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -10444,6 +10676,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 5",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -10534,6 +10768,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find an even number",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -10624,6 +10860,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 50 ÷ 5",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -10714,6 +10952,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find an odd number",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -10804,6 +11044,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 8 × 2",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -10894,6 +11136,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 2",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -10984,6 +11228,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the smallest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -11074,6 +11320,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number less than 15",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -11164,6 +11412,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the single-digit number",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -11254,6 +11504,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number greater than 50",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -11344,6 +11596,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 0",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -11434,6 +11688,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number between 20 and 30",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -11524,6 +11780,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number smaller than 60",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -11614,6 +11872,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 5",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -11704,6 +11964,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number between 70 and 90",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -11794,6 +12056,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find a number equal to half of 20",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -11884,6 +12148,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the smallest odd number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -11974,6 +12240,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find a number equal to half of 20",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -12064,6 +12332,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the two-digit number",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -12154,6 +12424,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number divisible by 4",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -12244,6 +12516,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number between 30 and 40",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -12334,6 +12608,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number containing the digit 9",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -12424,6 +12700,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a multiple of 5",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -12514,6 +12792,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number with three digits",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -12604,6 +12884,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 5",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -12694,6 +12976,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find a multiple of 2",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -12784,6 +13068,8 @@
     "type": "closest",
     "difficulty": "easy",
     "instruction": "Find the number closest to 25",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -12874,6 +13160,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number containing the digit 4",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -12964,6 +13252,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number that starts with 1",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -13054,6 +13344,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number 7",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -13144,6 +13436,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number that starts with 1",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -13234,6 +13528,8 @@
     "type": "highest",
     "difficulty": "easy",
     "instruction": "Find the largest even number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -13324,6 +13620,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number greater than 40",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -13414,6 +13712,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number containing the digit 9",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -13504,6 +13804,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 9 + 6",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -13594,6 +13896,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number less than 15",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -13684,6 +13988,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 8 × 2",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -13774,6 +14080,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number with repeated digits",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -13864,6 +14172,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the middle number (not highest or lowest)",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -13954,6 +14264,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number containing the digit 4",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -14044,6 +14356,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that is 5 less than 25",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -14134,6 +14448,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that is 10 more than 30",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -14224,6 +14540,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the middle number (not highest or lowest)",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -14314,6 +14632,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that is 5 less than 25",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -14404,6 +14724,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the second highest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -14494,6 +14816,8 @@
     "type": "closest",
     "difficulty": "easy",
     "instruction": "Find the number closest to 25",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -14584,6 +14908,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find a number equal to half of 20",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -14674,6 +15000,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number between 70 and 90",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -14764,6 +15092,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number greater than 50",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -14854,6 +15184,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number 7",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -14944,6 +15276,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number 42",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -15034,6 +15368,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the second highest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -15124,6 +15460,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a multiple of 5",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -15214,6 +15552,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the second highest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -15304,6 +15644,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find a number equal to half of 20",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -15394,6 +15736,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the second lowest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -15484,6 +15828,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find an odd number",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -15574,6 +15920,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number divisible by 4",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -15664,6 +16012,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number smaller than 60",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -15754,6 +16104,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number greater than 50",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -15844,6 +16196,8 @@
     "type": "highest",
     "difficulty": "easy",
     "instruction": "Find the highest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -15934,6 +16288,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number containing the digit 4",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -16024,6 +16380,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number that starts with 5",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -16114,6 +16472,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number between 30 and 40",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -16204,6 +16564,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number containing the digit 4",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -16294,6 +16656,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number with three digits",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -16384,6 +16748,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the second lowest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -16474,6 +16840,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the second lowest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -16564,6 +16932,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number greater than 40",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -16654,6 +17024,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number that starts with 1",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -16744,6 +17116,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find an even number",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -16834,6 +17208,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number containing the digit 4",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -16924,6 +17300,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the second highest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -17014,6 +17392,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a multiple of 5",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -17104,6 +17484,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find a multiple of 2",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -17194,6 +17576,8 @@
     "type": "highest",
     "difficulty": "easy",
     "instruction": "Find the largest even number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -17284,6 +17668,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 0",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -17374,6 +17760,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the two-digit number",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -17464,6 +17852,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the single-digit number",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -17554,6 +17944,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number less than 15",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -17644,6 +18036,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number that starts with 5",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -17734,6 +18128,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number 7",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -17824,6 +18220,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the second highest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -17914,6 +18312,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the single-digit number",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -18004,6 +18404,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the smallest odd number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -18094,6 +18496,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that is 10 more than 30",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -18184,6 +18588,8 @@
     "type": "highest",
     "difficulty": "easy",
     "instruction": "Find the highest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -18274,6 +18680,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number with repeated digits",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -18364,6 +18772,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 2",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -18454,6 +18864,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that is 5 less than 25",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -18544,6 +18956,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number between 30 and 40",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -18634,6 +19048,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the smallest odd number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -18724,6 +19140,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number containing the digit 9",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -18814,6 +19232,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the single-digit number",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -18904,6 +19324,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number between 70 and 90",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -18994,6 +19416,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number 7",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -19084,6 +19508,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number containing the digit 9",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -19174,6 +19600,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number between 20 and 30",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -19264,6 +19692,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 50 ÷ 5",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -19354,6 +19784,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number containing the digit 9",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -19444,6 +19876,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that is 5 less than 25",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -19534,6 +19968,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find a number equal to half of 20",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -19624,6 +20060,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a multiple of 3",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -19714,6 +20152,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the single-digit number",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -19804,6 +20244,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find an even number",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -19894,6 +20336,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find a number equal to half of 20",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -19984,6 +20428,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number between 20 and 30",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -20074,6 +20520,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number between 20 and 30",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -20164,6 +20612,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the smallest odd number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -20254,6 +20704,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that is 5 less than 25",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -20344,6 +20796,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 50 ÷ 5",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -20434,6 +20888,8 @@
     "type": "highest",
     "difficulty": "easy",
     "instruction": "Find the highest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -20524,6 +20980,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number that starts with 1",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -20614,6 +21072,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number divisible by 10",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -20704,6 +21164,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a multiple of 3",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -20794,6 +21256,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 2",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -20884,6 +21348,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the middle number (not highest or lowest)",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -20974,6 +21440,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number less than 15",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -21064,6 +21532,8 @@
     "type": "closest",
     "difficulty": "easy",
     "instruction": "Find the number closest to 25",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -21154,6 +21624,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 0",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -21244,6 +21716,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number 7",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -21334,6 +21808,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 0",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -21424,6 +21900,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the smallest odd number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -21514,6 +21992,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 9 + 6",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -21604,6 +22084,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find a multiple of 2",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -21694,6 +22176,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number with repeated digits",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -21784,6 +22268,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 9 + 6",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -21874,6 +22360,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 8",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -21964,6 +22452,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 0",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -22054,6 +22544,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number that starts with 5",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -22144,6 +22636,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the second highest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -22234,6 +22728,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find an even number",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -22324,6 +22820,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the middle number (not highest or lowest)",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -22414,6 +22912,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the middle number (not highest or lowest)",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -22504,6 +23004,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number with three digits",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -22594,6 +23096,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number divisible by 4",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -22684,6 +23188,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the two-digit number",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -22774,6 +23280,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find an even number",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -22864,6 +23372,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a multiple of 3",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -22954,6 +23464,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number between 20 and 30",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -23044,6 +23556,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number less than 15",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -23134,6 +23648,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number 42",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -23224,6 +23740,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number with repeated digits",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -23314,6 +23832,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number divisible by 10",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -23404,6 +23924,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number between 20 and 30",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -23494,6 +24016,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number divisible by 10",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -23584,6 +24108,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number with repeated digits",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -23674,6 +24200,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the second highest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -23764,6 +24292,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find an even number",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -23854,6 +24384,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the smallest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -23944,6 +24476,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number between 30 and 40",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -24034,6 +24568,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a multiple of 5",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -24124,6 +24660,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number 42",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -24214,6 +24752,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 2",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -24304,6 +24844,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a multiple of 5",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -24394,6 +24936,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 9 + 6",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -24484,6 +25028,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 0",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -24574,6 +25120,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number containing the digit 4",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -24664,6 +25212,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a multiple of 5",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -24754,6 +25304,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the second highest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -24844,6 +25396,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number divisible by 10",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -24934,6 +25488,8 @@
     "type": "highest",
     "difficulty": "easy",
     "instruction": "Find the highest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -25024,6 +25580,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 5",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -25114,6 +25672,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 8 × 2",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -25204,6 +25764,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number divisible by 4",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -25294,6 +25856,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the two-digit number",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -25384,6 +25948,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find a multiple of 2",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -25474,6 +26040,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number smaller than 60",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -25564,6 +26132,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that is 10 more than 30",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -25654,6 +26224,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 50 ÷ 5",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -25744,6 +26316,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 8 × 2",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -25834,6 +26408,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 50 ÷ 5",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -25924,6 +26500,8 @@
     "type": "highest",
     "difficulty": "easy",
     "instruction": "Find the largest even number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -26014,6 +26592,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number that starts with 1",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -26104,6 +26684,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 50 ÷ 5",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -26194,6 +26776,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the two-digit number",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -26284,6 +26868,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number containing the digit 4",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -26374,6 +26960,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 8",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -26464,6 +27052,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number smaller than 60",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -26554,6 +27144,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the lowest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -26644,6 +27236,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 50 ÷ 5",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -26734,6 +27328,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the second lowest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -26824,6 +27420,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a multiple of 3",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -26914,6 +27512,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the smallest odd number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -27004,6 +27604,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number 42",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -27094,6 +27696,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a multiple of 5",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -27184,6 +27788,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the two-digit number",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -27274,6 +27880,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 8 × 2",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -27364,6 +27972,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number between 70 and 90",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -27454,6 +28064,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number 7",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -27544,6 +28156,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the lowest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -27634,6 +28248,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number with repeated digits",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -27724,6 +28340,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 8",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -27814,6 +28432,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the lowest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -27904,6 +28524,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number with repeated digits",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -27994,6 +28616,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 5",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -28084,6 +28708,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number that starts with 5",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -28174,6 +28800,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the lowest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -28264,6 +28892,8 @@
     "type": "closest",
     "difficulty": "easy",
     "instruction": "Find the number closest to 25",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -28354,6 +28984,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number that starts with 1",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -28444,6 +29076,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 8",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -28534,6 +29168,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find a number equal to half of 20",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -28624,6 +29260,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number greater than 40",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -28714,6 +29352,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that is 10 more than 30",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -28804,6 +29444,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number divisible by 4",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -28894,6 +29536,8 @@
     "type": "highest",
     "difficulty": "easy",
     "instruction": "Find the largest even number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -28984,6 +29628,8 @@
     "type": "highest",
     "difficulty": "easy",
     "instruction": "Find the highest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -29074,6 +29720,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 8 × 2",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -29164,6 +29812,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 2",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -29254,6 +29904,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the smallest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -29344,6 +29996,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number that starts with 1",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -29434,6 +30088,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find a multiple of 2",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -29524,6 +30180,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number that starts with 5",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -29614,6 +30272,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the second lowest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -29704,6 +30364,8 @@
     "type": "highest",
     "difficulty": "easy",
     "instruction": "Find the largest even number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -29794,6 +30456,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find an even number",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -29884,6 +30548,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the lowest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -29974,6 +30640,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the lowest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -30064,6 +30732,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 50 ÷ 5",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -30154,6 +30824,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the middle number (not highest or lowest)",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -30244,6 +30916,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number 7",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -30334,6 +31008,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a multiple of 5",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -30424,6 +31100,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a multiple of 3",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -30514,6 +31192,8 @@
     "type": "highest",
     "difficulty": "easy",
     "instruction": "Find the largest even number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -30604,6 +31284,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number that starts with 5",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -30694,6 +31376,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number between 30 and 40",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -30784,6 +31468,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the smallest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -30874,6 +31560,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number greater than 40",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -30964,6 +31652,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the second highest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -31054,6 +31744,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the second highest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -31144,6 +31836,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number greater than 50",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -31234,6 +31928,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number smaller than 60",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -31324,6 +32020,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number divisible by 10",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -31414,6 +32112,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find an odd number",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -31504,6 +32204,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number containing the digit 4",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -31594,6 +32296,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number between 30 and 40",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -31684,6 +32388,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number containing the digit 9",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -31774,6 +32480,8 @@
     "type": "highest",
     "difficulty": "easy",
     "instruction": "Find the highest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -31864,6 +32572,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 2",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -31954,6 +32664,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number between 70 and 90",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -32044,6 +32756,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the smallest odd number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -32134,6 +32848,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number that starts with 5",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -32224,6 +32940,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the single-digit number",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -32314,6 +33032,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number 42",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -32404,6 +33124,8 @@
     "type": "closest",
     "difficulty": "easy",
     "instruction": "Find the number closest to 25",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -32494,6 +33216,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a multiple of 3",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -32584,6 +33308,8 @@
     "type": "closest",
     "difficulty": "easy",
     "instruction": "Find the number closest to 25",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -32674,6 +33400,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number less than 15",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -32764,6 +33492,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number between 70 and 90",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -32854,6 +33584,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number with three digits",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -32944,6 +33676,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the middle number (not highest or lowest)",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -33034,6 +33768,8 @@
     "type": "highest",
     "difficulty": "easy",
     "instruction": "Find the highest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -33124,6 +33860,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number smaller than 60",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -33214,6 +33952,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 9 + 6",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -33304,6 +34044,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number with three digits",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -33394,6 +34136,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number between 30 and 40",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -33484,6 +34228,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find a multiple of 2",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -33574,6 +34320,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that is 5 less than 25",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -33664,6 +34412,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number between 20 and 30",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -33754,6 +34504,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number greater than 50",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -33844,6 +34596,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number that starts with 1",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -33934,6 +34688,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number with three digits",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -34024,6 +34780,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the lowest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -34114,6 +34872,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number divisible by 4",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -34204,6 +34964,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number between 70 and 90",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -34294,6 +35056,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number greater than 40",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -34384,6 +35148,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the second lowest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -34474,6 +35240,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number greater than 40",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -34564,6 +35332,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find an odd number",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -34654,6 +35424,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the smallest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -34744,6 +35516,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the two-digit number",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -34834,6 +35608,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the smallest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -34924,6 +35700,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 5",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -35014,6 +35792,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number that starts with 5",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -35104,6 +35884,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find a number equal to half of 20",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -35194,6 +35976,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 8",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -35284,6 +36068,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the lowest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -35374,6 +36160,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number less than 15",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -35464,6 +36252,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 50 ÷ 5",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -35554,6 +36344,8 @@
     "type": "highest",
     "difficulty": "easy",
     "instruction": "Find the highest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -35644,6 +36436,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that is 10 more than 30",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -35734,6 +36528,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find a number equal to half of 20",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -35824,6 +36620,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number smaller than 60",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -35914,6 +36712,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number containing the digit 4",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -36004,6 +36804,8 @@
     "type": "lowest",
     "difficulty": "easy",
     "instruction": "Find the smallest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -36094,6 +36896,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number divisible by 4",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -36184,6 +36988,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 0",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -36274,6 +37080,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a multiple of 5",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -36364,6 +37172,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find a number greater than 40",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -36454,6 +37264,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the second lowest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -36544,6 +37356,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 9 + 6",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -36634,6 +37448,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find a multiple of 2",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -36724,6 +37540,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 5",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -36814,6 +37632,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the two-digit number",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -36904,6 +37724,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that is 5 less than 25",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -36994,6 +37816,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 5",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -37084,6 +37908,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number that starts with 5",
+    "instruction_complexity_index": 6,
+    "time_allowed_ms": 3210,
     "grids": [
       {
         "grid": [
@@ -37174,6 +38000,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 9 + 6",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -37264,6 +38092,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 50 ÷ 5",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -37354,6 +38184,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 8 × 2",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -37444,6 +38276,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number between 20 and 30",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -37534,6 +38368,8 @@
     "type": "odd_one_out",
     "difficulty": "easy",
     "instruction": "Find a multiple of 2",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -37624,6 +38460,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number with three digits",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -37714,6 +38552,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number that equals 8 × 2",
+    "instruction_complexity_index": 8,
+    "time_allowed_ms": 3630,
     "grids": [
       {
         "grid": [
@@ -37804,6 +38644,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the middle number (not highest or lowest)",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -37894,6 +38736,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number greater than 50",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -37984,6 +38828,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 2",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -38074,6 +38920,8 @@
     "type": "highest",
     "difficulty": "easy",
     "instruction": "Find the largest even number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -38164,6 +39012,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number 7",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -38254,6 +39104,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the second lowest number",
+    "instruction_complexity_index": 10,
+    "time_allowed_ms": 4050,
     "grids": [
       {
         "grid": [
@@ -38344,6 +39196,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number containing the digit 4",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -38434,6 +39288,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 5",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -38524,6 +39380,8 @@
     "type": "property",
     "difficulty": "easy",
     "instruction": "Find the number ending in 2",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [
@@ -38614,6 +39472,8 @@
     "type": "match",
     "difficulty": "easy",
     "instruction": "Find the number 42",
+    "instruction_complexity_index": 5,
+    "time_allowed_ms": 3000,
     "grids": [
       {
         "grid": [

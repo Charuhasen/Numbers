@@ -6,19 +6,6 @@ import * as Haptics from 'expo-haptics';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useSharedValue } from 'react-native-reanimated';
 
-/**
- * Derive the actual timer duration (seconds) from a board's estimated solve
- * time and the current grid position within the round (0-4).
- *
- * Formula: base = solveEstimate/1000 + 3s buffer, then decay 0.5s per grid.
- * Clamped to [2s, 8s].
- */
-function getTimerForGrid(estimatedSolveTimeMs: number, gridIndex: number): number {
-  const baseSec = estimatedSolveTimeMs / 1000 + 3.0;
-  const decayed = baseSec - gridIndex * 0.5;
-  return Math.min(Math.max(decayed, 2.0), 8.0);
-}
-
 function boardToGrid(board: Board, gridIndex: number): Grid {
   return {
     numbers: board.grids[gridIndex].grid,
@@ -26,7 +13,7 @@ function boardToGrid(board: Board, gridIndex: number): Grid {
     boardId: board.id,
     instruction: board.instruction,
     type: board.type,
-    estimatedSolveTimeMs: board.estimated_solve_time_ms,
+    timeAllowedMs: board.time_allowed_ms,
   };
 }
 
@@ -52,7 +39,7 @@ export function useGameEngine(mode: GameMode) {
 
   // Timer shared value for the animated bar (1.0 -> 0.0)
   const timerProgress = useSharedValue(1);
-  const timerDuration = getTimerForGrid(state.currentGrid.estimatedSolveTimeMs, state.gridIndex);
+  const timerDuration = state.currentGrid.timeAllowedMs / 1000;
 
   // Refs for timer management (avoids re-renders)
   const timerStartRef = useRef<number>(Date.now());
@@ -105,8 +92,8 @@ export function useGameEngine(mode: GameMode) {
   }, [mode, pool]);
 
   // Reset timer for a new grid
-  const resetTimer = useCallback((solveTimeMs: number, gridIndex: number) => {
-    const duration = getTimerForGrid(solveTimeMs, gridIndex);
+  const resetTimer = useCallback((timeAllowedMs: number) => {
+    const duration = timeAllowedMs / 1000;
     timerDurationRef.current = duration;
     timerStartRef.current = Date.now();
     pausedElapsedRef.current = 0;
@@ -141,7 +128,7 @@ export function useGameEngine(mode: GameMode) {
     const { nextGrid, nextChallengeType, nextInstruction } = generateNextGridData();
     dispatch({ type: 'ADVANCE_GRID', nextGrid, nextChallengeType, nextInstruction });
 
-    resetTimer(nextGrid.estimatedSolveTimeMs, nextGridIndex);
+    resetTimer(nextGrid.timeAllowedMs);
 
     // Pause timer if a new challenge is starting (banner will resume it)
     if (isNewChallenge) {

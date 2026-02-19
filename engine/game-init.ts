@@ -18,7 +18,7 @@ export function createInitialState(
       boardId: firstBoard.id,
       instruction: firstBoard.instruction,
       type: firstBoard.type,
-      estimatedSolveTimeMs: firstBoard.estimated_solve_time_ms,
+      timeAllowedMs: firstBoard.time_allowed_ms,
     },
     currentChallengeType: firstBoard.type,
     currentInstruction: firstBoard.instruction,

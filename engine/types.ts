@@ -37,6 +37,8 @@ export interface Board {
   id: string;
   type: ChallengeType;
   instruction: string;
+  instruction_complexity_index: number;
+  time_allowed_ms: number;
   grids: {
     grid: number[];             // length 9
     correct_answers: number[];  // indices of correct answers
@@ -51,7 +53,7 @@ export interface Grid {
   boardId: string;            // track which board was used
   instruction: string;        // from board.instruction
   type: ChallengeType;        // from board.type
-  estimatedSolveTimeMs: number; // from board.estimated_solve_time_ms
+  timeAllowedMs: number;      // from board.time_allowed_ms
 }
 
 export interface GameEvent {
