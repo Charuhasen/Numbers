@@ -1,69 +1,32 @@
-import classicEasy from '@/assets/boards/classic/easy.json';
-import classicHard from '@/assets/boards/classic/hard.json';
-import classicMedium from '@/assets/boards/classic/medium.json';
-import { Board, ChallengeType, Difficulty, GameMode } from './types';
+import boards from '@/assets/boards/classic/questions.json';
+import { Board, ChallengeType, GameMode } from './types';
 
-export interface BoardPool {
-  easy: Board[];
-  medium: Board[];
-  hard: Board[];
-}
+const ALL_BOARDS: Board[] = boards as Board[];
 
-const BOARD_POOLS: Record<GameMode, BoardPool> = {
-  classic: {
-    easy: classicEasy as Board[],
-    medium: classicMedium as Board[],
-    hard: classicHard as Board[],
-  },
-};
-
-export function loadBoardPool(mode: GameMode): BoardPool {
-  return BOARD_POOLS[mode];
+export function loadBoardPool(_mode: GameMode): Board[] {
+  return ALL_BOARDS;
 }
 
 /**
- * Classic difficulty scaling based on challenge index (0-based).
- * 1-5 -> Easy, 6-10 -> Easy+Medium, 11-15 -> Medium, 16-20 -> Medium+Hard, 21+ -> Hard
- */
-function getDifficultyTier(challengeIndex: number, _mode: GameMode): Difficulty[] {
-
-  const n = challengeIndex + 1;
-
-  if (n <= 5) return ['easy'];
-  if (n <= 10) return ['easy', 'medium'];
-  if (n <= 15) return ['medium'];
-  if (n <= 20) return ['medium', 'hard'];
-  return ['hard'];
-}
-
-/**
- * Pick the next board, avoiding recent types and recently-used board IDs.
+ * Pick the next board, avoiding recently-used challenge types and board IDs.
  */
 export function getNextBoard(
-  challengeIndex: number,
-  mode: GameMode,
+  _challengeIndex: number,
+  _mode: GameMode,
   recentTypes: ChallengeType[],
   recentBoardIds: string[],
-  pool: BoardPool,
+  pool: Board[],
 ): Board {
-  const tiers = getDifficultyTier(challengeIndex, mode);
-
-  // Collect all boards from allowed tiers
-  const candidates: Board[] = [];
-  for (const tier of tiers) {
-    candidates.push(...pool[tier]);
-  }
-
-  if (candidates.length === 0) {
-    throw new Error('No boards available for the current difficulty tier');
+  if (pool.length === 0) {
+    throw new Error('Board pool is empty');
   }
 
   // Filter out recently used types (last 3)
   const recentTypeSet = new Set(recentTypes.slice(-3));
-  let filtered = candidates.filter((b) => !recentTypeSet.has(b.type));
+  let filtered = pool.filter((b) => !recentTypeSet.has(b.type));
 
-  // If all types were recently used, fall back to all candidates
-  if (filtered.length === 0) filtered = candidates;
+  // If all types were recently used, fall back to full pool
+  if (filtered.length === 0) filtered = pool;
 
   // Filter out recently used board IDs
   const recentIdSet = new Set(recentBoardIds);
@@ -76,28 +39,22 @@ export function getNextBoard(
 }
 
 /**
- * Validates that every board in the pool has correct structure:
- * - grid has exactly 9 numbers
- * - correct_answers is non-empty
- * - all correct_answers indices are within [0, 8]
- *
+ * Validates every board in the pool has correct structure.
  * Returns an array of error messages (empty = all valid).
  */
-export function validateBoardPool(pool: BoardPool): string[] {
+export function validateBoardPool(pool: Board[]): string[] {
   const errors: string[] = [];
-  for (const tier of ['easy', 'medium', 'hard'] as const) {
-    for (const board of pool[tier]) {
-      for (const entry of board.grids) {
-        if (entry.grid.length !== 9) {
-          errors.push(`${board.id}: grid length is ${entry.grid.length}, expected 9`);
-        }
-        if (!entry.correct_answers || entry.correct_answers.length === 0) {
-          errors.push(`${board.id}: correct_answers is empty`);
-        }
-        for (const idx of entry.correct_answers) {
-          if (idx < 0 || idx >= 9) {
-            errors.push(`${board.id}: correct_answers index ${idx} out of bounds`);
-          }
+  for (const board of pool) {
+    for (const entry of board.grids) {
+      if (entry.grid.length !== 9) {
+        errors.push(`${board.id}: grid length is ${entry.grid.length}, expected 9`);
+      }
+      if (!entry.correct_answers || entry.correct_answers.length === 0) {
+        errors.push(`${board.id}: correct_answers is empty`);
+      }
+      for (const idx of entry.correct_answers) {
+        if (idx < 0 || idx >= 9) {
+          errors.push(`${board.id}: correct_answers index ${idx} out of bounds`);
         }
       }
     }

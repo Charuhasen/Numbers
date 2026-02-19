@@ -1,4 +1,4 @@
-import { BoardPool, getNextBoard, loadBoardPool } from '@/engine/board-pool';
+import { getNextBoard, loadBoardPool } from '@/engine/board-pool';
 import { createInitialState } from '@/engine/game-init';
 import { gameReducer } from '@/engine/game-reducer';
 import { Board, ChallengeType, GameMode, GameState, Grid } from '@/engine/types';
@@ -31,7 +31,7 @@ function boardToGrid(board: Board, gridIndex: number): Grid {
 }
 
 export function useGameEngine(mode: GameMode) {
-  const pool = useMemo<BoardPool>(() => loadBoardPool(mode), [mode]);
+  const pool = useMemo<Board[]>(() => loadBoardPool(mode), [mode]);
   const recentTypesRef = useRef<ChallengeType[]>([]);
   const recentBoardIdsRef = useRef<string[]>([]);
 

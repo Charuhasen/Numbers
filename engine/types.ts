@@ -11,8 +11,6 @@ export type ChallengeType =
   | 'match'
   | 'property';
 
-export type Difficulty = 'easy' | 'medium' | 'hard';
-
 export type GamePhase = 'playing' | 'gameOver';
 
 export type GameEventType = 'correct' | 'wrong' | 'timeout' | 'grid_skip';
@@ -32,14 +30,12 @@ export interface Challenge {
   id: string;
   instruction: string;
   type: ChallengeType;
-  difficulty: Difficulty;
   rules: GridRules;
 }
 
 export interface Board {
   id: string;
   type: ChallengeType;
-  difficulty: Difficulty;
   instruction: string;
   grids: {
     grid: number[];             // length 9
