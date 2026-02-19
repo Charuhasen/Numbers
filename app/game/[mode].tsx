@@ -38,7 +38,7 @@ export default function GameScreen() {
     });
   }, []);
 
-  const { state, tapCell, timerProgress, elapsedSeconds, isReady, resumeTimer } = useGameEngine(gameMode, handleRevealCorrect);
+  const { state, tapCell, timerProgress, timerDuration, elapsedSeconds, isReady, resumeTimer } = useGameEngine(gameMode, handleRevealCorrect);
   const { bestScores } = useProfile();
 
   const heartShake = useSharedValue(0);
@@ -147,7 +147,7 @@ export default function GameScreen() {
 
       {/* Timer Bar */}
       <View style={styles.timerContainer}>
-        <TimerBar progress={timerProgress} />
+        <TimerBar progress={timerProgress} durationSec={timerDuration} />
       </View>
 
       {/* Grid */}
