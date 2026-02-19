@@ -62,8 +62,9 @@ export default function GameScreen() {
   // Navigate to game over when phase changes
   useEffect(() => {
     if (state.phase === 'gameOver') {
-      const timeout = setTimeout(() => {
-        setGameSessionData({
+      const timeout = setTimeout(async () => {
+        // Persist session to AsyncStorage before navigating so it survives app kills.
+        await setGameSessionData({
           mode: gameMode,
           score: state.score,
           bitsEarned: state.bitsEarned,

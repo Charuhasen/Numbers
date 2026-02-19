@@ -1,5 +1,6 @@
 import { useSession } from '@/context/ctx';
-import { processPendingScores } from '@/lib/score-service';
+import { clearGameSessionData, getGameSessionData } from '@/lib/game-session-store';
+import { processPendingScores, queuePendingScore } from '@/lib/score-service';
 import { supabase } from '@/lib/supabase';
 import { createContext, useCallback, useContext, useEffect, useState, type PropsWithChildren } from 'react';
 
@@ -122,6 +123,19 @@ export function ProfileProvider({ children }: PropsWithChildren) {
     let cancelled = false;
 
     (async () => {
+      // If the app was killed after a game ended but before the game-over screen
+      // could submit, a stale session will be in AsyncStorage. Move it to the
+      // pending queue so it gets submitted on this startup.
+      const staleSession = await getGameSessionData();
+      if (staleSession) {
+        await queuePendingScore({
+          mode: staleSession.mode,
+          events: staleSession.events,
+          roundReached: staleSession.challengeIndex,
+        });
+        await clearGameSessionData();
+      }
+
       // Flush any scores queued while offline
       await processPendingScores();
       if (!cancelled) await fetchProfile();

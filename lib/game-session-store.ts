@@ -1,4 +1,7 @@
 import { GameEvent, GameMode } from '@/engine/types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const SESSION_KEY = 'taptapmath_pending_session';
 
 export interface GameSessionData {
   mode: GameMode;
@@ -9,16 +12,18 @@ export interface GameSessionData {
   events: GameEvent[];
 }
 
-let sessionData: GameSessionData | null = null;
-
-export function setGameSessionData(data: GameSessionData) {
-  sessionData = data;
+/** Persist session to AsyncStorage so it survives app kills. */
+export async function setGameSessionData(data: GameSessionData): Promise<void> {
+  await AsyncStorage.setItem(SESSION_KEY, JSON.stringify(data));
 }
 
-export function getGameSessionData(): GameSessionData | null {
-  return sessionData;
+/** Read persisted session. Returns null if none exists. */
+export async function getGameSessionData(): Promise<GameSessionData | null> {
+  const raw = await AsyncStorage.getItem(SESSION_KEY);
+  return raw ? (JSON.parse(raw) as GameSessionData) : null;
 }
 
-export function clearGameSessionData() {
-  sessionData = null;
+/** Remove the persisted session after it has been submitted or queued. */
+export async function clearGameSessionData(): Promise<void> {
+  await AsyncStorage.removeItem(SESSION_KEY);
 }

@@ -40,7 +40,7 @@ export default function GameOverScreen() {
   const submittedRef = useRef(false);
 
   const doSubmit = useCallback(async () => {
-    const sessionData = getGameSessionData();
+    const sessionData = await getGameSessionData();
     if (!sessionData) {
       setSubmissionStatus('success');
       return;
@@ -49,7 +49,7 @@ export default function GameOverScreen() {
     try {
       setSubmissionStatus('submitting');
       const result = await submitGameScore(sessionData.mode, sessionData.events, sessionData.challengeIndex);
-      clearGameSessionData();
+      await clearGameSessionData();
       setSubmissionStatus('success');
 
       if (result.isNewBest) {
@@ -58,14 +58,12 @@ export default function GameOverScreen() {
 
       await refreshProfile();
     } catch {
-      if (sessionData) {
-        await queuePendingScore({
-          mode: sessionData.mode,
-          events: sessionData.events,
-          roundReached: sessionData.challengeIndex,
-        });
-        clearGameSessionData();
-      }
+      await queuePendingScore({
+        mode: sessionData.mode,
+        events: sessionData.events,
+        roundReached: sessionData.challengeIndex,
+      });
+      await clearGameSessionData();
       setSubmissionStatus('error');
     }
   }, [refreshProfile]);

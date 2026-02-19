@@ -37,7 +37,6 @@ export async function submitGameScore(
 ): Promise<SubmitResult> {
   const { data, error } = await supabase.rpc('submit_game_score', {
     p_mode: mode,
-    p_difficulty: 'progressive',
     p_events: toSnakeCaseEvents(events),
     p_round_reached: roundReached,
   });
