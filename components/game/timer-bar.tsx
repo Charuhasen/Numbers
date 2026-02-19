@@ -4,9 +4,15 @@ import React from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 import Animated, {
   SharedValue,
-  useAnimatedProps,
-  useAnimatedStyle,
+  cancelAnimation,
   interpolateColor,
+  useAnimatedProps,
+  useAnimatedReaction,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
 } from 'react-native-reanimated';
 
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
@@ -22,6 +28,35 @@ export const TimerBar = React.memo(function TimerBar({ progress, durationSec }: 
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
 
+  // Pulse opacity — animates when ≤ 3 s remain
+  const pulseOpacity = useSharedValue(1);
+
+  useAnimatedReaction(
+    () => progress.value * durationSec,
+    (secondsLeft, prev) => {
+      // "in zone" = timer is running and ≤ 3 s remain
+      const inZone = secondsLeft <= 3 && secondsLeft > 0;
+      const wasInZone = prev !== null && prev <= 3 && prev > 0;
+
+      if (inZone && !wasInZone) {
+        // Just entered the last-3-seconds zone — start pulsing
+        pulseOpacity.value = withRepeat(
+          withSequence(
+            withTiming(0.35, { duration: 350 }),
+            withTiming(1, { duration: 350 }),
+          ),
+          -1,
+          false,
+        );
+      } else if (!inZone && wasInZone) {
+        // Left the zone (expired or new board reset above 3 s) — stop pulsing
+        cancelAnimation(pulseOpacity);
+        pulseOpacity.value = 1;
+      }
+    },
+    [durationSec],
+  );
+
   const animatedBarStyle = useAnimatedStyle(() => {
     const color = interpolateColor(
       progress.value,
@@ -31,10 +66,10 @@ export const TimerBar = React.memo(function TimerBar({ progress, durationSec }: 
     return {
       width: `${progress.value * 100}%` as `${number}%`,
       backgroundColor: color,
+      opacity: pulseOpacity.value,
     };
   });
 
-  // Drive the seconds text directly from the shared value — no React re-renders
   const animatedTextProps = useAnimatedProps(() => ({
     text: `${Math.ceil(progress.value * durationSec)}`,
     defaultValue: `${durationSec}`,

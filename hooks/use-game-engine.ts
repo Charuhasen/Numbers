@@ -202,7 +202,11 @@ export function useGameEngine(mode: GameMode, onRevealCorrect: (indices: number[
 
     const elapsed = (Date.now() - timerStartRef.current) / 1000;
     const duration = timerDurationRef.current;
-    const timeRemaining = Math.max(0, duration - elapsed);
+
+    // Reject taps only when the clock has actually reached zero
+    if (elapsed >= duration) return;
+
+    const timeRemaining = duration - elapsed;
 
     const isCorrect = s.currentGrid.correctAnswers.includes(index);
 
