@@ -45,7 +45,7 @@ export default function FriendProfileScreen() {
     if (!friendship) return;
     Alert.alert(
       'Remove Friend',
-      `Remove ${friendship.friend.displayName} from your friends?`,
+      `Remove @${friendship.friend.username} from your friends?`,
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -92,15 +92,12 @@ export default function FriendProfileScreen() {
           {/* Avatar */}
           <View style={[styles.avatarLarge, { backgroundColor: theme.surfaceVariant }]}>
             <Text style={[styles.avatarLargeText, { color: theme.onSurfaceVariant }]}>
-              {(friend.displayName[0] ?? '?').toUpperCase()}
+              {(friend.username[0] ?? '?').toUpperCase()}
             </Text>
           </View>
 
-          {/* Name */}
-          <Text style={[styles.displayName, { color: theme.onSurface }]}>
-            {friend.displayName}
-          </Text>
-          <Text style={[styles.username, { color: theme.onSurfaceVariant }]}>
+          {/* Username */}
+          <Text style={[styles.username, { color: theme.onSurface }]}>
             @{friend.username}
           </Text>
 
@@ -177,13 +174,9 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: '700',
   },
-  displayName: {
+  username: {
     fontSize: 22,
     fontWeight: '700',
-    marginBottom: 4,
-  },
-  username: {
-    fontSize: 14,
     marginBottom: 32,
   },
   chips: {

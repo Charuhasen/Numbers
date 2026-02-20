@@ -1,11 +1,12 @@
 import { Colors } from '@/constants/theme';
 import { useSession } from '@/context/ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { isHapticsEnabled, setHapticsEnabled } from '@/lib/haptics';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { Alert, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SettingsScreen() {
@@ -15,14 +16,17 @@ export default function SettingsScreen() {
   const router = useRouter();
   const { signOut } = useSession();
 
+  const [hapticsOn, setHapticsOn] = useState(isHapticsEnabled);
+
+  const handleHapticsToggle = (value: boolean) => {
+    setHapticsOn(value);
+    setHapticsEnabled(value);
+  };
+
   const handleSignOut = () => {
     Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
       { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Sign Out',
-        style: 'destructive',
-        onPress: () => signOut(),
-      },
+      { text: 'Sign Out', style: 'destructive', onPress: () => signOut() },
     ]);
   };
 
@@ -39,16 +43,32 @@ export default function SettingsScreen() {
         <View style={styles.backBtn} />
       </View>
 
-      {/* List */}
+      {/* Preferences */}
       <View style={styles.section}>
-        <TouchableOpacity
-          style={[styles.row, { backgroundColor: theme.surfaceVariant }]}
-          onPress={handleSignOut}
-          activeOpacity={0.75}
-        >
-          <MaterialIcons name="logout" size={20} color={theme.error} />
-          <Text style={[styles.rowLabel, { color: theme.error }]}>Sign Out</Text>
-        </TouchableOpacity>
+        <Text style={[styles.sectionLabel, { color: theme.onSurfaceVariant }]}>Preferences</Text>
+        <View style={[styles.card, { backgroundColor: theme.surfaceVariant }]}>
+          <View style={styles.row}>
+            <MaterialIcons name="vibration" size={20} color={theme.onSurface} />
+            <Text style={[styles.rowLabel, { color: theme.onSurface }]}>Vibration</Text>
+            <Switch
+              value={hapticsOn}
+              onValueChange={handleHapticsToggle}
+              trackColor={{ false: theme.surfaceDim, true: '#10B981' }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
+        </View>
+      </View>
+
+      {/* Account */}
+      <View style={styles.section}>
+        <Text style={[styles.sectionLabel, { color: theme.onSurfaceVariant }]}>Account</Text>
+        <View style={[styles.card, { backgroundColor: theme.surfaceVariant }]}>
+          <TouchableOpacity style={styles.row} onPress={handleSignOut} activeOpacity={0.75}>
+            <MaterialIcons name="logout" size={20} color={theme.error} />
+            <Text style={[styles.rowLabel, { color: theme.error }]}>Sign Out</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -71,6 +91,18 @@ const styles = StyleSheet.create({
   section: {
     marginTop: 24,
     paddingHorizontal: 24,
+    gap: 8,
+  },
+  sectionLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    marginLeft: 4,
+  },
+  card: {
+    borderRadius: 16,
+    overflow: 'hidden',
   },
   row: {
     flexDirection: 'row',
@@ -78,10 +110,10 @@ const styles = StyleSheet.create({
     gap: 14,
     paddingHorizontal: 16,
     paddingVertical: 16,
-    borderRadius: 16,
   },
   rowLabel: {
     fontSize: 16,
     fontWeight: '600',
+    flex: 1,
   },
 });

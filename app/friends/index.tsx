@@ -1,6 +1,7 @@
 import {
   Friendship,
   SearchResult,
+  getFriends,
   getIncomingRequests,
   getSentRequests,
   removeFriendship,
@@ -18,6 +19,7 @@ import {
   Alert,
   FlatList,
   Pressable,
+  SectionList,
   StyleSheet,
   Text,
   TextInput,
@@ -26,35 +28,38 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-type Tab = 'add' | 'requests';
+type Tab = 'friends' | 'add' | 'requests';
 
 export default function FriendsScreen() {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
   const router = useRouter();
 
-  const [activeTab, setActiveTab] = useState<Tab>('add');
+  const [activeTab, setActiveTab] = useState<Tab>('friends');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
+  const [friends, setFriends] = useState<Friendship[]>([]);
   const [incoming, setIncoming] = useState<Friendship[]>([]);
   const [sent, setSent] = useState<Friendship[]>([]);
-  const [isLoadingRequests, setIsLoadingRequests] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(false);
 
   const loadSocialData = useCallback(async () => {
-    setIsLoadingRequests(true);
+    setIsLoadingData(true);
     try {
-      const [inc, s] = await Promise.all([
+      const [f, inc, s] = await Promise.all([
+        getFriends(),
         getIncomingRequests(),
         getSentRequests(),
       ]);
+      setFriends(f);
       setIncoming(inc);
       setSent(s);
     } catch {
       // silently fail — not critical
     } finally {
-      setIsLoadingRequests(false);
+      setIsLoadingData(false);
     }
   }, []);
 
@@ -121,6 +126,28 @@ export default function FriendsScreen() {
     }
   };
 
+  // ── Render helpers ──────────────────────────────────────────────────────────
+
+  const renderFriend = ({ item }: { item: Friendship }) => (
+    <TouchableOpacity
+      style={[styles.row, { borderBottomColor: theme.outlineVariant }]}
+      onPress={() => router.push(`/friends/${item.friend.id}`)}
+      activeOpacity={0.75}
+    >
+      <View style={[styles.avatar, { backgroundColor: theme.surfaceVariant }]}>
+        <Text style={[styles.avatarText, { color: theme.onSurfaceVariant }]}>
+          {(item.friend.username[0] ?? '?').toUpperCase()}
+        </Text>
+      </View>
+      <View style={styles.rowInfo}>
+        <Text style={[styles.rowName, { color: theme.onSurface }]} numberOfLines={1}>
+          @{item.friend.username}
+        </Text>
+      </View>
+      <MaterialIcons name="chevron-right" size={20} color={theme.onSurfaceVariant} />
+    </TouchableOpacity>
+  );
+
   const renderSearchResult = ({ item }: { item: SearchResult }) => {
     const canAdd = !item.relationshipStatus;
     const isPending = item.relationshipStatus === 'pending' && item.isSender;
@@ -131,14 +158,11 @@ export default function FriendsScreen() {
       <View style={[styles.row, { borderBottomColor: theme.outlineVariant }]}>
         <View style={[styles.avatar, { backgroundColor: theme.surfaceVariant }]}>
           <Text style={[styles.avatarText, { color: theme.onSurfaceVariant }]}>
-            {(item.displayName[0] ?? '?').toUpperCase()}
+            {(item.username[0] ?? '?').toUpperCase()}
           </Text>
         </View>
         <View style={styles.rowInfo}>
           <Text style={[styles.rowName, { color: theme.onSurface }]} numberOfLines={1}>
-            {item.displayName}
-          </Text>
-          <Text style={[styles.rowUsername, { color: theme.onSurfaceVariant }]} numberOfLines={1}>
             @{item.username}
           </Text>
         </View>
@@ -159,16 +183,16 @@ export default function FriendsScreen() {
         {isIncoming && (
           <TouchableOpacity
             style={[styles.actionBtn, { backgroundColor: '#3B82F6' }]}
-            onPress={() => {
+            onPress={() =>
               Alert.alert(
-                `Friend request from ${item.displayName}`,
+                `Friend request from @${item.username}`,
                 undefined,
                 [
                   { text: 'Decline', style: 'destructive', onPress: () => handleRespond(item.friendshipId!, false) },
                   { text: 'Accept', onPress: () => handleRespond(item.friendshipId!, true) },
                 ]
-              );
-            }}
+              )
+            }
             activeOpacity={0.8}
           >
             <Text style={styles.actionBtnText}>Respond</Text>
@@ -191,14 +215,11 @@ export default function FriendsScreen() {
     <View style={[styles.row, { borderBottomColor: theme.outlineVariant }]}>
       <View style={[styles.avatar, { backgroundColor: theme.surfaceVariant }]}>
         <Text style={[styles.avatarText, { color: theme.onSurfaceVariant }]}>
-          {(item.friend.displayName[0] ?? '?').toUpperCase()}
+          {(item.friend.username[0] ?? '?').toUpperCase()}
         </Text>
       </View>
       <View style={styles.rowInfo}>
         <Text style={[styles.rowName, { color: theme.onSurface }]} numberOfLines={1}>
-          {item.friend.displayName}
-        </Text>
-        <Text style={[styles.rowUsername, { color: theme.onSurfaceVariant }]} numberOfLines={1}>
           @{item.friend.username}
         </Text>
       </View>
@@ -223,14 +244,11 @@ export default function FriendsScreen() {
     <View style={[styles.row, { borderBottomColor: theme.outlineVariant }]}>
       <View style={[styles.avatar, { backgroundColor: theme.surfaceVariant }]}>
         <Text style={[styles.avatarText, { color: theme.onSurfaceVariant }]}>
-          {(item.friend.displayName[0] ?? '?').toUpperCase()}
+          {(item.friend.username[0] ?? '?').toUpperCase()}
         </Text>
       </View>
       <View style={styles.rowInfo}>
         <Text style={[styles.rowName, { color: theme.onSurface }]} numberOfLines={1}>
-          {item.friend.displayName}
-        </Text>
-        <Text style={[styles.rowUsername, { color: theme.onSurfaceVariant }]} numberOfLines={1}>
           @{item.friend.username}
         </Text>
       </View>
@@ -246,6 +264,12 @@ export default function FriendsScreen() {
 
   const requestBadge = incoming.length;
 
+  const tabs: { key: Tab; label: string }[] = [
+    { key: 'friends', label: 'Friends' },
+    { key: 'add', label: 'Add' },
+    { key: 'requests', label: 'Requests' },
+  ];
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.surface }]}>
       {/* Header */}
@@ -259,29 +283,45 @@ export default function FriendsScreen() {
 
       {/* Tab bar */}
       <View style={[styles.tabBar, { borderBottomColor: theme.outlineVariant }]}>
-        {(['add', 'requests'] as Tab[]).map((tab) => (
+        {tabs.map(({ key, label }) => (
           <Pressable
-            key={tab}
+            key={key}
             style={styles.tabItem}
-            onPress={() => setActiveTab(tab)}
+            onPress={() => setActiveTab(key)}
           >
-            <Text
-              style={[
-                styles.tabLabel,
-                { color: activeTab === tab ? '#10B981' : theme.onSurfaceVariant },
-              ]}
-            >
-              {tab === 'add' ? 'Add' : 'Requests'}
+            <Text style={[styles.tabLabel, { color: activeTab === key ? '#10B981' : theme.onSurfaceVariant }]}>
+              {label}
             </Text>
-            {tab === 'requests' && requestBadge > 0 && (
+            {key === 'requests' && requestBadge > 0 && (
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>{requestBadge}</Text>
               </View>
             )}
-            {activeTab === tab && <View style={styles.tabUnderline} />}
+            {activeTab === key && <View style={styles.tabUnderline} />}
           </Pressable>
         ))}
       </View>
+
+      {/* Friends tab */}
+      {activeTab === 'friends' && (
+        <View style={styles.flex}>
+          {isLoadingData ? (
+            <ActivityIndicator style={styles.loader} color={theme.onSurfaceVariant} />
+          ) : (
+            <FlatList
+              data={friends}
+              keyExtractor={(item) => item.id}
+              renderItem={renderFriend}
+              contentContainerStyle={styles.listContent}
+              ListEmptyComponent={
+                <Text style={[styles.emptyText, { color: theme.onSurfaceVariant }]}>
+                  No friends yet — search for players in the Add tab
+                </Text>
+              }
+            />
+          )}
+        </View>
+      )}
 
       {/* Add tab */}
       {activeTab === 'add' && (
@@ -324,34 +364,32 @@ export default function FriendsScreen() {
       {/* Requests tab */}
       {activeTab === 'requests' && (
         <View style={styles.flex}>
-          {isLoadingRequests ? (
+          {isLoadingData ? (
             <ActivityIndicator style={styles.loader} color={theme.onSurfaceVariant} />
+          ) : incoming.length === 0 && sent.length === 0 ? (
+            <Text style={[styles.emptyText, { color: theme.onSurfaceVariant }]}>
+              No pending requests
+            </Text>
           ) : (
-            <FlatList
-              data={[...incoming.map((f) => ({ ...f, _section: 'incoming' as const })),
-                     ...sent.map((f) => ({ ...f, _section: 'sent' as const }))]}
+            <SectionList
+              sections={[
+                { key: 'incoming', title: 'Incoming', data: incoming },
+                { key: 'sent', title: 'Outgoing', data: sent },
+              ]}
               keyExtractor={(item) => item.id}
-              ListHeaderComponent={
-                <>
-                  {incoming.length > 0 && (
-                    <Text style={[styles.sectionLabel, { color: theme.onSurfaceVariant }]}>
-                      Incoming
-                    </Text>
-                  )}
-                </>
+              renderSectionHeader={({ section }) =>
+                section.data.length > 0 ? (
+                  <Text style={[styles.sectionLabel, { color: theme.onSurfaceVariant, backgroundColor: theme.surface }]}>
+                    {section.title}
+                  </Text>
+                ) : null
               }
-              renderItem={({ item }) => {
-                if (item._section === 'incoming') {
-                  return renderIncoming({ item });
-                }
-                return renderSent({ item });
-              }}
+              renderItem={({ item, section }) =>
+                section.key === 'incoming'
+                  ? renderIncoming({ item })
+                  : renderSent({ item })
+              }
               contentContainerStyle={styles.listContent}
-              ListEmptyComponent={
-                <Text style={[styles.emptyText, { color: theme.onSurfaceVariant }]}>
-                  No pending requests
-                </Text>
-              }
             />
           )}
         </View>
@@ -455,10 +493,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
   },
-  rowUsername: {
-    fontSize: 12,
-    marginTop: 1,
-  },
   actionBtn: {
     paddingHorizontal: 12,
     paddingVertical: 7,
@@ -487,6 +521,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 48,
     fontSize: 15,
+    paddingHorizontal: 32,
   },
   loader: {
     marginTop: 48,

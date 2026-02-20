@@ -2,7 +2,8 @@ import { getNextBoard, loadBoardPool } from '@/engine/board-pool';
 import { createInitialState } from '@/engine/game-init';
 import { gameReducer } from '@/engine/game-reducer';
 import { Board, ChallengeType, GameMode, GameState, Grid } from '@/engine/types';
-import * as Haptics from 'expo-haptics';
+import { impact } from '@/lib/haptics';
+import { ImpactFeedbackStyle } from 'expo-haptics';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useSharedValue } from 'react-native-reanimated';
 
@@ -173,7 +174,7 @@ export function useGameEngine(
       if (remaining <= 0 && !isAdvancingRef.current) {
         // Block re-entry during the reveal window
         isAdvancingRef.current = true;
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+        impact(ImpactFeedbackStyle.Heavy);
         dispatch({ type: 'TIMEOUT' });
 
         // Freeze the grid, then reveal the correct answer
@@ -222,7 +223,7 @@ export function useGameEngine(
     isAdvancingRef.current = true;
 
     if (isCorrect) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      impact(ImpactFeedbackStyle.Medium);
       setTimeout(() => {
         if (stateRef.current.phase !== 'gameOver') {
           isAdvancingRef.current = false;
@@ -230,7 +231,7 @@ export function useGameEngine(
         }
       }, 300);
     } else {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+      impact(ImpactFeedbackStyle.Heavy);
       // Reveal the correct answer, then advance after the player has seen it
       onRevealCorrect(s.currentGrid.correctAnswers);
       setTimeout(() => {

@@ -1,6 +1,7 @@
 import { Colors, Spacing } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import * as Haptics from 'expo-haptics';
+import { impact } from '@/lib/haptics';
+import { ImpactFeedbackStyle } from 'expo-haptics';
 import React, { useCallback } from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import Animated, {
@@ -40,7 +41,7 @@ export const GridTile = React.memo(function GridTile({
       withTiming(0.92, { duration: 50 }),
       withSpring(1, { damping: 15, stiffness: 300 }),
     );
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    impact(ImpactFeedbackStyle.Light);
     onPress();
   }, [disabled, onPress, scale]);
 

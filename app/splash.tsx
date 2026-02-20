@@ -1,6 +1,7 @@
 import { Colors } from '@/constants/theme';
 import { useProfile } from '@/context/profile-ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { loadHapticsPreference } from '@/lib/haptics';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useRef, useState } from 'react';
@@ -39,8 +40,9 @@ export default function SplashScreen() {
     transform: [{ translateY: translateY.value }],
   }));
 
-  // Minimum 2-second display time
+  // Minimum 2-second display time + bootstrap side-effects
   useEffect(() => {
+    loadHapticsPreference();
     const timer = setTimeout(() => setTimerReady(true), 2000);
     return () => clearTimeout(timer);
   }, []);
