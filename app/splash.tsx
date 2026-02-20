@@ -2,6 +2,7 @@ import { Colors } from '@/constants/theme';
 import { useProfile } from '@/context/profile-ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { loadHapticsPreference } from '@/lib/haptics';
+import { detectAndSaveRegion } from '@/lib/region-service';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useRef, useState } from 'react';
@@ -21,7 +22,7 @@ export default function SplashScreen() {
   const theme = Colors[colorScheme ?? 'light'];
   const isDark = colorScheme === 'dark';
   const router = useRouter();
-  const { profile, isLoading } = useProfile();
+  const { profile, isLoading, refreshProfile } = useProfile();
   const hasNavigated = useRef(false);
   const [profileReady, setProfileReady] = useState(false);
   const [timerReady, setTimerReady] = useState(false);
@@ -46,6 +47,15 @@ export default function SplashScreen() {
     const timer = setTimeout(() => setTimerReady(true), 2000);
     return () => clearTimeout(timer);
   }, []);
+
+  // Detect region via GPS / IP geolocation on every launch (fire-and-forget)
+  useEffect(() => {
+    const userId = profile?.id;
+    if (!userId) return;
+    detectAndSaveRegion(userId).then((code) => {
+      if (code) refreshProfile();
+    });
+  }, [profile?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Track when profile has finished loading
   useEffect(() => {

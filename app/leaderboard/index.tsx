@@ -4,7 +4,6 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { getFriends, type FriendProfile } from '@/lib/friends-service';
 import {
   buildFriendsLeaderboard,
-  detectAndPersistCountryCode,
   fetchGlobalLeaderboard,
   fetchRegionalLeaderboard,
   type LeaderboardEntry,
@@ -93,14 +92,9 @@ export default function LeaderboardScreen() {
   // ---------------------------------------------------------------------------
 
   function resolveCountryCode(): string | null {
-    const fromProfile = profileRef.current?.countryCode;
-    if (fromProfile) return fromProfile;
-    if (countryCodeRef.current) return countryCodeRef.current;
-    const userId = profileRef.current?.id;
-    if (!userId) return null;
-    const detected = detectAndPersistCountryCode(userId);
-    if (detected) countryCodeRef.current = detected;
-    return detected;
+    // Country code is detected on the splash screen (GPS / IP geolocation)
+    // and persisted to the profile. We just read it here.
+    return profileRef.current?.countryCode ?? countryCodeRef.current;
   }
 
   function cacheKey(s: LeaderboardScope, m: LeaderboardMode, cc: string | null): string {

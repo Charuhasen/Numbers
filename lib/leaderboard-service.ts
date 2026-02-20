@@ -1,5 +1,3 @@
-import { getLocales } from 'expo-localization';
-
 import { supabase } from '@/lib/supabase';
 import type { FriendProfile } from '@/lib/friends-service';
 
@@ -126,20 +124,3 @@ export function buildFriendsLeaderboard(
   };
 }
 
-/**
- * Detect device region code and persist it to the user's profile.
- * Fire-and-forget: does not throw on failure.
- * Returns the detected code or null.
- */
-export function detectAndPersistCountryCode(userId: string): string | null {
-  const regionCode = getLocales()[0]?.regionCode ?? null;
-  if (regionCode) {
-    // Fire-and-forget update — do not await
-    supabase
-      .from('profiles')
-      .update({ country_code: regionCode })
-      .eq('id', userId)
-      .then(() => {/* ignore */});
-  }
-  return regionCode;
-}
