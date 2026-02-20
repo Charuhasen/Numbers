@@ -50,6 +50,7 @@ function RootLayoutNav() {
         <Stack.Screen name="splash" options={{ headerShown: false }} />
         <Stack.Screen name="game" options={{ headerShown: false }} />
         <Stack.Screen name="friends" options={{ headerShown: false }} />
+        <Stack.Screen name="leaderboard" options={{ headerShown: false }} />
         <Stack.Screen name="settings" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="auto" />

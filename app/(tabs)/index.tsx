@@ -66,7 +66,7 @@ export default function HomeScreen() {
           <TouchableOpacity
             style={[styles.quickActionCard, { backgroundColor: theme.surfaceVariant }]}
             activeOpacity={0.75}
-            onPress={() => Alert.alert('Leaderboard', 'Coming soon!')}
+            onPress={() => router.push('/leaderboard')}
           >
             <View style={[styles.quickActionIcon, { backgroundColor: roseIconBg }]}>
               <MaterialIcons name="emoji-events" size={22} color="#F43F5E" />

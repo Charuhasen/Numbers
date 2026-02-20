@@ -10,14 +10,17 @@ export interface Profile {
   displayName: string | null;
   bits: number;
   avatarUrl: string | null;
+  countryCode: string | null;
 }
 
 export interface BestScores {
   classic: number;
+  blitz: number;
 }
 
 const emptyBestScores = (): BestScores => ({
   classic: 0,
+  blitz: 0,
 });
 
 interface ProfileContextValue {
@@ -57,7 +60,7 @@ export function ProfileProvider({ children }: PropsWithChildren) {
     // Fetch profile
     let profileResult = await supabase
       .from('profiles')
-      .select('id, username, display_name, bits, avatar_url')
+      .select('id, username, display_name, bits, avatar_url, country_code')
       .eq('id', userId)
       .single();
 
@@ -76,7 +79,7 @@ export function ProfileProvider({ children }: PropsWithChildren) {
       // Re-fetch after creation
       profileResult = await supabase
         .from('profiles')
-        .select('id, username, display_name, bits, avatar_url')
+        .select('id, username, display_name, bits, avatar_url, country_code')
         .eq('id', userId)
         .single();
     }
@@ -88,6 +91,7 @@ export function ProfileProvider({ children }: PropsWithChildren) {
         displayName: profileResult.data.display_name,
         bits: profileResult.data.bits ?? 0,
         avatarUrl: profileResult.data.avatar_url,
+        countryCode: profileResult.data.country_code ?? null,
       });
     }
 
