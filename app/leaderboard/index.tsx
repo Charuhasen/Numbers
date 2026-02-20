@@ -26,7 +26,43 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import PagerView from 'react-native-pager-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
+const SCOPES: LeaderboardScope[] = ['global', 'regional', 'friends'];
+
+// ---------------------------------------------------------------------------
+// Per-page state type
+// ---------------------------------------------------------------------------
+
+interface PageState {
+  result: LeaderboardResult;
+  isLoading: boolean;
+  lastUpdated: Date | null;
+  error: string | null;
+}
+
+function initPageState(s: LeaderboardScope): PageState {
+  if (s === 'global') {
+    return {
+      result: { entries: [], playerRank: null },
+      isLoading: !isLeaderboardFresh('classic', null),
+      lastUpdated: getLeaderboardFetchedAt('classic', null),
+      error: null,
+    };
+  }
+  // regional starts loading; friends is client-side so starts ready
+  return {
+    result: { entries: [], playerRank: null },
+    isLoading: s === 'regional',
+    lastUpdated: null,
+    error: null,
+  };
+}
 
 // ---------------------------------------------------------------------------
 // LeaderboardRow
@@ -82,22 +118,18 @@ export default function LeaderboardScreen() {
   const router = useRouter();
   const { profile, bestScores } = useProfile();
 
-  // UI state — only what the render tree reads
   const [mode, setMode] = useState<LeaderboardMode>('classic');
-  const [scope, setScope] = useState<LeaderboardScope>('global');
-  // Start without a spinner if we already have fresh cached data for the default view
-  const [isLoading, setIsLoading] = useState(() => !isLeaderboardFresh('classic', null));
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<LeaderboardResult>({ entries: [], playerRank: null });
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(
-    () => getLeaderboardFetchedAt('classic', null),
-  );
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [activePage, setActivePage] = useState(0);
+  const [pages, setPages] = useState<Record<LeaderboardScope, PageState>>(() => ({
+    global: initPageState('global'),
+    regional: initPageState('regional'),
+    friends: initPageState('friends'),
+  }));
+  const [refreshingScope, setRefreshingScope] = useState<LeaderboardScope | null>(null);
 
   // Toast
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const toastOpacity = useRef(new Animated.Value(0)).current;
-
   const showToast = useCallback((msg: string) => {
     setToastMsg(msg);
     toastOpacity.setValue(0);
@@ -108,15 +140,17 @@ export default function LeaderboardScreen() {
     ]).start(() => setToastMsg(null));
   }, [toastOpacity]);
 
+  // PagerView ref for programmatic navigation (tab taps)
+  const pagerRef = useRef<PagerView>(null);
+  // Track active page in a ref to avoid redundant setState calls during scroll
+  const activePageRef = useRef(0);
+
   // ---------------------------------------------------------------------------
-  // Refs — read inside callbacks without creating dependency loops
+  // Refs — read inside stable callbacks without dependency loops
   // ---------------------------------------------------------------------------
   const modeRef = useRef<LeaderboardMode>('classic');
-  const scopeRef = useRef<LeaderboardScope>('global');
   const countryCodeRef = useRef<string | null>(profile?.countryCode ?? null);
   const friendsRef = useRef<FriendProfile[]>([]);
-
-  // Keep profile ref for stable access inside doLoad
   const profileRef = useRef(profile);
   const bestScoresRef = useRef(bestScores);
   useEffect(() => { profileRef.current = profile; }, [profile]);
@@ -127,28 +161,30 @@ export default function LeaderboardScreen() {
   // ---------------------------------------------------------------------------
 
   function resolveCountryCode(): string | null {
-    // Country code is detected on the splash screen (GPS / IP geolocation)
-    // and persisted to the profile. We just read it here.
     return profileRef.current?.countryCode ?? countryCodeRef.current;
   }
 
-  // Pure data fetcher — never touches isLoading; service handles TTL cache
-  async function fetchForScope(
-    s: LeaderboardScope,
-    m: LeaderboardMode,
-    friendList: FriendProfile[],
-    cc: string | null,
-  ): Promise<void> {
+  // Functional update — safe to call from stale closures (setPages is stable)
+  function patchPage(s: LeaderboardScope, patch: Partial<PageState>) {
+    setPages(prev => ({ ...prev, [s]: { ...prev[s], ...patch } }));
+  }
+
+  // ---------------------------------------------------------------------------
+  // loadOneScope — fetches data for a single scope and updates its page state
+  // ---------------------------------------------------------------------------
+  const loadOneScope = useCallback(async (s: LeaderboardScope, m: LeaderboardMode) => {
     if (s === 'friends') {
       const p = profileRef.current;
       if (!p) return;
       const r = buildFriendsLeaderboard(
-        m, friendList, p.id, p.username,
+        m, friendsRef.current, p.id, p.username,
         bestScoresRef.current[m], p.countryCode ?? undefined,
       );
-      setResult(r);
+      patchPage(s, { result: r, isLoading: false, lastUpdated: new Date(), error: null });
       return;
     }
+
+    const cc = s === 'regional' ? resolveCountryCode() : null;
 
     try {
       let r: LeaderboardResult;
@@ -156,93 +192,70 @@ export default function LeaderboardScreen() {
         r = await fetchGlobalLeaderboard(m);
       } else {
         if (!cc) {
-          setResult({ entries: [], playerRank: null });
+          patchPage(s, { result: { entries: [], playerRank: null }, isLoading: false, error: null });
           return;
         }
         r = await fetchRegionalLeaderboard(m, cc);
       }
-      setResult(r);
+      patchPage(s, { result: r, isLoading: false, lastUpdated: getLeaderboardFetchedAt(m, cc), error: null });
     } catch {
-      setError('Could not load leaderboard. Pull down to refresh.');
+      patchPage(s, { isLoading: false, error: 'Could not load leaderboard. Pull down to refresh.' });
     }
-  }
-
-  // ---------------------------------------------------------------------------
-  // doLoad — reads everything from refs, no state deps → stable reference
-  // ---------------------------------------------------------------------------
-  const doLoad = useCallback(async (viaRefresh = false) => {
-    setError(null);
-
-    const s = scopeRef.current;
-    const m = modeRef.current;
-    const cc = s === 'regional' ? resolveCountryCode() : null;
-
-    // Show full-screen spinner only on initial/stale loads, not pull-to-refresh
-    const needsNetwork = s !== 'friends' && !isLeaderboardFresh(m, cc);
-    if (!viaRefresh && needsNetwork) setIsLoading(true);
-
-    // Refresh friends list (needed for friends tab; also updates background data)
-    try {
-      const fetched = await getFriends();
-      friendsRef.current = fetched.map((f) => f.friend);
-    } catch {
-      // non-fatal — use stale friendsRef
-    }
-
-    await fetchForScope(s, m, friendsRef.current, cc);
-    setLastUpdated(s === 'friends' ? new Date() : getLeaderboardFetchedAt(m, cc));
-    setIsLoading(false);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Stable ref so useFocusEffect never sees a changing callback
+  // ---------------------------------------------------------------------------
+  // doLoad — refresh friends list then load all 3 scopes concurrently
+  // ---------------------------------------------------------------------------
+  const doLoad = useCallback(async () => {
+    const m = modeRef.current;
+    const cc = resolveCountryCode();
+
+    // Only show the full-screen spinner for scopes with stale/empty data
+    setPages(prev => ({
+      global: { ...prev.global, isLoading: !isLeaderboardFresh(m, null) },
+      regional: { ...prev.regional, isLoading: !isLeaderboardFresh(m, cc) },
+      friends: { ...prev.friends, isLoading: false },
+    }));
+
+    try {
+      const fetched = await getFriends();
+      friendsRef.current = fetched.map(f => f.friend);
+    } catch {
+      // non-fatal
+    }
+
+    await Promise.all(SCOPES.map(s => loadOneScope(s, m)));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const doLoadRef = useRef(doLoad);
   useEffect(() => { doLoadRef.current = doLoad; });
 
-  // Only re-runs on actual screen focus changes (not on dep changes)
-  useFocusEffect(
-    useCallback(() => {
-      doLoadRef.current();
-    }, []),
-  );
+  useFocusEffect(useCallback(() => {
+    doLoadRef.current();
+  }, []));
 
   // ---------------------------------------------------------------------------
-  // Tab handlers — update both state (UI) and ref (next call) synchronously
+  // Mode change — reload all pages for the new mode
   // ---------------------------------------------------------------------------
-
   const handleModeChange = async (m: LeaderboardMode) => {
     setMode(m);
     modeRef.current = m;
-    const s = scopeRef.current;
-    const cc = s === 'regional' ? resolveCountryCode() : null;
-    if (s !== 'friends' && !isLeaderboardFresh(m, cc)) {
-      setIsLoading(true);
-      setError(null);
-    }
-    await fetchForScope(s, m, friendsRef.current, cc);
-    setLastUpdated(s === 'friends' ? new Date() : getLeaderboardFetchedAt(m, cc));
-    setIsLoading(false);
+    const cc = resolveCountryCode();
+    setPages(prev => ({
+      global: { ...prev.global, isLoading: !isLeaderboardFresh(m, null) },
+      regional: { ...prev.regional, isLoading: !isLeaderboardFresh(m, cc) },
+      friends: { ...prev.friends },
+    }));
+    await Promise.all(SCOPES.map(s => loadOneScope(s, m)));
   };
 
-  const handleScopeChange = async (s: LeaderboardScope) => {
-    setScope(s);
-    scopeRef.current = s;
-    const m = modeRef.current;
-    const cc = s === 'regional' ? resolveCountryCode() : null;
-    if (s !== 'friends' && !isLeaderboardFresh(m, cc)) {
-      setIsLoading(true);
-      setError(null);
-    }
-    await fetchForScope(s, m, friendsRef.current, cc);
-    setLastUpdated(s === 'friends' ? new Date() : getLeaderboardFetchedAt(m, cc));
-    setIsLoading(false);
-  };
-
-  const handleRefresh = useCallback(() => {
-    const s = scopeRef.current;
+  // ---------------------------------------------------------------------------
+  // Pull-to-refresh — per scope, respects 5-min TTL
+  // ---------------------------------------------------------------------------
+  const handleRefresh = useCallback((s: LeaderboardScope) => {
     const m = modeRef.current;
     const cc = s === 'regional' ? resolveCountryCode() : null;
 
-    // Friends tab is always re-fetchable (client-side, no RPC cost)
     if (s !== 'friends' && isLeaderboardFresh(m, cc)) {
       const fetchedAt = getLeaderboardFetchedAt(m, cc);
       if (fetchedAt) {
@@ -253,28 +266,31 @@ export default function LeaderboardScreen() {
       return;
     }
 
-    setIsRefreshing(true);
-    doLoadRef.current(true).finally(() => setIsRefreshing(false));
-  }, [showToast]); // eslint-disable-line react-hooks/exhaustive-deps
+    setRefreshingScope(s);
+
+    const doRefresh = async () => {
+      // Re-fetch friends list when refreshing the friends tab
+      if (s === 'friends') {
+        try {
+          const fetched = await getFriends();
+          friendsRef.current = fetched.map(f => f.friend);
+        } catch { /* non-fatal */ }
+      }
+      await loadOneScope(s, m);
+    };
+
+    doRefresh().finally(() => setRefreshingScope(null));
+  }, [showToast, loadOneScope]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ---------------------------------------------------------------------------
-  // Render helpers
+  // Render helper — empty / error message per scope
   // ---------------------------------------------------------------------------
-
-  const emptyMessage = (): string => {
+  function emptyMessage(s: LeaderboardScope, error: string | null): string {
     if (error) return error;
-    if (scope === 'friends') return 'Add friends to see how you compare!';
-    if (scope === 'regional' && !countryCodeRef.current) return 'Your region could not be detected.';
+    if (s === 'friends') return 'Add friends to see how you compare!';
+    if (s === 'regional' && !countryCodeRef.current) return 'Your region could not be detected.';
     return 'No scores yet. Be the first to play!';
-  };
-
-  const renderEmpty = () => (
-    <View style={styles.emptyContainer}>
-      <Text style={[styles.emptyText, { color: theme.onSurfaceVariant }]}>{emptyMessage()}</Text>
-    </View>
-  );
-
-  const playerRankScore = bestScores[mode];
+  }
 
   // ---------------------------------------------------------------------------
   // Render
@@ -291,7 +307,7 @@ export default function LeaderboardScreen() {
         <View style={styles.backBtn} />
       </View>
 
-      {/* Mode tabs */}
+      {/* Mode tabs — Classic / Blitz */}
       <View style={[styles.modeTabs, { backgroundColor: theme.surfaceVariant }]}>
         {(['classic', 'blitz'] as LeaderboardMode[]).map((m) => {
           const active = mode === m;
@@ -310,12 +326,19 @@ export default function LeaderboardScreen() {
         })}
       </View>
 
-      {/* Scope toggle */}
+      {/* Scope tabs — tap or swipe to navigate */}
       <View style={styles.scopeRow}>
-        {(['global', 'regional', 'friends'] as LeaderboardScope[]).map((s) => {
-          const active = scope === s;
+        {SCOPES.map((s, i) => {
+          const active = activePage === i;
           return (
-            <TouchableOpacity key={s} onPress={() => handleScopeChange(s)} style={styles.scopeTab}>
+            <TouchableOpacity
+              key={s}
+              style={styles.scopeTab}
+              onPress={() => {
+                pagerRef.current?.setPage(i);
+                setActivePage(i);
+              }}
+            >
               <Text style={[styles.scopeTabText, { color: active ? theme.primary : theme.onSurfaceVariant }]}>
                 {s.charAt(0).toUpperCase() + s.slice(1)}
               </Text>
@@ -325,62 +348,98 @@ export default function LeaderboardScreen() {
         })}
       </View>
 
-      {/* Scrollable content — pull from anywhere triggers refresh */}
-      <ScrollView
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={handleRefresh}
-            tintColor={theme.primary}
-            colors={[theme.primary]}
-          />
-        }
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
+      {/* Swipeable pages — one per scope */}
+      <PagerView
+        ref={pagerRef}
+        style={styles.pager}
+        initialPage={0}
+        onPageScroll={(e) => {
+          const { position, offset } = e.nativeEvent;
+          // Update at the midpoint so the indicator tracks the dominant page instantly
+          const dominant = offset > 0.5 ? position + 1 : position;
+          if (dominant !== activePageRef.current) {
+            activePageRef.current = dominant;
+            setActivePage(dominant);
+          }
+        }}
+        onPageSelected={(e) => {
+          // Final confirmation once animation settles
+          const p = e.nativeEvent.position;
+          if (p !== activePageRef.current) {
+            activePageRef.current = p;
+            setActivePage(p);
+          }
+        }}
       >
-        {/* Last updated timestamp */}
-        {lastUpdated && !isLoading && (
-          <Text style={[styles.lastUpdated, { color: theme.onSurfaceVariant }]}>
-            Updated {formatAge(lastUpdated)}
-          </Text>
-        )}
+        {SCOPES.map((s) => {
+          const { result, isLoading, lastUpdated, error } = pages[s];
+          const playerRankScore = bestScores[mode];
 
-        {isLoading ? (
-          <ActivityIndicator color={theme.primary} size="large" style={styles.loadingSpinner} />
-        ) : (
-          <>
-            {/* Rank card */}
-            {result.playerRank !== null && (
-              <View style={[styles.rankCard, { backgroundColor: theme.surfaceVariant }]}>
-                <View style={styles.rankCardSide}>
-                  <Text style={[styles.rankCardLabel, { color: theme.onSurfaceVariant }]}>YOUR RANK</Text>
-                  <Text style={[styles.rankCardValue, { color: theme.primary }]}>#{result.playerRank}</Text>
-                </View>
-                <View style={styles.rankCardDivider} />
-                <View style={styles.rankCardSide}>
-                  <Text style={[styles.rankCardLabel, { color: theme.onSurfaceVariant }]}>BEST</Text>
-                  <Text style={[styles.rankCardValue, { color: theme.onSurface }]}>
-                    {playerRankScore === 0 ? '—' : new Intl.NumberFormat('en-US').format(playerRankScore)}
-                  </Text>
-                </View>
-              </View>
-            )}
+          return (
+            <ScrollView
+              key={s}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshingScope === s}
+                  onRefresh={() => handleRefresh(s)}
+                  tintColor={theme.primary}
+                  colors={[theme.primary]}
+                />
+              }
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.scrollContent}
+            >
+              {/* Last updated */}
+              {lastUpdated && !isLoading && (
+                <Text style={[styles.lastUpdated, { color: theme.onSurfaceVariant }]}>
+                  Updated {formatAge(lastUpdated)}
+                </Text>
+              )}
 
-            {/* Rows */}
-            {result.entries.length === 0
-              ? renderEmpty()
-              : result.entries.map((item) => (
-                  <LeaderboardRow
-                    key={item.userId}
-                    entry={item}
-                    isCurrentUser={item.userId === profile?.id}
-                    theme={theme}
-                  />
-                ))
-            }
-          </>
-        )}
-      </ScrollView>
+              {isLoading ? (
+                <ActivityIndicator color={theme.primary} size="large" style={styles.loadingSpinner} />
+              ) : (
+                <>
+                  {/* Rank card */}
+                  {result.playerRank !== null && (
+                    <View style={[styles.rankCard, { backgroundColor: theme.surfaceVariant }]}>
+                      <View style={styles.rankCardSide}>
+                        <Text style={[styles.rankCardLabel, { color: theme.onSurfaceVariant }]}>YOUR RANK</Text>
+                        <Text style={[styles.rankCardValue, { color: theme.primary }]}>#{result.playerRank}</Text>
+                      </View>
+                      <View style={styles.rankCardDivider} />
+                      <View style={styles.rankCardSide}>
+                        <Text style={[styles.rankCardLabel, { color: theme.onSurfaceVariant }]}>BEST</Text>
+                        <Text style={[styles.rankCardValue, { color: theme.onSurface }]}>
+                          {playerRankScore === 0 ? '—' : new Intl.NumberFormat('en-US').format(playerRankScore)}
+                        </Text>
+                      </View>
+                    </View>
+                  )}
+
+                  {/* Rows or empty state */}
+                  {result.entries.length === 0 ? (
+                    <View style={styles.emptyContainer}>
+                      <Text style={[styles.emptyText, { color: theme.onSurfaceVariant }]}>
+                        {emptyMessage(s, error)}
+                      </Text>
+                    </View>
+                  ) : (
+                    result.entries.map((item) => (
+                      <LeaderboardRow
+                        key={item.userId}
+                        entry={item}
+                        isCurrentUser={item.userId === profile?.id}
+                        theme={theme}
+                      />
+                    ))
+                  )}
+                </>
+              )}
+            </ScrollView>
+          );
+        })}
+      </PagerView>
 
       {/* Toast */}
       {toastMsg !== null && (
@@ -416,6 +475,9 @@ const styles = StyleSheet.create({
   scopeTab: { flex: 1, alignItems: 'center', paddingBottom: 8 },
   scopeTabText: { fontSize: 14, fontWeight: '500' },
   scopeUnderline: { height: 2, width: '60%', borderRadius: 1, marginTop: 4 },
+  pager: { flex: 1 },
+  scrollContent: { flexGrow: 1 },
+  loadingSpinner: { marginTop: 60 },
   lastUpdated: {
     fontSize: 11,
     fontWeight: '400',
@@ -440,8 +502,6 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   rankCardValue: { fontSize: 22, fontWeight: '700' },
-  scrollContent: { flexGrow: 1 },
-  loadingSpinner: { marginTop: 60 },
   row: { flexDirection: 'row', alignItems: 'center', height: 56, paddingHorizontal: 24 },
   rowRank: { width: 36, fontSize: 15, fontWeight: '700' },
   rowUsername: { flex: 1, fontSize: 14, fontWeight: '500' },
