@@ -1,7 +1,6 @@
 import { MODE_CARD_WIDTH, ModeCard } from '@/components/mode-card';
 import { PlayerInfoRow } from '@/components/player-info-row';
 import { Colors } from '@/constants/theme';
-import { useSession } from '@/context/ctx';
 import { useProfile } from '@/context/profile-ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -15,7 +14,6 @@ export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
   const isDark = colorScheme === 'dark';
-  const { session } = useSession();
   const { profile, bestScores, refreshProfile } = useProfile();
   const router = useRouter();
 
@@ -25,17 +23,13 @@ export default function HomeScreen() {
     }, [refreshProfile])
   );
 
-  const fullName = session?.user?.user_metadata?.full_name
-    || session?.user?.user_metadata?.name
-    || session?.user?.email?.split('@')[0]
-    || 'Player';
-  const displayName = fullName.split(/\s+/)[0];
+  const username = profile?.username ?? 'Player';
 
   const handlePlayClassic = () => {
     router.push('/game/classic');
   };
   const handleSettingsPress = () => {
-    Alert.alert('Settings', 'Profile & settings coming soon.');
+    router.push('/settings');
   };
 
   // Icon colors: dark-mode aware
@@ -52,7 +46,7 @@ export default function HomeScreen() {
 
         {/* Header */}
         <PlayerInfoRow
-          username={displayName}
+          username={username}
           bits={profile?.bits ?? 0}
           onSettingsPress={handleSettingsPress}
         />

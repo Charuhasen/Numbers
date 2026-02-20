@@ -67,7 +67,7 @@ export function ProfileProvider({ children }: PropsWithChildren) {
       const displayName = meta?.full_name ?? meta?.name ?? session.user.email?.split('@')[0] ?? null;
       await supabase.from('profiles').insert({
         id: userId,
-        username: displayName,
+        username: null,
         display_name: displayName,
         avatar_url: meta?.avatar_url ?? null,
       });
@@ -120,6 +120,7 @@ export function ProfileProvider({ children }: PropsWithChildren) {
       return;
     }
 
+    setIsLoading(true);
     let cancelled = false;
 
     (async () => {
