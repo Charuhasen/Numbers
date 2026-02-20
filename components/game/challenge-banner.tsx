@@ -3,12 +3,15 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, {
+  Easing,
   FadeIn,
   FadeOut,
+  interpolateColor,
   useAnimatedStyle,
   useSharedValue,
+  withRepeat,
+  withSequence,
   withTiming,
-  Easing,
 } from 'react-native-reanimated';
 
 interface ChallengeBannerProps {
@@ -17,7 +20,7 @@ interface ChallengeBannerProps {
   onDismiss: () => void;
 }
 
-const DISPLAY_DURATION = 2000;
+const DISPLAY_DURATION = 4000;
 
 export function ChallengeBanner({
   challengeNumber,
@@ -27,6 +30,7 @@ export function ChallengeBanner({
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
   const progressWidth = useSharedValue(100);
+  const pulse = useSharedValue(0); // 0 = primary colour, 1 = error/red
   const [countdown, setCountdown] = useState(Math.ceil(DISPLAY_DURATION / 1000));
   const startTimeRef = useRef(Date.now());
 
@@ -36,7 +40,16 @@ export function ChallengeBanner({
       easing: Easing.linear,
     });
 
-    // Update the numeric countdown every 100ms for smooth display
+    // Blink countdown from the very start
+    pulse.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration: 400 }),
+        withTiming(0, { duration: 400 }),
+      ),
+      -1,
+      false,
+    );
+
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTimeRef.current;
       const remaining = Math.max(0, DISPLAY_DURATION - elapsed);
@@ -48,10 +61,22 @@ export function ChallengeBanner({
       clearTimeout(timeout);
       clearInterval(interval);
     };
-  }, [onDismiss, progressWidth]);
+  }, [onDismiss, progressWidth, pulse]);
 
   const progressStyle = useAnimatedStyle(() => ({
     width: `${progressWidth.value}%` as `${number}%`,
+  }));
+
+  const pulseColorStyle = useAnimatedStyle(() => ({
+    color: interpolateColor(pulse.value, [0, 1], [theme.primary, theme.error]),
+  }));
+
+  const progressFillStyle = useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(
+      pulse.value,
+      [0, 1],
+      [theme.primary, theme.error],
+    ),
   }));
 
   return (
@@ -71,12 +96,12 @@ export function ChallengeBanner({
         <Text style={[styles.instruction, { color: theme.onSurface }]}>
           {instruction}
         </Text>
-        <Text style={[styles.countdown, { color: theme.primary }]}>
+        <Animated.Text style={[styles.countdown, pulseColorStyle]}>
           {countdown}
-        </Text>
+        </Animated.Text>
         <View style={[styles.progressTrack, { backgroundColor: theme.surfaceDim }]}>
           <Animated.View
-            style={[styles.progressFill, progressStyle, { backgroundColor: theme.primary }]}
+            style={[styles.progressFill, progressStyle, progressFillStyle]}
           />
         </View>
       </Animated.View>
