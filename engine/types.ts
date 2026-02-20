@@ -11,27 +11,9 @@ export type ChallengeType =
   | 'match'
   | 'property';
 
-export type GamePhase = 'playing' | 'gameOver';
+type GamePhase = 'playing' | 'gameOver';
 
-export type GameEventType = 'correct' | 'wrong' | 'timeout' | 'grid_skip';
-
-/** @deprecated Rule-based generation replaced by pre-generated boards. */
-export interface GridRules {
-  min_value: number;
-  max_value: number;
-  distractor_min_delta: number;
-  distractor_max_delta: number;
-  target_value?: number;
-  required_selections: number;
-}
-
-/** @deprecated Rule-based generation replaced by pre-generated boards. */
-export interface Challenge {
-  id: string;
-  instruction: string;
-  type: ChallengeType;
-  rules: GridRules;
-}
+type GameEventType = 'correct' | 'wrong' | 'timeout' | 'grid_skip';
 
 export interface Board {
   id: string;

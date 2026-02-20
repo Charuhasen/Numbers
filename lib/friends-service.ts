@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
 
-export type FriendshipStatus = 'pending' | 'accepted' | 'declined';
+type FriendshipStatus = 'pending' | 'accepted' | 'declined';
 
 export interface FriendProfile {
   id: string;
