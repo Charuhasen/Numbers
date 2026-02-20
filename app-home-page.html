@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Cognitive Training Hub</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#9DB2BF",
+                        "background-light": "#F5F0EB",
+                        "background-dark": "#1A1A1A",
+                        "card-light": "#FFFFFF",
+                        "card-dark": "#2D2D2D",
+                        "accent-yellow": "#FFC107",
+                    },
+                    fontFamily: {
+                        display: ["Plus Jakarta Sans", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "24px",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        .tactile-button {
+            border-bottom: 4px solid rgba(0, 0, 0, 0.15);
+            transition: all 0.1s ease;
+        }
+
+        .tactile-button:active {
+            border-bottom-width: 0px;
+            transform: translateY(4px);
+        }
+
+        .carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .glass-badge {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+        }
+
+        .card-shadow {
+            box-shadow: 0 8px 0 rgba(0, 0, 0, 0.03);
+        }
+
+        .dark .card-shadow {
+            box-shadow: 0 8px 0 rgba(0, 0, 0, 0.2);
+        }
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
+<body class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+    <div class="h-12 w-full flex items-center justify-between px-8 text-sm font-semibold">
+    </div>
+    <main class="max-w-md mx-auto px-6 pb-12">
+        <header class="flex items-center justify-between mt-4 mb-10">
+            <div class="flex items-center gap-4">
+                <div
+                    class="w-14 h-14 rounded-full bg-primary flex items-center justify-center text-white text-xl font-bold border-4 border-white dark:border-card-dark shadow-sm">
+                    C
+                </div>
+                <div>
+                    <p class="text-[10px] uppercase tracking-widest font-bold opacity-50">Welcome back</p>
+                    <h1 class="text-xl font-extrabold">Hi, Charuhasen</h1>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <div
+                    class="bg-card-light dark:bg-card-dark px-3 py-2 rounded-2xl flex items-center gap-2 shadow-sm border border-slate-100 dark:border-slate-800">
+                    <span class="material-symbols-rounded text-accent-yellow fill-1">monetization_on</span>
+                    <span class="font-bold text-sm">552</span>
+                </div>
+                <button
+                    class="w-11 h-11 rounded-2xl bg-card-light dark:bg-card-dark flex items-center justify-center border border-slate-100 dark:border-slate-800 shadow-sm hover:scale-95 transition-transform">
+                    <span class="material-symbols-rounded">settings</span>
+                </button>
+            </div>
+        </header>
+        <section class="mb-6">
+            <div class="grid grid-cols-2 gap-4">
+                <div
+                    class="bg-card-light dark:bg-card-dark p-5 rounded-3xl border border-slate-100 dark:border-slate-800 flex items-center gap-4">
+                    <div
+                        class="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl flex items-center justify-center">
+                        <span class="material-symbols-rounded text-indigo-500">medication</span>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold uppercase opacity-40">Store</p>
+                        <p class="font-extrabold">Potion Store</p>
+                    </div>
+                </div>
+                <div
+                    class="bg-card-light dark:bg-card-dark p-5 rounded-3xl border border-slate-100 dark:border-slate-800 flex items-center gap-4">
+                    <div class="w-10 h-10 bg-rose-50 dark:bg-rose-900/20 rounded-xl flex items-center justify-center">
+                        <span class="material-symbols-rounded text-rose-500">leaderboard</span>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold uppercase opacity-40">Ranking</p>
+                        <p class="font-extrabold">Leaderboard</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="flex items-center justify-between mb-6 px-1">
+                <h2 class="text-lg font-bold">Game Modes</h2>
+            </div>
+            <div class="carousel-container flex overflow-x-auto gap-5 pb-8 snap-x">
+                <div
+                    class="snap-center min-w-[280px] bg-card-light dark:bg-card-dark p-6 rounded-[32px] border border-slate-100 dark:border-slate-800 card-shadow flex flex-col relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 opacity-5 dark:opacity-10 text-[120px] pointer-events-none">
+                        <span class="material-symbols-rounded">calculate</span>
+                    </div>
+                    <div class="flex justify-between items-start mb-8">
+                        <div
+                            class="w-14 h-14 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center">
+                            <span class="material-symbols-rounded text-blue-500 text-3xl">psychology</span>
+                        </div>
+                        <span
+                            class="text-[10px] font-bold px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full opacity-60">BEST:
+                            3,294</span>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-extrabold mb-2">Classic</h3>
+                        <p class="text-sm opacity-60 leading-relaxed mb-6">The standard mental challenge for daily
+                            practice.</p>
+                    </div>
+                    <div class="mt-auto space-y-4">
+                        <button
+                            class="w-full bg-slate-800 dark:bg-white text-white dark:text-slate-900 font-bold py-3 rounded-2xl tactile-button">PLAY</button>
+                    </div>
+                </div>
+                <div
+                    class="snap-center min-w-[280px] bg-card-light dark:bg-card-dark p-6 rounded-[32px] border border-slate-100 dark:border-slate-800 card-shadow flex flex-col relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 opacity-5 dark:opacity-10 text-[120px] pointer-events-none">
+                        <span class="material-symbols-rounded">bolt</span>
+                    </div>
+                    <div class="flex justify-between items-start mb-8">
+                        <div
+                            class="w-14 h-14 bg-orange-100 dark:bg-orange-900/30 rounded-2xl flex items-center justify-center">
+                            <span class="material-symbols-rounded text-orange-500 text-3xl">timer</span>
+                        </div>
+                        <span
+                            class="text-[10px] font-bold px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-full">COMING
+                            SOON</span>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-extrabold mb-2">Blitz</h3>
+                        <p class="text-sm opacity-60 leading-relaxed mb-6">Fast-paced arithmetic. How fast can you
+                            think?</p>
+                    </div>
+                    <div class="mt-auto">
+                        <button disabled
+                            class="w-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 font-bold py-4 rounded-2xl cursor-not-allowed">
+                            COMING SOON
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+
+
+</body>
+
+</html>
