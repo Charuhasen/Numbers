@@ -19,8 +19,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Animated,
+  FlatList,
   RefreshControl,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -376,8 +376,12 @@ export default function LeaderboardScreen() {
           const playerRankScore = bestScores[mode];
 
           return (
-            <ScrollView
+            <FlatList
               key={s}
+              data={result.entries}
+              keyExtractor={(item) => item.userId}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.scrollContent}
               refreshControl={
                 <RefreshControl
                   refreshing={refreshingScope === s}
@@ -386,57 +390,56 @@ export default function LeaderboardScreen() {
                   colors={[theme.primary]}
                 />
               }
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.scrollContent}
-            >
-              {/* Last updated */}
-              {lastUpdated && !isLoading && (
-                <Text style={[styles.lastUpdated, { color: theme.onSurfaceVariant }]}>
-                  Updated {formatAge(lastUpdated)}
-                </Text>
-              )}
-
-              {isLoading ? (
-                <ActivityIndicator color={theme.primary} size="large" style={styles.loadingSpinner} />
-              ) : (
-                <>
-                  {/* Rank card */}
-                  {result.playerRank !== null && (
-                    <View style={[styles.rankCard, { backgroundColor: theme.surfaceVariant }]}>
-                      <View style={styles.rankCardSide}>
-                        <Text style={[styles.rankCardLabel, { color: theme.onSurfaceVariant }]}>YOUR RANK</Text>
-                        <Text style={[styles.rankCardValue, { color: theme.primary }]}>#{result.playerRank}</Text>
-                      </View>
-                      <View style={styles.rankCardDivider} />
-                      <View style={styles.rankCardSide}>
-                        <Text style={[styles.rankCardLabel, { color: theme.onSurfaceVariant }]}>BEST</Text>
-                        <Text style={[styles.rankCardValue, { color: theme.onSurface }]}>
-                          {playerRankScore === 0 ? '—' : new Intl.NumberFormat('en-US').format(playerRankScore)}
-                        </Text>
-                      </View>
-                    </View>
+              ListHeaderComponent={
+                <View>
+                  {/* Last updated */}
+                  {lastUpdated && !isLoading && (
+                    <Text style={[styles.lastUpdated, { color: theme.onSurfaceVariant }]}>
+                      Updated {formatAge(lastUpdated)}
+                    </Text>
                   )}
 
-                  {/* Rows or empty state */}
-                  {result.entries.length === 0 ? (
-                    <View style={styles.emptyContainer}>
-                      <Text style={[styles.emptyText, { color: theme.onSurfaceVariant }]}>
-                        {emptyMessage(s, error)}
-                      </Text>
-                    </View>
+                  {isLoading ? (
+                    <ActivityIndicator color={theme.primary} size="large" style={styles.loadingSpinner} />
                   ) : (
-                    result.entries.map((item) => (
-                      <LeaderboardRow
-                        key={item.userId}
-                        entry={item}
-                        isCurrentUser={item.userId === profile?.id}
-                        theme={theme}
-                      />
-                    ))
+                    <>
+                      {/* Rank card */}
+                      {result.playerRank !== null && (
+                        <View style={[styles.rankCard, { backgroundColor: theme.surfaceVariant }]}>
+                          <View style={styles.rankCardSide}>
+                            <Text style={[styles.rankCardLabel, { color: theme.onSurfaceVariant }]}>YOUR RANK</Text>
+                            <Text style={[styles.rankCardValue, { color: theme.primary }]}>#{result.playerRank}</Text>
+                          </View>
+                          <View style={styles.rankCardDivider} />
+                          <View style={styles.rankCardSide}>
+                            <Text style={[styles.rankCardLabel, { color: theme.onSurfaceVariant }]}>BEST</Text>
+                            <Text style={[styles.rankCardValue, { color: theme.onSurface }]}>
+                              {playerRankScore === 0 ? '—' : new Intl.NumberFormat('en-US').format(playerRankScore)}
+                            </Text>
+                          </View>
+                        </View>
+                      )}
+                    </>
                   )}
-                </>
+                </View>
+              }
+              ListEmptyComponent={
+                !isLoading ? (
+                  <View style={styles.emptyContainer}>
+                    <Text style={[styles.emptyText, { color: theme.onSurfaceVariant }]}>
+                      {emptyMessage(s, error)}
+                    </Text>
+                  </View>
+                ) : null
+              }
+              renderItem={({ item }) => (
+                <LeaderboardRow
+                  entry={item}
+                  isCurrentUser={item.userId === profile?.id}
+                  theme={theme}
+                />
               )}
-            </ScrollView>
+            />
           );
         })}
       </PagerView>
