@@ -24,7 +24,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         return {
           ...state,
           score: newScore,
-          bitsEarned: Math.floor(newScore / 10),
+          bitsEarned: Math.floor(newScore / 100),
           events: [...state.events, event],
         };
       } else {
@@ -44,7 +44,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
             ...state,
             hearts: 0,
             phase: 'gameOver',
-            bitsEarned: Math.floor(state.score / 10),
+            bitsEarned: Math.floor(state.score / 100),
             events: [...state.events, event],
           };
         }
@@ -73,7 +73,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           ...state,
           hearts: 0,
           phase: 'gameOver',
-          bitsEarned: Math.floor(state.score / 10),
+          bitsEarned: Math.floor(state.score / 100),
           events: [...state.events, event],
         };
       }

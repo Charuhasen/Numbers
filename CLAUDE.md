@@ -163,7 +163,7 @@ ActivePotionEffects: secondChanceActive, fortuneTonicRoundsLeft, timerFrozen,
 
 ### Round = 1 Challenge (5 grids). Potion drops evaluated at round completion.
 
-### Bits: `bitsEarned = Math.floor(finalScore / 10)`, credited at session end via RPC.
+### Bits: `bitsEarned = Math.floor(finalScore / 100)`, credited at session end via RPC.
 
 ### Leaderboards: Best score per player per mode. Each player appears once.
 
