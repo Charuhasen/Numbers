@@ -17,7 +17,11 @@ function boardToGrid(board: Board, gridIndex: number): Grid {
   };
 }
 
-export function useGameEngine(mode: GameMode, onRevealCorrect: (indices: number[]) => void) {
+export function useGameEngine(
+  mode: GameMode,
+  onRevealCorrect: (indices: number[]) => void,
+  onTimeout: () => void,
+) {
   const pool = useMemo<Board[]>(() => loadBoardPool(mode), [mode]);
   const recentTypesRef = useRef<ChallengeType[]>([]);
   const recentBoardIdsRef = useRef<string[]>([]);
@@ -172,8 +176,9 @@ export function useGameEngine(mode: GameMode, onRevealCorrect: (indices: number[
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
         dispatch({ type: 'TIMEOUT' });
 
-        // Reveal the correct answer, then advance after a short pause
+        // Freeze the grid, then reveal the correct answer
         const s = stateRef.current;
+        onTimeout();
         onRevealCorrect(s.currentGrid.correctAnswers);
 
         if (s.hearts - 1 > 0) {
@@ -212,10 +217,15 @@ export function useGameEngine(mode: GameMode, onRevealCorrect: (indices: number[
 
     dispatch({ type: 'TAP_CELL', index, timeRemaining });
 
+    // Lock immediately so the timer tick cannot fire a TIMEOUT dispatch
+    // during the reveal window (which would cost a second heart).
+    isAdvancingRef.current = true;
+
     if (isCorrect) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       setTimeout(() => {
         if (stateRef.current.phase !== 'gameOver') {
+          isAdvancingRef.current = false;
           advanceGrid();
         }
       }, 300);
@@ -225,6 +235,7 @@ export function useGameEngine(mode: GameMode, onRevealCorrect: (indices: number[
       onRevealCorrect(s.currentGrid.correctAnswers);
       setTimeout(() => {
         if (stateRef.current.phase !== 'gameOver') {
+          isAdvancingRef.current = false;
           advanceGrid();
         }
       }, 600);

@@ -14,6 +14,7 @@ import { startGameSession } from '@/lib/score-service';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSharedValue } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -27,6 +28,14 @@ export default function GameScreen() {
 
   const gameMode = (mode as GameMode) || 'classic';
 
+  const [showTimeUp, setShowTimeUp] = useState(false);
+
+  // Called by the engine on timeout — freezes all tiles blue before the
+  // correct answer is revealed on top (onRevealCorrect overrides the correct tile to green).
+  const handleTimeout = useCallback(() => {
+    setShowTimeUp(true);
+  }, []);
+
   // Called by the engine whenever the correct answer should be revealed
   // (wrong tap or timeout). Highlights the correct tile(s) in green and
   // locks input so the player can't tap during the reveal window.
@@ -39,7 +48,7 @@ export default function GameScreen() {
     });
   }, []);
 
-  const { state, tapCell, timerProgress, timerDuration, elapsedSeconds, isReady, resumeTimer } = useGameEngine(gameMode, handleRevealCorrect);
+  const { state, tapCell, timerProgress, timerDuration, elapsedSeconds, isReady, resumeTimer } = useGameEngine(gameMode, handleRevealCorrect, handleTimeout);
   const { bestScores } = useProfile();
 
   // Session token: requested once from the server when the game screen is ready.
@@ -80,6 +89,7 @@ export default function GameScreen() {
     if (state.currentGrid !== prevGridRef.current) {
       setFeedbackMap({});
       setInputDisabled(false);
+      setShowTimeUp(false);
       prevGridRef.current = state.currentGrid;
     }
   }, [state.currentGrid]);
@@ -165,6 +175,15 @@ export default function GameScreen() {
 
       {/* Grid */}
       <View style={styles.gridContainer}>
+        {showTimeUp && (
+          <Animated.Text
+            entering={FadeIn.duration(150)}
+            exiting={FadeOut.duration(150)}
+            style={[styles.timeUpLabel, { color: theme.error }]}
+          >
+            TIME UP!
+          </Animated.Text>
+        )}
         <GameGrid
           numbers={state.currentGrid.numbers}
           feedbackMap={feedbackMap}
@@ -224,6 +243,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: Spacing.screenPadding,
+    gap: 16,
+  },
+  timeUpLabel: {
+    fontSize: 22,
+    fontWeight: '800',
+    letterSpacing: 3,
   },
   statsContainer: {
     marginTop: 'auto',
