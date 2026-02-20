@@ -4,103 +4,150 @@ import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+export const MODE_CARD_WIDTH = 268;
+
 interface ModeCardProps {
   title: string;
   description: string;
-  bestScore: number;
-  onPlayPress: () => void;
-  isDaily?: boolean;
+  bestScore?: number;
+  onPlayPress?: () => void;
   iconName: keyof typeof MaterialIcons.glyphMap;
+  iconColor: string;
+  iconBgColor: string;
+  comingSoon?: boolean;
 }
 
-export function ModeCard({ title, description, bestScore, onPlayPress, iconName }: ModeCardProps) {
+export function ModeCard({
+  title,
+  description,
+  bestScore,
+  onPlayPress,
+  iconName,
+  iconColor,
+  iconBgColor,
+  comingSoon,
+}: ModeCardProps) {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
 
+  const isDark = colorScheme === 'dark';
+  const buttonBg = isDark ? '#E8E4E0' : '#1E2530';
+  const buttonTextColor = isDark ? '#1E2530' : '#FFFFFF';
+
   return (
     <View style={[styles.card, { backgroundColor: theme.surfaceVariant }]}>
-      <View style={styles.contentContainer}>
-        <View style={styles.headerRow}>
-          <View>
-            <Text style={[styles.title, { color: theme.onSurface }]}>{title}</Text>
-            <Text style={[styles.description, { color: theme.onSurfaceVariant }]}>{description}</Text>
-          </View>
-          <View style={[styles.badge, { backgroundColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.5)' }]}>
-            <Text style={[styles.badgeText, { color: theme.primary }]}>BEST: {bestScore ? bestScore.toLocaleString() : '--'}</Text>
-          </View>
+      {/* Decorative bg icon — rendered first, sits behind content */}
+      <View style={styles.decorativeIcon} pointerEvents="none">
+        <MaterialIcons name={iconName} size={140} color={`${iconColor}18`} />
+      </View>
+
+      {/* Top row: icon container + badge */}
+      <View style={styles.topRow}>
+        <View style={[styles.iconContainer, { backgroundColor: iconBgColor }]}>
+          <MaterialIcons name={iconName} size={28} color={iconColor} />
         </View>
 
-        <TouchableOpacity
-          onPress={onPlayPress}
-          style={[styles.playButton, { backgroundColor: theme.primary }]}
-          activeOpacity={0.9}
-        >
-          <Text style={styles.playText}>PLAY</Text>
-        </TouchableOpacity>
+        {comingSoon ? (
+          <View style={[styles.badge, { backgroundColor: `${iconColor}22` }]}>
+            <Text style={[styles.badgeText, { color: iconColor }]}>COMING SOON</Text>
+          </View>
+        ) : (
+          <View style={[styles.badge, { backgroundColor: `${iconColor}22` }]}>
+            <Text style={[styles.badgeText, { color: iconColor }]}>
+              BEST: {bestScore ? bestScore.toLocaleString() : '--'}
+            </Text>
+          </View>
+        )}
       </View>
 
-      {/* Decorative background icon */}
-      <View style={styles.iconBackground}>
-        <MaterialIcons name={iconName} size={112} color={`${theme.primary}0D`} />
+      {/* Text content */}
+      <View style={styles.textContent}>
+        <Text style={[styles.title, { color: theme.onSurface }]}>{title}</Text>
+        <Text style={[styles.description, { color: theme.onSurface }]}>{description}</Text>
       </View>
+
+      {/* Button */}
+      {comingSoon ? (
+        <View style={[styles.button, { backgroundColor: theme.surfaceDim ?? theme.surfaceVariant }]}>
+          <Text style={[styles.buttonText, { color: theme.onSurfaceVariant, opacity: 0.5 }]}>COMING SOON</Text>
+        </View>
+      ) : (
+        <TouchableOpacity
+          onPress={onPlayPress}
+          style={[styles.button, { backgroundColor: buttonBg }]}
+          activeOpacity={0.85}
+        >
+          <Text style={[styles.buttonText, { color: buttonTextColor }]}>PLAY</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 16,
-    marginHorizontal: 24,
-    marginBottom: 16,
+    width: MODE_CARD_WIDTH,
+    borderRadius: 28,
+    padding: 24,
     overflow: 'hidden',
     position: 'relative',
   },
-  contentContainer: {
-    padding: 24,
-    zIndex: 10,
+  decorativeIcon: {
+    position: 'absolute',
+    top: -20,
+    right: -20,
+    zIndex: 0,
   },
-  headerRow: {
+  topRow: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 16,
+    marginBottom: 24,
+    zIndex: 1,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 4,
-  },
-  description: {
-    fontSize: 14,
-    opacity: 0.6,
-  },
-  badge: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 999,
-  },
-  badgeText: {
-    fontSize: 10,
-    fontWeight: '700',
-    letterSpacing: 1,
-  },
-  playButton: {
-    width: '100%',
-    paddingVertical: 12,
-    borderRadius: 999,
+  iconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  playText: {
-    color: '#FFFFFF',
+  badge: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 999,
+  },
+  badgeText: {
+    fontSize: 9,
+    fontWeight: '700',
+    letterSpacing: 0.8,
+  },
+  textContent: {
+    flex: 1,
+    marginBottom: 20,
+    zIndex: 1,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: '800',
+    marginBottom: 6,
+  },
+  description: {
+    fontSize: 13,
+    opacity: 0.7,
+    lineHeight: 18,
+  },
+  button: {
+    width: '100%',
+    paddingVertical: 14,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  buttonText: {
     fontSize: 14,
     fontWeight: '700',
     letterSpacing: 1,
-  },
-  iconBackground: {
-    position: 'absolute',
-    right: -16,
-    top: -16,
-    zIndex: 1,
   },
 });

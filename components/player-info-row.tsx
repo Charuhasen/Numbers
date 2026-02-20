@@ -19,8 +19,6 @@ interface PlayerInfoRowProps {
   bits: number;
   avatarUrl?: string;
   onSettingsPress?: () => void;
-  onRankingsPress?: () => void;
-  onPotionsPress?: () => void;
 }
 
 export function PlayerInfoRow({
@@ -28,8 +26,6 @@ export function PlayerInfoRow({
   bits,
   avatarUrl,
   onSettingsPress,
-  onRankingsPress,
-  onPotionsPress,
 }: PlayerInfoRowProps) {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
@@ -59,7 +55,6 @@ export function PlayerInfoRow({
     );
   }, [overflowAmount, translateX]);
 
-  // Restart animation whenever measurements change and overflow exists
   React.useEffect(() => {
     if (isOverflowing) {
       startMarquee();
@@ -75,72 +70,54 @@ export function PlayerInfoRow({
 
   return (
     <View style={styles.container}>
-      {/* Top Row: Avatar, Greeting, Bits, Settings */}
-      <View style={styles.topRow}>
-        <View style={styles.leftSection}>
-          <View style={[styles.avatarContainer, { borderColor: `${theme.primary}33` }]}>
+      <View style={styles.leftSection}>
+        {/* Avatar: outer for border+shadow, inner for clip */}
+        <View style={[styles.avatarOuter, { borderColor: '#FFFFFF', shadowColor: '#000' }]}>
+          <View style={styles.avatarInner}>
             {avatarUrl ? (
-              <Image source={{ uri: avatarUrl }} style={styles.avatar} />
+              <Image source={{ uri: avatarUrl }} style={styles.avatarImage} />
             ) : (
-              <View style={[styles.avatar, { backgroundColor: theme.primary }]}>
+              <View style={[styles.avatarFallback, { backgroundColor: theme.primary }]}>
                 <Text style={styles.avatarText}>{username.charAt(0).toUpperCase()}</Text>
               </View>
             )}
           </View>
-          <View
-            style={styles.greetingContainer}
-            onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}
-          >
-            <Text style={[styles.welcomeText, { color: theme.primary }]}>WELCOME BACK</Text>
-            <View style={styles.usernameClip}>
-              <Animated.Text
-                style={[styles.username, { color: theme.onSurface }, marqueeStyle]}
-                numberOfLines={1}
-                onTextLayout={(e) => {
-                  const measured = e.nativeEvent.lines[0]?.width ?? 0;
-                  if (Math.round(measured) !== Math.round(textWidth)) {
-                    setTextWidth(measured);
-                  }
-                }}
-              >
-                Hi, {username}
-              </Animated.Text>
-            </View>
-          </View>
         </View>
 
-        <View style={styles.rightSection}>
-          <View style={[styles.bitsBadge, { backgroundColor: theme.surfaceVariant, borderColor: `${theme.primary}0D` }]}>
-            <MaterialIcons name="paid" size={16} color="#D4A017" />
-            <Text style={[styles.bitsText, { color: theme.primary }]}>{bits.toLocaleString()}</Text>
+        <View
+          style={styles.greetingContainer}
+          onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}
+        >
+          <Text style={[styles.welcomeText, { color: theme.primary }]}>WELCOME BACK</Text>
+          <View style={styles.usernameClip}>
+            <Animated.Text
+              style={[styles.username, { color: theme.onSurface }, marqueeStyle]}
+              numberOfLines={1}
+              onTextLayout={(e) => {
+                const measured = e.nativeEvent.lines[0]?.width ?? 0;
+                if (Math.round(measured) !== Math.round(textWidth)) {
+                  setTextWidth(measured);
+                }
+              }}
+            >
+              Hi, {username}
+            </Animated.Text>
           </View>
-
-          <TouchableOpacity
-            onPress={onSettingsPress}
-            style={[styles.actionButton, { backgroundColor: theme.surfaceVariant }]}
-            activeOpacity={0.7}
-          >
-            <MaterialIcons name="settings" size={20} color={theme.primary} />
-          </TouchableOpacity>
         </View>
       </View>
 
-      {/* Bottom Row: Trophy and Potion Actions */}
-      <View style={styles.bottomRow}>
-        <TouchableOpacity
-          onPress={onRankingsPress}
-          style={[styles.actionButton, { backgroundColor: theme.surfaceVariant }]}
-          activeOpacity={0.7}
-        >
-          <MaterialIcons name="emoji-events" size={20} color={theme.primary} />
-        </TouchableOpacity>
+      <View style={styles.rightSection}>
+        <View style={[styles.bitsBadge, { backgroundColor: theme.surfaceVariant, borderColor: `${theme.primary}0D` }]}>
+          <MaterialIcons name="paid" size={16} color="#D4A017" />
+          <Text style={[styles.bitsText, { color: theme.primary }]}>{bits.toLocaleString()}</Text>
+        </View>
 
         <TouchableOpacity
-          onPress={onPotionsPress}
-          style={[styles.actionButton, { backgroundColor: theme.surfaceVariant }]}
+          onPress={onSettingsPress}
+          style={[styles.settingsButton, { backgroundColor: theme.surfaceVariant }]}
           activeOpacity={0.7}
         >
-          <MaterialIcons name="science" size={20} color={theme.primary} />
+          <MaterialIcons name="settings" size={20} color={theme.primary} />
         </TouchableOpacity>
       </View>
     </View>
@@ -149,21 +126,12 @@ export function PlayerInfoRow({
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    marginBottom: 8,
-    gap: 12,
-  },
-  topRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-  },
-  bottomRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    gap: 8,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    marginBottom: 8,
   },
   leftSection: {
     flexDirection: 'row',
@@ -172,14 +140,29 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 12,
   },
-  avatarContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  avatarOuter: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     borderWidth: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarInner: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     overflow: 'hidden',
   },
-  avatar: {
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+  },
+  avatarFallback: {
     width: '100%',
     height: '100%',
     justifyContent: 'center',
@@ -188,7 +171,7 @@ const styles = StyleSheet.create({
   avatarText: {
     color: '#FFFFFF',
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 22,
   },
   greetingContainer: {
     justifyContent: 'center',
@@ -226,10 +209,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
   },
-  actionButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  settingsButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
   },
