@@ -34,6 +34,12 @@ interface RowProps {
   theme: (typeof Colors)['light'];
 }
 
+function countryFlag(code: string): string {
+  return [...code.toUpperCase()].map(
+    (c) => String.fromCodePoint(0x1f1e6 + c.charCodeAt(0) - 65),
+  ).join('');
+}
+
 const LeaderboardRow = React.memo(function LeaderboardRow({ entry, isCurrentUser, theme }: RowProps) {
   const isTopThree = entry.rank <= 3;
   const rankColor = isTopThree ? theme.primary : theme.onSurfaceVariant;
@@ -42,14 +48,14 @@ const LeaderboardRow = React.memo(function LeaderboardRow({ entry, isCurrentUser
   return (
     <View style={[styles.row, isCurrentUser && { backgroundColor: theme.surfaceVariant }]}>
       <Text style={[styles.rowRank, { color: rankColor }]}>{entry.rank}</Text>
-      <View style={[styles.avatar, { backgroundColor: theme.surfaceDim }]}>
-        <Text style={[styles.avatarText, { color: theme.onSurfaceVariant }]}>
-          {(entry.username[0] ?? '?').toUpperCase()}
-        </Text>
-      </View>
       <Text style={[styles.rowUsername, { color: theme.onSurface }]} numberOfLines={1} ellipsizeMode="tail">
         {entry.username}
       </Text>
+      {entry.countryCode ? (
+        <Text style={styles.rowFlag}>{countryFlag(entry.countryCode)}</Text>
+      ) : (
+        <Text style={[styles.rowFlag, { color: theme.onSurfaceVariant }]}>—</Text>
+      )}
       <Text style={[styles.rowScore, { color: theme.onSurface }]}>{displayScore}</Text>
     </View>
   );
@@ -120,7 +126,7 @@ export default function LeaderboardScreen() {
       if (!p) return;
       const r = buildFriendsLeaderboard(
         m, friendList, p.id, p.username,
-        bestScoresRef.current[m], p.avatarUrl ?? undefined,
+        bestScoresRef.current[m], p.countryCode ?? undefined,
       );
       cache.current[key] = r;
       setResult(r);
@@ -365,18 +371,10 @@ const styles = StyleSheet.create({
   },
   rankCardValue: { fontSize: 22, fontWeight: '700' },
   row: { flexDirection: 'row', alignItems: 'center', height: 56, paddingHorizontal: 24 },
-  rowRank: { width: 40, fontSize: 15, fontWeight: '700' },
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  avatarText: { fontSize: 13, fontWeight: '600' },
+  rowRank: { width: 36, fontSize: 15, fontWeight: '700' },
   rowUsername: { flex: 1, fontSize: 14, fontWeight: '500' },
-  rowScore: { fontSize: 14, fontWeight: '600', marginLeft: 8 },
+  rowFlag: { fontSize: 18, marginHorizontal: 10 },
+  rowScore: { fontSize: 14, fontWeight: '600' },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   emptyContainer: { paddingHorizontal: 32, paddingTop: 48, alignItems: 'center' },
   emptyText: { fontSize: 15, textAlign: 'center', lineHeight: 22 },

@@ -7,7 +7,7 @@ export type LeaderboardScope = 'global' | 'regional' | 'friends';
 export interface LeaderboardEntry {
   userId: string;
   username: string;
-  avatarUrl?: string;
+  countryCode?: string;
   score: number;
   rank: number;
 }
@@ -21,7 +21,7 @@ interface RpcRow {
   user_id: string;
   username: string | null;
   display_name: string | null;
-  avatar_url: string | null;
+  country_code: string | null;
   score: number;
   rank: number;
 }
@@ -30,7 +30,7 @@ function mapRow(row: RpcRow): LeaderboardEntry {
   return {
     userId: row.user_id,
     username: row.username ?? row.display_name ?? row.user_id,
-    avatarUrl: row.avatar_url ?? undefined,
+    countryCode: row.country_code ?? undefined,
     score: row.score,
     rank: row.rank,
   };
@@ -89,21 +89,21 @@ export function buildFriendsLeaderboard(
   currentUserId: string,
   currentUsername: string | null,
   currentUserScore: number,
-  avatarUrl?: string,
+  currentUserCountryCode?: string,
 ): LeaderboardResult {
-  type Entry = { userId: string; username: string; avatarUrl?: string; score: number };
+  type Entry = { userId: string; username: string; countryCode?: string; score: number };
 
   const all: Entry[] = [
     {
       userId: currentUserId,
       username: currentUsername ?? currentUserId,
-      avatarUrl,
+      countryCode: currentUserCountryCode,
       score: currentUserScore,
     },
     ...friends.map((f) => ({
       userId: f.id,
       username: f.username,
-      avatarUrl: f.avatarUrl,
+      countryCode: f.countryCode,
       score: (mode === 'classic' ? f.classicBest : f.blitzBest) ?? 0,
     })),
   ];

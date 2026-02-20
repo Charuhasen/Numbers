@@ -26,6 +26,7 @@ export default function SplashScreen() {
   const hasNavigated = useRef(false);
   const [profileReady, setProfileReady] = useState(false);
   const [timerReady, setTimerReady] = useState(false);
+  const [regionReady, setRegionReady] = useState(false);
 
   // Fade-in animation
   const opacity = useSharedValue(0);
@@ -48,23 +49,49 @@ export default function SplashScreen() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Detect region via GPS / IP geolocation on every launch (fire-and-forget)
-  useEffect(() => {
-    const userId = profile?.id;
-    if (!userId) return;
-    detectAndSaveRegion(userId).then((code) => {
-      if (code) refreshProfile();
-    });
-  }, [profile?.id]); // eslint-disable-line react-hooks/exhaustive-deps
-
   // Track when profile has finished loading
   useEffect(() => {
     if (!isLoading) setProfileReady(true);
   }, [isLoading]);
 
-  // Navigate only when both the timer and profile are ready
+  // Detect and persist region every launch.
+  // Starts once the profile is loaded (userId available).
+  // A 6-second safety timeout prevents GPS permission dialogs from blocking
+  // the splash indefinitely. Navigation waits for this to resolve.
   useEffect(() => {
-    if (!profileReady || !timerReady || hasNavigated.current) return;
+    if (!profileReady || !profile?.id) return;
+
+    const userId = profile.id;
+    let settled = false;
+
+    const done = () => {
+      if (!settled) {
+        settled = true;
+        setRegionReady(true);
+      }
+    };
+
+    // Safety net — unblock navigation if detection stalls
+    const timeout = setTimeout(done, 6000);
+
+    detectAndSaveRegion(userId)
+      .then(async (code) => {
+        if (code) await refreshProfile();
+      })
+      .finally(() => {
+        clearTimeout(timeout);
+        done();
+      });
+
+    return () => {
+      clearTimeout(timeout);
+      settled = true; // prevent state update after unmount
+    };
+  }, [profileReady, profile?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Navigate only when timer, profile, and region detection are all done
+  useEffect(() => {
+    if (!profileReady || !timerReady || !regionReady || hasNavigated.current) return;
     hasNavigated.current = true;
 
     const hasValidUsername = USERNAME_RE.test(profile?.username ?? '');
@@ -73,7 +100,7 @@ export default function SplashScreen() {
     } else {
       router.replace('/(setup)/username');
     }
-  }, [profileReady, timerReady, profile?.username]);
+  }, [profileReady, timerReady, regionReady, profile?.username]);
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.surface }]}>

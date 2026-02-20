@@ -7,6 +7,7 @@ export interface FriendProfile {
   username: string;
   displayName: string;
   avatarUrl?: string;
+  countryCode?: string;
   classicBest?: number;
   blitzBest?: number;
 }
@@ -148,7 +149,7 @@ export async function getFriends(): Promise<Friendship[]> {
   const [profilesResult, scoresResult] = await Promise.all([
     supabase
       .from('profiles')
-      .select('id, username, display_name, avatar_url')
+      .select('id, username, display_name, avatar_url, country_code')
       .in('id', friendIds),
     supabase
       .from('scores')
@@ -158,7 +159,7 @@ export async function getFriends(): Promise<Friendship[]> {
 
   if (profilesResult.error) throw profilesResult.error;
 
-  const profileMap = new Map<string, { id: string; username: string | null; display_name: string | null; avatar_url: string | null }>();
+  const profileMap = new Map<string, { id: string; username: string | null; display_name: string | null; avatar_url: string | null; country_code: string | null }>();
   for (const p of (profilesResult.data ?? [])) {
     profileMap.set(p.id, p);
   }
@@ -186,6 +187,7 @@ export async function getFriends(): Promise<Friendship[]> {
         username: profile?.username ?? friendId,
         displayName: profile?.display_name ?? profile?.username ?? friendId,
         avatarUrl: profile?.avatar_url ?? undefined,
+        countryCode: profile?.country_code ?? undefined,
         classicBest: scores?.classic,
         blitzBest: scores?.blitz,
       },
