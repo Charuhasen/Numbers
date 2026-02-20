@@ -41,6 +41,7 @@ export default function HomeScreen() {
   // Icon colors: dark-mode aware
   const indigoIconBg = isDark ? 'rgba(99,102,241,0.2)' : '#EEF2FF';
   const roseIconBg = isDark ? 'rgba(244,63,94,0.2)' : '#FFF1F2';
+  const emeraldIconBg = isDark ? 'rgba(16,185,129,0.2)' : '#D1FAE5';
   const blueIconBg = isDark ? 'rgba(59,130,246,0.2)' : '#DBEAFE';
   const orangeIconBg = isDark ? 'rgba(249,115,22,0.2)' : '#FFEDD5';
 
@@ -75,6 +76,16 @@ export default function HomeScreen() {
           >
             <View style={[styles.quickActionIcon, { backgroundColor: roseIconBg }]}>
               <MaterialIcons name="emoji-events" size={22} color="#F43F5E" />
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.quickActionCard, { backgroundColor: theme.surfaceVariant }]}
+            activeOpacity={0.75}
+            onPress={() => router.push('/friends')}
+          >
+            <View style={[styles.quickActionIcon, { backgroundColor: emeraldIconBg }]}>
+              <MaterialIcons name="people" size={22} color="#10B981" />
             </View>
           </TouchableOpacity>
         </View>
