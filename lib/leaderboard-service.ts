@@ -4,6 +4,45 @@ import type { FriendProfile } from '@/lib/friends-service';
 export type LeaderboardMode = 'classic' | 'blitz';
 export type LeaderboardScope = 'global' | 'regional' | 'friends';
 
+// ---------------------------------------------------------------------------
+// Module-level TTL cache — survives tab switches, cleared on pull-to-refresh
+// ---------------------------------------------------------------------------
+
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+interface CacheEntry {
+  result: LeaderboardResult;
+  fetchedAt: number;
+}
+
+const _cache = new Map<string, CacheEntry>();
+
+function cacheKey(mode: LeaderboardMode, countryCode: string | null): string {
+  return countryCode ? `${mode}:${countryCode}` : mode;
+}
+
+function isFresh(key: string): boolean {
+  const entry = _cache.get(key);
+  return !!entry && Date.now() - entry.fetchedAt < CACHE_TTL_MS;
+}
+
+/** Returns true if the cached result for the given scope is still within TTL. */
+export function isLeaderboardFresh(
+  mode: LeaderboardMode,
+  countryCode: string | null = null,
+): boolean {
+  return isFresh(cacheKey(mode, countryCode));
+}
+
+/** Returns the Date when the given scope was last fetched, or null if never. */
+export function getLeaderboardFetchedAt(
+  mode: LeaderboardMode,
+  countryCode: string | null = null,
+): Date | null {
+  const entry = _cache.get(cacheKey(mode, countryCode));
+  return entry ? new Date(entry.fetchedAt) : null;
+}
+
 export interface LeaderboardEntry {
   userId: string;
   username: string;
@@ -41,6 +80,12 @@ export async function fetchGlobalLeaderboard(
   mode: LeaderboardMode,
   limit = 100,
 ): Promise<LeaderboardResult> {
+  const key = cacheKey(mode, null);
+
+  if (isFresh(key)) {
+    return _cache.get(key)!.result;
+  }
+
   const { data, error } = await supabase.rpc('get_leaderboard', {
     p_mode: mode,
     p_country_code: null,
@@ -51,10 +96,13 @@ export async function fetchGlobalLeaderboard(
   if (error) throw error;
 
   const rows: RpcRow[] = data?.leaderboard ?? [];
-  return {
+  const result: LeaderboardResult = {
     entries: rows.map(mapRow),
     playerRank: data?.player_rank ?? null,
   };
+
+  _cache.set(key, { result, fetchedAt: Date.now() });
+  return result;
 }
 
 /** Fetch regional leaderboard filtered by country code. */
@@ -63,6 +111,12 @@ export async function fetchRegionalLeaderboard(
   countryCode: string,
   limit = 100,
 ): Promise<LeaderboardResult> {
+  const key = cacheKey(mode, countryCode);
+
+  if (isFresh(key)) {
+    return _cache.get(key)!.result;
+  }
+
   const { data, error } = await supabase.rpc('get_leaderboard', {
     p_mode: mode,
     p_country_code: countryCode,
@@ -73,10 +127,13 @@ export async function fetchRegionalLeaderboard(
   if (error) throw error;
 
   const rows: RpcRow[] = data?.leaderboard ?? [];
-  return {
+  const result: LeaderboardResult = {
     entries: rows.map(mapRow),
     playerRank: data?.player_rank ?? null,
   };
+
+  _cache.set(key, { result, fetchedAt: Date.now() });
+  return result;
 }
 
 /**

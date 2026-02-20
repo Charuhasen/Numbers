@@ -6,6 +6,8 @@ import {
   buildFriendsLeaderboard,
   fetchGlobalLeaderboard,
   fetchRegionalLeaderboard,
+  getLeaderboardFetchedAt,
+  isLeaderboardFresh,
   type LeaderboardEntry,
   type LeaderboardMode,
   type LeaderboardResult,
@@ -16,7 +18,9 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  FlatList,
+  Animated,
+  RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -38,6 +42,13 @@ function countryFlag(code: string): string {
   return [...code.toUpperCase()].map(
     (c) => String.fromCodePoint(0x1f1e6 + c.charCodeAt(0) - 65),
   ).join('');
+}
+
+function formatAge(date: Date): string {
+  const mins = Math.floor((Date.now() - date.getTime()) / 60000);
+  if (mins < 1) return 'just now';
+  if (mins === 1) return '1 min ago';
+  return `${mins} mins ago`;
 }
 
 const LeaderboardRow = React.memo(function LeaderboardRow({ entry, isCurrentUser, theme }: RowProps) {
@@ -74,14 +85,32 @@ export default function LeaderboardScreen() {
   // UI state — only what the render tree reads
   const [mode, setMode] = useState<LeaderboardMode>('classic');
   const [scope, setScope] = useState<LeaderboardScope>('global');
-  const [isLoading, setIsLoading] = useState(true);
+  // Start without a spinner if we already have fresh cached data for the default view
+  const [isLoading, setIsLoading] = useState(() => !isLeaderboardFresh('classic', null));
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<LeaderboardResult>({ entries: [], playerRank: null });
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(
+    () => getLeaderboardFetchedAt('classic', null),
+  );
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Toast
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const toastOpacity = useRef(new Animated.Value(0)).current;
+
+  const showToast = useCallback((msg: string) => {
+    setToastMsg(msg);
+    toastOpacity.setValue(0);
+    Animated.sequence([
+      Animated.timing(toastOpacity, { toValue: 1, duration: 200, useNativeDriver: true }),
+      Animated.delay(2800),
+      Animated.timing(toastOpacity, { toValue: 0, duration: 300, useNativeDriver: true }),
+    ]).start(() => setToastMsg(null));
+  }, [toastOpacity]);
 
   // ---------------------------------------------------------------------------
   // Refs — read inside callbacks without creating dependency loops
   // ---------------------------------------------------------------------------
-  const cache = useRef<Record<string, LeaderboardResult>>({});
   const modeRef = useRef<LeaderboardMode>('classic');
   const scopeRef = useRef<LeaderboardScope>('global');
   const countryCodeRef = useRef<string | null>(profile?.countryCode ?? null);
@@ -103,24 +132,13 @@ export default function LeaderboardScreen() {
     return profileRef.current?.countryCode ?? countryCodeRef.current;
   }
 
-  function cacheKey(s: LeaderboardScope, m: LeaderboardMode, cc: string | null): string {
-    return s === 'regional' && cc ? `${s}:${m}:${cc}` : `${s}:${m}`;
-  }
-
-  // Pure data fetcher — never touches isLoading
+  // Pure data fetcher — never touches isLoading; service handles TTL cache
   async function fetchForScope(
     s: LeaderboardScope,
     m: LeaderboardMode,
     friendList: FriendProfile[],
     cc: string | null,
   ): Promise<void> {
-    const key = cacheKey(s, m, cc);
-
-    if (cache.current[key]) {
-      setResult(cache.current[key]);
-      return;
-    }
-
     if (s === 'friends') {
       const p = profileRef.current;
       if (!p) return;
@@ -128,7 +146,6 @@ export default function LeaderboardScreen() {
         m, friendList, p.id, p.username,
         bestScoresRef.current[m], p.countryCode ?? undefined,
       );
-      cache.current[key] = r;
       setResult(r);
       return;
     }
@@ -144,7 +161,6 @@ export default function LeaderboardScreen() {
         }
         r = await fetchRegionalLeaderboard(m, cc);
       }
-      cache.current[key] = r;
       setResult(r);
     } catch {
       setError('Could not load leaderboard. Pull down to refresh.');
@@ -154,12 +170,18 @@ export default function LeaderboardScreen() {
   // ---------------------------------------------------------------------------
   // doLoad — reads everything from refs, no state deps → stable reference
   // ---------------------------------------------------------------------------
-  const doLoad = useCallback(async (clearCache = false) => {
-    if (clearCache) cache.current = {};
-    setIsLoading(true);
+  const doLoad = useCallback(async (viaRefresh = false) => {
     setError(null);
 
-    // Refresh friends list (always, so friends leaderboard stays current)
+    const s = scopeRef.current;
+    const m = modeRef.current;
+    const cc = s === 'regional' ? resolveCountryCode() : null;
+
+    // Show full-screen spinner only on initial/stale loads, not pull-to-refresh
+    const needsNetwork = s !== 'friends' && !isLeaderboardFresh(m, cc);
+    if (!viaRefresh && needsNetwork) setIsLoading(true);
+
+    // Refresh friends list (needed for friends tab; also updates background data)
     try {
       const fetched = await getFriends();
       friendsRef.current = fetched.map((f) => f.friend);
@@ -167,10 +189,8 @@ export default function LeaderboardScreen() {
       // non-fatal — use stale friendsRef
     }
 
-    const s = scopeRef.current;
-    const m = modeRef.current;
-    const cc = s === 'regional' ? resolveCountryCode() : countryCodeRef.current;
     await fetchForScope(s, m, friendsRef.current, cc);
+    setLastUpdated(s === 'friends' ? new Date() : getLeaderboardFetchedAt(m, cc));
     setIsLoading(false);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -192,30 +212,50 @@ export default function LeaderboardScreen() {
   const handleModeChange = async (m: LeaderboardMode) => {
     setMode(m);
     modeRef.current = m;
-    const cc = scopeRef.current === 'regional' ? resolveCountryCode() : countryCodeRef.current;
-    const key = cacheKey(scopeRef.current, m, cc);
-    if (!cache.current[key]) {
+    const s = scopeRef.current;
+    const cc = s === 'regional' ? resolveCountryCode() : null;
+    if (s !== 'friends' && !isLeaderboardFresh(m, cc)) {
       setIsLoading(true);
       setError(null);
     }
-    await fetchForScope(scopeRef.current, m, friendsRef.current, cc);
+    await fetchForScope(s, m, friendsRef.current, cc);
+    setLastUpdated(s === 'friends' ? new Date() : getLeaderboardFetchedAt(m, cc));
     setIsLoading(false);
   };
 
   const handleScopeChange = async (s: LeaderboardScope) => {
     setScope(s);
     scopeRef.current = s;
-    const cc = s === 'regional' ? resolveCountryCode() : countryCodeRef.current;
-    const key = cacheKey(s, modeRef.current, cc);
-    if (!cache.current[key]) {
+    const m = modeRef.current;
+    const cc = s === 'regional' ? resolveCountryCode() : null;
+    if (s !== 'friends' && !isLeaderboardFresh(m, cc)) {
       setIsLoading(true);
       setError(null);
     }
-    await fetchForScope(s, modeRef.current, friendsRef.current, cc);
+    await fetchForScope(s, m, friendsRef.current, cc);
+    setLastUpdated(s === 'friends' ? new Date() : getLeaderboardFetchedAt(m, cc));
     setIsLoading(false);
   };
 
-  const handleRefresh = useCallback(() => doLoadRef.current(true), []);
+  const handleRefresh = useCallback(() => {
+    const s = scopeRef.current;
+    const m = modeRef.current;
+    const cc = s === 'regional' ? resolveCountryCode() : null;
+
+    // Friends tab is always re-fetchable (client-side, no RPC cost)
+    if (s !== 'friends' && isLeaderboardFresh(m, cc)) {
+      const fetchedAt = getLeaderboardFetchedAt(m, cc);
+      if (fetchedAt) {
+        const msLeft = 5 * 60 * 1000 - (Date.now() - fetchedAt.getTime());
+        const minsLeft = Math.max(1, Math.ceil(msLeft / 60000));
+        showToast(`You can refresh once every 5 mins. You can refresh again in ${minsLeft} minute${minsLeft === 1 ? '' : 's'}.`);
+      }
+      return;
+    }
+
+    setIsRefreshing(true);
+    doLoadRef.current(true).finally(() => setIsRefreshing(false));
+  }, [showToast]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ---------------------------------------------------------------------------
   // Render helpers
@@ -285,44 +325,68 @@ export default function LeaderboardScreen() {
         })}
       </View>
 
-      {/* Content — spinner or fully loaded data */}
-      {isLoading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator color={theme.primary} size="large" />
-        </View>
-      ) : (
-        <>
-          {/* Rank card — only visible after data is ready */}
-          {result.playerRank !== null && (
-            <View style={[styles.rankCard, { backgroundColor: theme.surfaceVariant }]}>
-              <View style={styles.rankCardSide}>
-                <Text style={[styles.rankCardLabel, { color: theme.onSurfaceVariant }]}>YOUR RANK</Text>
-                <Text style={[styles.rankCardValue, { color: theme.primary }]}>#{result.playerRank}</Text>
-              </View>
-              <View style={styles.rankCardDivider} />
-              <View style={styles.rankCardSide}>
-                <Text style={[styles.rankCardLabel, { color: theme.onSurfaceVariant }]}>BEST</Text>
-                <Text style={[styles.rankCardValue, { color: theme.onSurface }]}>
-                  {playerRankScore === 0 ? '—' : new Intl.NumberFormat('en-US').format(playerRankScore)}
-                </Text>
-              </View>
-            </View>
-          )}
-
-          <FlatList
-            data={result.entries}
-            keyExtractor={(item) => item.userId}
-            renderItem={({ item }) => (
-              <LeaderboardRow entry={item} isCurrentUser={item.userId === profile?.id} theme={theme} />
-            )}
-            getItemLayout={(_d, i) => ({ length: 56, offset: 56 * i, index: i })}
-            ListEmptyComponent={renderEmpty}
+      {/* Scrollable content — pull from anywhere triggers refresh */}
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
             onRefresh={handleRefresh}
-            refreshing={false}
-            contentContainerStyle={result.entries.length === 0 && styles.emptyList}
-            showsVerticalScrollIndicator={false}
+            tintColor={theme.primary}
+            colors={[theme.primary]}
           />
-        </>
+        }
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {/* Last updated timestamp */}
+        {lastUpdated && !isLoading && (
+          <Text style={[styles.lastUpdated, { color: theme.onSurfaceVariant }]}>
+            Updated {formatAge(lastUpdated)}
+          </Text>
+        )}
+
+        {isLoading ? (
+          <ActivityIndicator color={theme.primary} size="large" style={styles.loadingSpinner} />
+        ) : (
+          <>
+            {/* Rank card */}
+            {result.playerRank !== null && (
+              <View style={[styles.rankCard, { backgroundColor: theme.surfaceVariant }]}>
+                <View style={styles.rankCardSide}>
+                  <Text style={[styles.rankCardLabel, { color: theme.onSurfaceVariant }]}>YOUR RANK</Text>
+                  <Text style={[styles.rankCardValue, { color: theme.primary }]}>#{result.playerRank}</Text>
+                </View>
+                <View style={styles.rankCardDivider} />
+                <View style={styles.rankCardSide}>
+                  <Text style={[styles.rankCardLabel, { color: theme.onSurfaceVariant }]}>BEST</Text>
+                  <Text style={[styles.rankCardValue, { color: theme.onSurface }]}>
+                    {playerRankScore === 0 ? '—' : new Intl.NumberFormat('en-US').format(playerRankScore)}
+                  </Text>
+                </View>
+              </View>
+            )}
+
+            {/* Rows */}
+            {result.entries.length === 0
+              ? renderEmpty()
+              : result.entries.map((item) => (
+                  <LeaderboardRow
+                    key={item.userId}
+                    entry={item}
+                    isCurrentUser={item.userId === profile?.id}
+                    theme={theme}
+                  />
+                ))
+            }
+          </>
+        )}
+      </ScrollView>
+
+      {/* Toast */}
+      {toastMsg !== null && (
+        <Animated.View style={[styles.toast, { opacity: toastOpacity }]}>
+          <Text style={styles.toastText}>{toastMsg}</Text>
+        </Animated.View>
       )}
     </SafeAreaView>
   );
@@ -352,6 +416,12 @@ const styles = StyleSheet.create({
   scopeTab: { flex: 1, alignItems: 'center', paddingBottom: 8 },
   scopeTabText: { fontSize: 14, fontWeight: '500' },
   scopeUnderline: { height: 2, width: '60%', borderRadius: 1, marginTop: 4 },
+  lastUpdated: {
+    fontSize: 11,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
   rankCard: {
     flexDirection: 'row',
     marginHorizontal: 24,
@@ -370,13 +440,30 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   rankCardValue: { fontSize: 22, fontWeight: '700' },
+  scrollContent: { flexGrow: 1 },
+  loadingSpinner: { marginTop: 60 },
   row: { flexDirection: 'row', alignItems: 'center', height: 56, paddingHorizontal: 24 },
   rowRank: { width: 36, fontSize: 15, fontWeight: '700' },
   rowUsername: { flex: 1, fontSize: 14, fontWeight: '500' },
   rowFlag: { fontSize: 18, marginHorizontal: 10 },
   rowScore: { fontSize: 14, fontWeight: '600' },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   emptyContainer: { paddingHorizontal: 32, paddingTop: 48, alignItems: 'center' },
   emptyText: { fontSize: 15, textAlign: 'center', lineHeight: 22 },
-  emptyList: { flex: 1 },
+  toast: {
+    position: 'absolute',
+    bottom: 32,
+    left: 24,
+    right: 24,
+    backgroundColor: 'rgba(20,20,20,0.88)',
+    borderRadius: 14,
+    paddingVertical: 13,
+    paddingHorizontal: 18,
+  },
+  toastText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '500',
+    textAlign: 'center',
+    lineHeight: 18,
+  },
 });

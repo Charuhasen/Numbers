@@ -104,7 +104,12 @@ export async function sendFriendRequest(targetUserId: string): Promise<void> {
     status: 'pending',
   });
 
-  if (error) throw error;
+  if (error) {
+    if (error.message === 'rate_limit_exceeded') {
+      throw new Error('You can only send 10 friend requests per hour.');
+    }
+    throw error;
+  }
 }
 
 /** Accept or decline a pending incoming friend request. */

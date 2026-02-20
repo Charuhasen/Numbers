@@ -96,8 +96,9 @@ export default function FriendsScreen() {
             : r
         )
       );
-    } catch {
-      Alert.alert('Error', 'Could not send friend request.');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Could not send friend request.';
+      Alert.alert('Error', msg);
     }
   };
 
