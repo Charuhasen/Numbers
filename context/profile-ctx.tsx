@@ -11,6 +11,7 @@ export interface Profile {
   bits: number;
   avatarUrl: string | null;
   countryCode: string | null;
+  allowFriendRequests: boolean;
 }
 
 export interface BestScores {
@@ -60,7 +61,7 @@ export function ProfileProvider({ children }: PropsWithChildren) {
     // Fetch profile
     let profileResult = await supabase
       .from('profiles')
-      .select('id, username, display_name, bits, avatar_url, country_code')
+      .select('id, username, display_name, bits, avatar_url, country_code, allow_friend_requests')
       .eq('id', userId)
       .single();
 
@@ -79,7 +80,7 @@ export function ProfileProvider({ children }: PropsWithChildren) {
       // Re-fetch after creation
       profileResult = await supabase
         .from('profiles')
-        .select('id, username, display_name, bits, avatar_url, country_code')
+        .select('id, username, display_name, bits, avatar_url, country_code, allow_friend_requests')
         .eq('id', userId)
         .single();
     }
@@ -92,6 +93,7 @@ export function ProfileProvider({ children }: PropsWithChildren) {
         bits: profileResult.data.bits ?? 0,
         avatarUrl: profileResult.data.avatar_url,
         countryCode: profileResult.data.country_code ?? null,
+        allowFriendRequests: profileResult.data.allow_friend_requests ?? false,
       });
     }
 

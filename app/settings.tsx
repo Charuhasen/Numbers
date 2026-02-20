@@ -3,6 +3,7 @@ import { useSession } from '@/context/ctx';
 import { useProfile } from '@/context/profile-ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { isHapticsEnabled, setHapticsEnabled } from '@/lib/haptics';
+import { supabase } from '@/lib/supabase';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -32,14 +33,31 @@ export default function SettingsScreen() {
   const isDark = colorScheme === 'dark';
   const router = useRouter();
   const { signOut } = useSession();
-  const { profile } = useProfile();
+  const { profile, refreshProfile } = useProfile();
   const regionCode = profile?.countryCode ?? null;
 
   const [hapticsOn, setHapticsOn] = useState(isHapticsEnabled);
+  const [friendRequestsOn, setFriendRequestsOn] = useState(
+    profile?.allowFriendRequests ?? false,
+  );
 
   const handleHapticsToggle = (value: boolean) => {
     setHapticsOn(value);
     setHapticsEnabled(value);
+  };
+
+  const handleFriendRequestsToggle = async (value: boolean) => {
+    if (!profile?.id) return;
+    setFriendRequestsOn(value); // optimistic
+    const { error } = await supabase
+      .from('profiles')
+      .update({ allow_friend_requests: value })
+      .eq('id', profile.id);
+    if (error) {
+      setFriendRequestsOn(!value); // revert on failure
+    } else {
+      refreshProfile();
+    }
   };
 
   const handleSignOut = () => {
@@ -90,6 +108,28 @@ export default function SettingsScreen() {
             ) : (
               <Text style={[styles.rowValue, { color: theme.onSurfaceVariant }]}>Not detected</Text>
             )}
+          </View>
+        </View>
+      </View>
+
+      {/* Privacy */}
+      <View style={styles.section}>
+        <Text style={[styles.sectionLabel, { color: theme.onSurfaceVariant }]}>Privacy</Text>
+        <View style={[styles.card, { backgroundColor: theme.surfaceVariant }]}>
+          <View style={styles.row}>
+            <MaterialIcons name="person-add" size={20} color={theme.onSurface} />
+            <View style={styles.rowTextGroup}>
+              <Text style={[styles.rowLabel, { color: theme.onSurface }]}>Friend Requests</Text>
+              <Text style={[styles.rowSubLabel, { color: theme.onSurfaceVariant }]}>
+                Allow others to send you friend requests
+              </Text>
+            </View>
+            <Switch
+              value={friendRequestsOn}
+              onValueChange={handleFriendRequestsToggle}
+              trackColor={{ false: theme.surfaceDim, true: '#10B981' }}
+              thumbColor="#FFFFFF"
+            />
           </View>
         </View>
       </View>
@@ -149,6 +189,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     flex: 1,
+  },
+  rowTextGroup: {
+    flex: 1,
+    gap: 2,
+  },
+  rowSubLabel: {
+    fontSize: 12,
+    fontWeight: '400',
   },
   rowValue: {
     fontSize: 15,

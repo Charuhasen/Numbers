@@ -149,7 +149,8 @@ export default function FriendsScreen() {
   );
 
   const renderSearchResult = ({ item }: { item: SearchResult }) => {
-    const canAdd = !item.relationshipStatus;
+    const canAdd = !item.relationshipStatus && item.allowFriendRequests;
+    const isLocked = !item.relationshipStatus && !item.allowFriendRequests;
     const isPending = item.relationshipStatus === 'pending' && item.isSender;
     const isIncoming = item.relationshipStatus === 'pending' && !item.isSender;
     const isFriend = item.relationshipStatus === 'accepted';
@@ -174,6 +175,11 @@ export default function FriendsScreen() {
           >
             <Text style={styles.actionBtnText}>Add</Text>
           </TouchableOpacity>
+        )}
+        {isLocked && (
+          <View style={[styles.actionBtn, { backgroundColor: theme.surfaceDim }]}>
+            <MaterialIcons name="lock" size={14} color={theme.onSurfaceVariant} />
+          </View>
         )}
         {isPending && (
           <View style={[styles.actionBtn, styles.actionBtnDisabled, { backgroundColor: theme.surfaceVariant }]}>

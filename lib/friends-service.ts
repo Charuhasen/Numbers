@@ -25,6 +25,7 @@ export interface SearchResult {
   username: string;
   displayName: string;
   avatarUrl?: string;
+  allowFriendRequests: boolean;
   friendshipId?: string;
   relationshipStatus?: FriendshipStatus;
   isSender?: boolean;
@@ -43,7 +44,7 @@ export async function searchUsers(query: string): Promise<SearchResult[]> {
 
   const { data: profiles, error } = await supabase
     .from('profiles')
-    .select('id, username, display_name, avatar_url')
+    .select('id, username, display_name, avatar_url, allow_friend_requests')
     .ilike('username', `%${trimmed}%`)
     .neq('id', user.id)
     .limit(20);
@@ -77,13 +78,14 @@ export async function searchUsers(query: string): Promise<SearchResult[]> {
     });
   }
 
-  return profiles.map((p: { id: string; username: string | null; display_name: string | null; avatar_url: string | null }) => {
+  return profiles.map((p: { id: string; username: string | null; display_name: string | null; avatar_url: string | null; allow_friend_requests: boolean }) => {
     const existing = friendshipMap.get(p.id);
     return {
       id: p.id,
       username: p.username ?? p.id,
       displayName: p.display_name ?? p.username ?? p.id,
       avatarUrl: p.avatar_url ?? undefined,
+      allowFriendRequests: p.allow_friend_requests ?? false,
       friendshipId: existing?.id,
       relationshipStatus: existing?.status,
       isSender: existing?.isSender,
