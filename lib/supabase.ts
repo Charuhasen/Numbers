@@ -13,16 +13,56 @@ if (__DEV__ && (!supabaseUrl || !supabaseAnonKey)) {
   );
 }
 
-// Custom storage for Supabase session persistence
+// SecureStore has a 2048-byte limit per key. Large Supabase session objects
+// (JWT + user metadata) routinely exceed this, so we chunk them.
+const CHUNK_SIZE = 2000;
+
 const ExpoSecureStoreAdapter = {
-    getItem: (key: string) => {
-        return SecureStore.getItemAsync(key);
+    async getItem(key: string): Promise<string | null> {
+        const chunksStr = await SecureStore.getItemAsync(`${key}.chunks`);
+        if (!chunksStr) {
+            // Value was stored unchunked (small enough to fit in one key)
+            return SecureStore.getItemAsync(key);
+        }
+        const total = parseInt(chunksStr, 10);
+        let value = '';
+        for (let i = 0; i < total; i++) {
+            const chunk = await SecureStore.getItemAsync(`${key}.chunk_${i}`);
+            if (chunk === null) return null;
+            value += chunk;
+        }
+        return value;
     },
-    setItem: (key: string, value: string) => {
-        SecureStore.setItemAsync(key, value);
+
+    async setItem(key: string, value: string): Promise<void> {
+        if (value.length <= CHUNK_SIZE) {
+            await SecureStore.setItemAsync(key, value);
+            // Remove any leftover chunks from a previous larger value
+            await SecureStore.deleteItemAsync(`${key}.chunks`);
+            return;
+        }
+        const total = Math.ceil(value.length / CHUNK_SIZE);
+        for (let i = 0; i < total; i++) {
+            await SecureStore.setItemAsync(
+                `${key}.chunk_${i}`,
+                value.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE),
+            );
+        }
+        await SecureStore.setItemAsync(`${key}.chunks`, String(total));
+        // Remove the plain key in case a previous value was stored unchunked
+        await SecureStore.deleteItemAsync(key);
     },
-    removeItem: (key: string) => {
-        SecureStore.deleteItemAsync(key);
+
+    async removeItem(key: string): Promise<void> {
+        const chunksStr = await SecureStore.getItemAsync(`${key}.chunks`);
+        if (chunksStr) {
+            const total = parseInt(chunksStr, 10);
+            for (let i = 0; i < total; i++) {
+                await SecureStore.deleteItemAsync(`${key}.chunk_${i}`);
+            }
+            await SecureStore.deleteItemAsync(`${key}.chunks`);
+        }
+        await SecureStore.deleteItemAsync(key);
     },
 };
 
