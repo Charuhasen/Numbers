@@ -19,6 +19,23 @@ export interface BestScores {
   blitz: number;
 }
 
+export interface Inventory {
+  potion_time_freeze: number;
+  potion_second_chance: number;
+  potion_heart_refill: number;
+  potion_50_50: number;
+  potion_grid_skip: number;
+  potion_revive: number;
+  potion_fortune_tonic: number;
+  potion_scanner: number;
+}
+
+export interface UserPotionSlot {
+  slot_index: number;
+  potion_type: string | null;
+  auto_use_enabled: boolean;
+}
+
 const emptyBestScores = (): BestScores => ({
   classic: 0,
   blitz: 0,
@@ -27,6 +44,8 @@ const emptyBestScores = (): BestScores => ({
 interface ProfileContextValue {
   profile: Profile | null;
   bestScores: BestScores;
+  inventory: Inventory | null;
+  potionSlots: UserPotionSlot[];
   isLoading: boolean;
   refreshProfile: () => Promise<void>;
 }
@@ -34,6 +53,8 @@ interface ProfileContextValue {
 const ProfileContext = createContext<ProfileContextValue>({
   profile: null,
   bestScores: emptyBestScores(),
+  inventory: null,
+  potionSlots: [],
   isLoading: true,
   refreshProfile: async () => {},
 });
@@ -46,12 +67,16 @@ export function ProfileProvider({ children }: PropsWithChildren) {
   const { session } = useSession();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [bestScores, setBestScores] = useState<BestScores>(emptyBestScores());
+  const [inventory, setInventory] = useState<Inventory | null>(null);
+  const [potionSlots, setPotionSlots] = useState<UserPotionSlot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchProfile = useCallback(async () => {
     if (!session?.user?.id) {
       setProfile(null);
       setBestScores(emptyBestScores());
+      setInventory(null);
+      setPotionSlots([]);
       setIsLoading(false);
       return;
     }
@@ -114,6 +139,31 @@ export function ProfileProvider({ children }: PropsWithChildren) {
       setBestScores(best);
     }
 
+    // Fetch Inventory
+    const inventoryResult = await supabase
+      .from('inventory')
+      .select('potion_time_freeze, potion_second_chance, potion_heart_refill, potion_50_50, potion_grid_skip, potion_revive, potion_fortune_tonic, potion_scanner')
+      .eq('user_id', userId)
+      .single();
+
+    if (inventoryResult.data) {
+      setInventory(inventoryResult.data as unknown as Inventory);
+    } else {
+      setInventory(null);
+    }
+
+    // Fetch Potion Slots
+    const slotsResult = await supabase
+      .from('user_potion_slots')
+      .select('slot_index, potion_type, auto_use_enabled')
+      .eq('user_id', userId);
+
+    if (slotsResult.data) {
+      setPotionSlots(slotsResult.data as UserPotionSlot[]);
+    } else {
+      setPotionSlots([]);
+    }
+
     setIsLoading(false);
   }, [session?.user?.id]);
 
@@ -122,6 +172,8 @@ export function ProfileProvider({ children }: PropsWithChildren) {
     if (!session?.user?.id) {
       setProfile(null);
       setBestScores(emptyBestScores());
+      setInventory(null);
+      setPotionSlots([]);
       setIsLoading(false);
       return;
     }
@@ -157,6 +209,8 @@ export function ProfileProvider({ children }: PropsWithChildren) {
       value={{
         profile,
         bestScores,
+        inventory,
+        potionSlots,
         isLoading,
         refreshProfile: fetchProfile,
       }}

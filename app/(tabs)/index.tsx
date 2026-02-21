@@ -1,5 +1,6 @@
 import { MODE_CARD_WIDTH, ModeCard } from '@/components/mode-card';
 import { PlayerInfoRow } from '@/components/player-info-row';
+import { PotionInventory } from '@/components/potion-inventory';
 import { Colors } from '@/constants/theme';
 import { useProfile } from '@/context/profile-ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -128,6 +129,9 @@ export default function HomeScreen() {
             iconBgColor={orangeIconBg}
           />
         </ScrollView>
+
+        {/* Potion Inventory */}
+        <PotionInventory />
 
       </ScrollView>
     </SafeAreaView>
