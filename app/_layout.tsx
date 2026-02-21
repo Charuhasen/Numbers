@@ -44,8 +44,14 @@ function RootLayoutNav() {
 
   const bgColor = Colors[colorScheme ?? 'light'].surface;
 
+  // Override card + background so the Stack card container matches the app surface.
+  // Without this, DefaultTheme's white card shows through during swipe-back gestures.
+  const theme = colorScheme === 'dark'
+    ? { ...DarkTheme, colors: { ...DarkTheme.colors, background: bgColor, card: bgColor } }
+    : { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: bgColor, card: bgColor } };
+
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={theme}>
       <Stack screenOptions={{ contentStyle: { backgroundColor: bgColor } }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
