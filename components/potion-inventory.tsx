@@ -1,19 +1,19 @@
 import { Colors } from '@/constants/theme';
-import { useProfile } from '@/context/profile-ctx';
+import { useProfile, type UserPotionSlot } from '@/context/profile-ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { getStoreItems, StoreItem } from '@/lib/store-service';
 import { supabase } from '@/lib/supabase';
 import { MaterialIcons } from '@expo/vector-icons';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
     ActivityIndicator,
     Alert,
     Modal,
+    Pressable,
     ScrollView,
     StyleSheet,
     Switch,
     Text,
-    TouchableOpacity,
     View,
 } from 'react-native';
 
@@ -32,7 +32,7 @@ export function PotionInventory() {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
   const isDark = colorScheme === 'dark';
-  const { profile, inventory, potionSlots, refreshProfile } = useProfile();
+  const { profile, inventory, potionSlots, setPotionSlotsOptimistic } = useProfile();
 
   const [storeItems, setStoreItems] = useState<StoreItem[]>([]);
   const [loadingItems, setLoadingItems] = useState(true);
@@ -51,21 +51,51 @@ export function PotionInventory() {
       });
   }, []);
 
+  // Filter potions user owns
+  const ownedPotions = useMemo(() => {
+    if (!inventory) return [];
+    return storeItems.filter((item) => {
+      if (item.type !== 'potion' || !item.metadata?.column) return false;
+      const col = item.metadata.column as keyof typeof inventory;
+      return inventory[col] > 0;
+    });
+  }, [storeItems, inventory]);
+
   if (!inventory || !profile) return null;
 
-  // Filter potions user owns
-  const ownedPotions = storeItems.filter((item) => {
-    if (item.type !== 'potion' || !item.metadata?.column) return false;
-    const col = item.metadata.column as keyof typeof inventory;
-    return inventory[col] > 0;
-  });
+  const applySlotUpdate = (slotIndex: number, potionType: string | null, autoUse: boolean) => {
+    // Optimistic: update potionSlots immediately
+    let nextSlots: UserPotionSlot[];
+    if (potionType === null) {
+      nextSlots = potionSlots.filter((s) => s.slot_index !== slotIndex);
+    } else {
+      const existing = potionSlots.find((s) => s.slot_index === slotIndex);
+      if (existing) {
+        nextSlots = potionSlots.map((s) =>
+          s.slot_index === slotIndex
+            ? { ...s, potion_type: potionType, auto_use_enabled: autoUse }
+            : s,
+        );
+      } else {
+        nextSlots = [
+          ...potionSlots,
+          { slot_index: slotIndex, potion_type: potionType, auto_use_enabled: autoUse },
+        ];
+      }
+    }
+    setPotionSlotsOptimistic(nextSlots);
+    return nextSlots;
+  };
 
   const handleUpdateSlot = async (slotIndex: number, potionType: string | null, autoUse: boolean) => {
-    try {
-      if (!profile.id) return;
+    if (!profile.id) return;
 
+    // Apply optimistic update first
+    const previousSlots = [...potionSlots];
+    applySlotUpdate(slotIndex, potionType, autoUse);
+
+    try {
       if (potionType === null) {
-        // Clear slot
         const { error } = await supabase
           .from('user_potion_slots')
           .delete()
@@ -73,7 +103,6 @@ export function PotionInventory() {
           .eq('slot_index', slotIndex);
         if (error) throw error;
       } else {
-        // Upsert
         const { error } = await supabase
           .from('user_potion_slots')
           .upsert({
@@ -84,8 +113,9 @@ export function PotionInventory() {
           });
         if (error) throw error;
       }
-      refreshProfile();
     } catch (err: any) {
+      // Rollback on failure
+      setPotionSlotsOptimistic(previousSlots);
       Alert.alert('Error', err.message);
     }
   };
@@ -94,7 +124,6 @@ export function PotionInventory() {
     const slot = potionSlots.find((s) => s.slot_index === index);
     const item = slot?.potion_type ? storeItems.find((i) => i.sku === slot.potion_type) : null;
 
-    // We get count from inventory
     let count = 0;
     if (item?.metadata?.column) {
       count = inventory[item.metadata.column as keyof typeof inventory] || 0;
@@ -107,15 +136,14 @@ export function PotionInventory() {
         <View style={styles.slotHeader}>
           <Text style={[styles.slotTitle, { color: theme.onSurfaceVariant }]}>Slot {index}</Text>
           {slot && (
-            <TouchableOpacity onPress={() => handleUpdateSlot(index, null, false)} hitSlop={12}>
+            <Pressable onPress={() => handleUpdateSlot(index, null, false)} hitSlop={12}>
               <MaterialIcons name="close" size={16} color={theme.onSurfaceVariant} />
-            </TouchableOpacity>
+            </Pressable>
           )}
         </View>
 
-        <TouchableOpacity
+        <Pressable
           style={styles.slotMain}
-          activeOpacity={0.7}
           onPress={() => setEditingSlot(index)}
         >
           {item ? (
@@ -157,7 +185,7 @@ export function PotionInventory() {
               </View>
             </>
           )}
-        </TouchableOpacity>
+        </Pressable>
 
         {slot && (
           <View style={styles.autoUseRow}>
@@ -191,21 +219,25 @@ export function PotionInventory() {
       )}
 
       {/* Potion Picker Modal */}
-      <Modal visible={editingSlot !== null} animationType="slide" transparent>
-        <View
+      <Modal visible={editingSlot !== null} animationType="fade" transparent>
+        <Pressable
           style={[
             styles.modalOverlay,
             { backgroundColor: isDark ? 'rgba(0,0,0,0.8)' : 'rgba(0,0,0,0.5)' },
           ]}
+          onPress={() => setEditingSlot(null)}
         >
-          <View style={[styles.modalContent, { backgroundColor: theme.surface }]}>
+          <Pressable
+            style={[styles.modalContent, { backgroundColor: theme.surface }]}
+            onPress={undefined}
+          >
             <View style={styles.modalHeader}>
               <Text style={[styles.modalTitle, { color: theme.onSurface }]}>
                 Equip Slot {editingSlot}
               </Text>
-              <TouchableOpacity onPress={() => setEditingSlot(null)} hitSlop={12}>
+              <Pressable onPress={() => setEditingSlot(null)} hitSlop={12}>
                 <MaterialIcons name="close" size={24} color={theme.onSurface} />
-              </TouchableOpacity>
+              </Pressable>
             </View>
             <ScrollView style={styles.modalScroll} showsVerticalScrollIndicator={false}>
               {ownedPotions.length === 0 ? (
@@ -222,7 +254,7 @@ export function PotionInventory() {
                     inventory[(potion.metadata?.column) as keyof typeof inventory] || 0;
 
                   return (
-                    <TouchableOpacity
+                    <Pressable
                       key={potion.sku}
                       style={[
                         styles.pickerItem,
@@ -232,12 +264,13 @@ export function PotionInventory() {
                         },
                       ]}
                       disabled={isEquipped}
-                      activeOpacity={0.7}
                       onPress={() => {
-                        if (editingSlot) {
-                          handleUpdateSlot(editingSlot, potion.sku, false);
-                        }
+                        // Close modal immediately for snappy feel
+                        const slot = editingSlot;
                         setEditingSlot(null);
+                        if (slot) {
+                          handleUpdateSlot(slot, potion.sku, false);
+                        }
                       }}
                     >
                       <View
@@ -265,13 +298,13 @@ export function PotionInventory() {
                           Equipped
                         </Text>
                       )}
-                    </TouchableOpacity>
+                    </Pressable>
                   );
                 })
               )}
             </ScrollView>
-          </View>
-        </View>
+          </Pressable>
+        </Pressable>
       </Modal>
     </View>
   );

@@ -48,6 +48,7 @@ interface ProfileContextValue {
   potionSlots: UserPotionSlot[];
   isLoading: boolean;
   refreshProfile: () => Promise<void>;
+  setPotionSlotsOptimistic: (slots: UserPotionSlot[]) => void;
 }
 
 const ProfileContext = createContext<ProfileContextValue>({
@@ -57,6 +58,7 @@ const ProfileContext = createContext<ProfileContextValue>({
   potionSlots: [],
   isLoading: true,
   refreshProfile: async () => {},
+  setPotionSlotsOptimistic: () => {},
 });
 
 export function useProfile() {
@@ -213,6 +215,7 @@ export function ProfileProvider({ children }: PropsWithChildren) {
         potionSlots,
         isLoading,
         refreshProfile: fetchProfile,
+        setPotionSlotsOptimistic: setPotionSlots,
       }}
     >
       {children}
