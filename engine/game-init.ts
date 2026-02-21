@@ -6,7 +6,7 @@ export function createInitialState(
 ): GameState {
   return {
     mode,
-    hearts: 3,
+    hearts: mode === 'blitz' ? 1 : 3,
     challengeIndex: 0,
     gridIndex: 0,
     score: 0,

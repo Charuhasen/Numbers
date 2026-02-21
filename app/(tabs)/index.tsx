@@ -7,7 +7,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useCallback } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
@@ -24,6 +24,10 @@ export default function HomeScreen() {
   );
 
   const username = profile?.username ?? 'Player';
+
+  const handlePlayBlitz = () => {
+    router.replace('/game/blitz');
+  };
 
   const handlePlayClassic = () => {
     // replace instead of push — home must not sit under the game in the stack,
@@ -64,7 +68,7 @@ export default function HomeScreen() {
           <TouchableOpacity
             style={[styles.quickActionCard, { backgroundColor: theme.surfaceVariant }]}
             activeOpacity={0.75}
-            onPress={() => Alert.alert('Potion Store', 'Coming soon!')}
+            onPress={() => router.push('/store')}
           >
             <View style={[styles.quickActionIcon, { backgroundColor: indigoIconBg }]}>
               <MaterialIcons name="science" size={22} color="#6366F1" />
@@ -116,11 +120,12 @@ export default function HomeScreen() {
           />
           <ModeCard
             title="Blitz"
-            description="60-second sprint. No hearts. Pure speed."
+            description="1 heart. No second chances. How far can you go?"
+            bestScore={bestScores.blitz}
+            onPlayPress={handlePlayBlitz}
             iconName="bolt"
             iconColor="#F97316"
             iconBgColor={orangeIconBg}
-            comingSoon
           />
         </ScrollView>
 

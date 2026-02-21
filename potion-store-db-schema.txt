@@ -1,0 +1,138 @@
+Potion Store & Inventory DB Design
+To support the new features (equippable slots for Blitz mode, auto-use toggles, and discount events), we need to expand the existing schema in 
+supabase-schema.md
+.
+
+1. Schema Modifications
+1.1 store_items (Adding Discounts)
+We need to support special events where items go on sale. We can add columns to track active discounts.
+
+sql
+ALTER TABLE public.store_items
+ADD COLUMN discount_percentage int default 0 check (discount_percentage >= 0 and discount_percentage <= 100),
+ADD COLUMN discount_ends_at timestamp with time zone;
+Logic: The purchase_item_with_bits RPC will need to dynamically calculate the effective price: price_bits * (1 - (discount_percentage / 100.0)) if discount_ends_at > now().
+
+1.2 inventory (Existing)
+The current inventory table uses flat integer columns (potion_time_freeze, potion_second_chance, etc.). This is highly performant for a fixed set of potions. We will keep this structure for the core counts.
+
+1.3 user_potion_slots (NEW TABLE)
+Users need to equip up to 3 potions specifically for Blitz mode. They also need to toggle "auto-use" for specific slots (e.g., auto-use a "Second Chance" potion when they make a mistake).
+
+sql
+create table public.user_potion_slots (
+  user_id uuid references public.profiles(id) on delete cascade not null,
+  slot_index int not null check (slot_index in (1, 2, 3)),
+  potion_type text references public.store_items(sku) on delete set null, -- Null means slot is empty
+  auto_use_enabled boolean default false,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  
+  primary key (user_id, slot_index)
+);
+-- Protect against equipping the same potion in multiple slots
+create unique index idx_unique_potion_per_user 
+on public.user_potion_slots(user_id, potion_type) 
+where potion_type is not null;
+-- RLS
+alter table public.user_potion_slots enable row level security;
+create policy "Users can view and update their own slots."
+  on public.user_potion_slots 
+  for all using (auth.uid() = user_id);
+(Note: Client can directly UPDATE this table, unlike the core inventory currency, because this is just a preference toggle, not granting actual inventory.)
+
+2. Updated RPC Functions
+2.1 Updated purchase_item_with_bits
+Must now account for the discount percentage if valid.
+
+sql
+create or replace function public.purchase_item_with_bits(item_sku text)
+returns json
+language plpgsql
+security definer
+as $$
+declare
+  v_effective_price int;
+  -- ... existing variables ...
+begin
+  -- 1. Fetch item
+  select * into v_item
+  from public.store_items
+  where sku = item_sku and is_active = true;
+  -- Calculate dynamic price based on active discounts
+  if v_item.discount_percentage > 0 and (v_item.discount_ends_at is null or v_item.discount_ends_at > now()) then
+    v_effective_price := floor(v_item.price_bits * (1.0 - (v_item.discount_percentage / 100.0)))::int;
+  else
+    v_effective_price := v_item.price_bits;
+  end if;
+  -- 2. Lock and check balance
+  -- ... check against v_effective_price instead of v_item.price_bits ...
+2.2 New equip_potion RPC (Optional Helper)
+While the client could update user_potion_slots directly, it's safer to use an RPC to ensure the user actually owns at least 1 of the potion they are trying to equip.
+
+sql
+create or replace function public.equip_potion(p_slot_index int, p_potion_type text, p_auto_use boolean)
+returns json
+language plpgsql
+security definer
+as $$
+declare
+  v_user_id uuid := auth.uid();
+  v_owns_potion int;
+begin
+  -- 1. Check if user actually has the potion in their inventory
+  -- (Dynamic SQL to check the specific inventory column to ensure count > 0)
+  
+  -- 2. Upsert into user_potion_slots
+  insert into public.user_potion_slots (user_id, slot_index, potion_type, auto_use_enabled)
+  values (v_user_id, p_slot_index, p_potion_type, p_auto_use)
+  on conflict (user_id, slot_index) do update
+  set potion_type = excluded.potion_type,
+      auto_use_enabled = excluded.auto_use_enabled;
+  return json_build_object('success', true);
+end;
+$$;
+3. Game Design Suggestions for Addiction & Fun
+Based on standard mobile gaming loops, to make the Bits -> Potion economy engaging:
+
+Daily Rotating Store: Don't just have a static catalog. Have a separate store_daily_offers concept where a random Legendary potion goes on a -30% discount for 24 hours. This drives daily logins.
+Combo Potions: Allow players to merge 3 identical Tier 1 potions (e.g., +5s Time Freeze) into 1 Tier 2 potion (+10s Time Freeze). This creates a sink for excess inventory and gives a reason to keep grinding lower-tier rewards.
+The "Auto-Use" Tax: If a player toggles "Auto-Use" on a Revive or Second Chance potion, they don't have to pause and tap it manually. However, perhaps Auto-Use applies a slight score penalty (e.g., -5% final score) compared to manual usage, creating a risk/reward skill ceiling for high-level players.
+Visual "Gacha" Pack Opening: When players buy a "Bundle" from the store, don't just add it to the inventory. Trigger an unboxing animation in React Native where the potion bottles pop out with haptic feedback (expo-haptics).
+Streaks & Potion Drops: If a player gets 10 correct answers in a row quickly in Classic mode, an inline "Loot Goblin" or "Bonus Box" tile appears on the grid. Tapping it drops a random potion directly into their inventory.
+
+Implementation Plan
+less than a minute ago
+
+Review
+
+Proceed
+Implementation Plan: Potion Store & Inventory Schema
+This plan outlines the updates to the Supabase database schema (
+game-design/supabase-schema.md
+) to integrate the Potion Store, user inventory slots, and the strict game-mode rules for potions.
+
+Proposed Changes
+1. 
+game-design/supabase-schema.md
+ modifications
+We will embed the new additions directly into the source of truth for the DB schema:
+
+[MODIFY] 
+game-design/supabase-schema.md
+store_items Table Update: Add discount_percentage and discount_ends_at to support event pricing.
+user_potion_slots Table Creation: Add the new table to track up to 3 equipped potions for Blitz mode and their auto_use_enabled preference.
+purchase_item_with_bits RPC: Update the function to dynamically calculate the effective price based on active discounts.
+grant_potion_drop RPC:
+Add p_mode text as a parameter.
+Add validation: if p_mode != 'classic' then raise exception... to ensure potions can only be dropped in Classic mode.
+consume_potion RPC:
+Add p_mode text as a parameter.
+Add validation: if p_mode != 'blitz' then raise exception... to ensure potions can only be consumed during Blitz mode.
+equip_potion RPC: Add the helper function to safely upsert slots to user_potion_slots, validating that the user actually owns at least 1 of the potion type.
+Verification Plan
+Because these are schema and RPC designs for a Supabase backend:
+
+Manual Verification: I will ask you to review the updated 
+supabase-schema.md
+ document to ensure the constraints align perfectly with the game rules.
+Next Phase (Execution): Once the design is approved, I will generate a Supabase migration file (e.g., supabase/migrations/TIMESTAMP_potion_store.sql) so you can deploy these changes to your database.
