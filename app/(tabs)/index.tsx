@@ -26,7 +26,10 @@ export default function HomeScreen() {
   const username = profile?.username ?? 'Player';
 
   const handlePlayClassic = () => {
-    router.push('/game/classic');
+    // replace instead of push — home must not sit under the game in the stack,
+    // otherwise game-over's router.replace('/') would create a duplicate home entry.
+    // gestureEnabled:false on the game route already prevents accidental swipe-back.
+    router.replace('/game/classic');
   };
   const handleProfilePress = () => {
     router.push('/profile');
