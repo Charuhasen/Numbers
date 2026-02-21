@@ -1,12 +1,13 @@
 import { Spacing } from '@/constants/theme';
 import React, { useMemo } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
+import { SharedValue } from 'react-native-reanimated';
 
 import { GridTile, TileFeedback } from './grid-tile';
 
 interface GridProps {
   numbers: number[];
-  feedbackMap: Record<number, TileFeedback>; // index → feedback state
+  feedbackValues: SharedValue<TileFeedback[]>; // UI-thread driven, avoids root re-renders
   onTap: (index: number) => void;
   disabled: boolean;
 }
@@ -21,7 +22,7 @@ function calculateTileSize(): number {
 
 export const GameGrid = React.memo(function GameGrid({
   numbers,
-  feedbackMap,
+  feedbackValues,
   onTap,
   disabled,
 }: GridProps) {
@@ -43,8 +44,9 @@ export const GameGrid = React.memo(function GameGrid({
               <GridTile
                 key={idx}
                 number={num}
-                feedback={feedbackMap[idx] ?? 'idle'}
-                onPress={() => onTap(idx)}
+                tileIndex={idx}
+                feedbackValues={feedbackValues}
+                onTap={onTap}
                 disabled={disabled}
                 size={tileSize}
               />

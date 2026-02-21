@@ -1,12 +1,13 @@
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 interface StatsBarProps {
   score: number;
   bestScore: number;
-  elapsedSeconds: number;
+  /** Stable Unix timestamp (ms) from when the game started — never changes, so never triggers GameScreen re-renders */
+  gameStartTime: number;
 }
 
 function formatTime(seconds: number): string {
@@ -19,10 +20,31 @@ function formatScore(score: number): string {
   return score.toLocaleString();
 }
 
+/** Self-contained elapsed timer — re-renders only this leaf component, not GameScreen */
+function ElapsedTimer({ startTime }: { startTime: number }) {
+  const colorScheme = useColorScheme();
+  const theme = Colors[colorScheme ?? 'light'];
+  const [elapsed, setElapsed] = useState(() => Math.floor((Date.now() - startTime) / 1000));
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setElapsed(Math.floor((Date.now() - startTime) / 1000));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [startTime]);
+
+  return (
+    <View style={styles.stat}>
+      <Text style={[styles.label, { color: theme.onSurfaceVariant }]}>TIME</Text>
+      <Text style={[styles.value, { color: theme.onSurface }]}>{formatTime(elapsed)}</Text>
+    </View>
+  );
+}
+
 export const StatsBar = React.memo(function StatsBar({
   score,
   bestScore,
-  elapsedSeconds,
+  gameStartTime,
 }: StatsBarProps) {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
@@ -39,10 +61,7 @@ export const StatsBar = React.memo(function StatsBar({
         <Text style={[styles.value, { color: theme.onSurface }]}>{formatScore(bestScore)}</Text>
       </View>
       <View style={[styles.divider, { backgroundColor: theme.outlineVariant }]} />
-      <View style={styles.stat}>
-        <Text style={[styles.label, { color: theme.onSurfaceVariant }]}>TIME</Text>
-        <Text style={[styles.value, { color: theme.onSurface }]}>{formatTime(elapsedSeconds)}</Text>
-      </View>
+      <ElapsedTimer startTime={gameStartTime} />
     </View>
   );
 });

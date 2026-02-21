@@ -13,7 +13,7 @@ import { setGameSessionData } from '@/lib/game-session-store';
 import { startGameSession } from '@/lib/score-service';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, InteractionManager, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useSharedValue } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -36,19 +36,19 @@ export default function GameScreen() {
     setShowTimeUp(true);
   }, []);
 
+  // feedbackValues: SharedValue array — updates go directly to UI thread, no root re-render
+  const feedbackValues = useSharedValue<TileFeedback[]>(Array(9).fill('idle'));
+
   // Called by the engine whenever the correct answer should be revealed
-  // (wrong tap or timeout). Highlights the correct tile(s) in green and
-  // locks input so the player can't tap during the reveal window.
+  // (wrong tap or timeout). Updates the SharedValue — no React state change.
   const handleRevealCorrect = useCallback((correctIndices: number[]) => {
     setInputDisabled(true);
-    setFeedbackMap((prev) => {
-      const update = { ...prev };
-      for (const idx of correctIndices) update[idx] = 'correct';
-      return update;
-    });
-  }, []);
+    const next = feedbackValues.value.slice() as TileFeedback[];
+    for (const idx of correctIndices) next[idx] = 'correct';
+    feedbackValues.value = next;
+  }, [feedbackValues]);
 
-  const { state, tapCell, timerProgress, timerDuration, elapsedSeconds, isReady, resumeTimer } = useGameEngine(gameMode, handleRevealCorrect, handleTimeout);
+  const { state, tapCell, timerProgress, timerDuration, gameStartTime, isReady, resumeTimer } = useGameEngine(gameMode, handleRevealCorrect, handleTimeout);
   const { bestScores } = useProfile();
 
   // Session token: requested once from the server when the game screen is ready.
@@ -63,7 +63,6 @@ export default function GameScreen() {
   }, [isReady, gameMode]);
 
   const heartShake = useSharedValue(0);
-  const [feedbackMap, setFeedbackMap] = useState<Record<number, TileFeedback>>({});
   const [inputDisabled, setInputDisabled] = useState(false);
   const prevGridRef = useRef(state.currentGrid);
 
@@ -87,17 +86,18 @@ export default function GameScreen() {
   // Reset feedback when grid changes
   useEffect(() => {
     if (state.currentGrid !== prevGridRef.current) {
-      setFeedbackMap({});
+      feedbackValues.value = Array(9).fill('idle');
       setInputDisabled(false);
       setShowTimeUp(false);
       prevGridRef.current = state.currentGrid;
     }
-  }, [state.currentGrid]);
+  }, [state.currentGrid, feedbackValues]);
 
   // Navigate to game over when phase changes
   useEffect(() => {
     if (state.phase === 'gameOver') {
       const timeout = setTimeout(async () => {
+        const elapsedSeconds = Math.floor((Date.now() - gameStartTime) / 1000);
         // Persist session to AsyncStorage before navigating so it survives app kills.
         await setGameSessionData({
           mode: gameMode,
@@ -108,34 +108,50 @@ export default function GameScreen() {
           events: state.events,
           sessionId: sessionIdRef.current,
         });
-        router.replace({
-          pathname: '/game/game-over',
-          params: {
-            score: state.score.toString(),
-            challengeIndex: state.challengeIndex.toString(),
-            bitsEarned: state.bitsEarned.toString(),
-            elapsedSeconds: elapsedSeconds.toString(),
-            mode: gameMode,
-          },
+        // Defer navigation until after any in-progress interactions finish
+        // so the game-over transition doesn't stutter while AsyncStorage serializes.
+        InteractionManager.runAfterInteractions(() => {
+          router.replace({
+            pathname: '/game/game-over',
+            params: {
+              score: state.score.toString(),
+              challengeIndex: state.challengeIndex.toString(),
+              bitsEarned: state.bitsEarned.toString(),
+              elapsedSeconds: elapsedSeconds.toString(),
+              mode: gameMode,
+            },
+          });
         });
       }, 500);
       return () => clearTimeout(timeout);
     }
-  }, [state.phase, state.score, state.challengeIndex, state.bitsEarned, elapsedSeconds, gameMode, router]);
+  }, [state.phase, state.score, state.challengeIndex, state.bitsEarned, gameStartTime, gameMode, router]);
 
-  const handleTap = useCallback((index: number) => {
+  // handleTap written to a ref so the stable wrapper never invalidates GridTile memos
+  const handleTapImpl = useCallback((index: number) => {
     if (inputDisabled) return;
 
     const isCorrect = state.currentGrid.correctAnswers.includes(index);
     setInputDisabled(true);
-    setFeedbackMap({ [index]: isCorrect ? 'correct' : 'wrong' });
+
+    const next = feedbackValues.value.slice() as TileFeedback[];
+    next[index] = isCorrect ? 'correct' : 'wrong';
+    feedbackValues.value = next;
 
     if (!isCorrect) {
       triggerHeartShake(heartShake);
     }
 
     tapCell(index);
-  }, [state.currentGrid, tapCell, inputDisabled, heartShake]);
+  }, [state.currentGrid, tapCell, inputDisabled, heartShake, feedbackValues]);
+
+  const handleTapRef = useRef(handleTapImpl);
+  handleTapRef.current = handleTapImpl;
+
+  // Stable tap handler — never recreates, so GameGrid/GridTile React.memo is never defeated
+  const stableHandleTap = useCallback((index: number) => {
+    handleTapRef.current(index);
+  }, []);
 
   const handleExit = useCallback(() => {
     router.replace('/');
@@ -186,8 +202,8 @@ export default function GameScreen() {
         )}
         <GameGrid
           numbers={state.currentGrid.numbers}
-          feedbackMap={feedbackMap}
-          onTap={handleTap}
+          feedbackValues={feedbackValues}
+          onTap={stableHandleTap}
           disabled={inputDisabled || state.phase === 'gameOver' || showBanner}
         />
       </View>
@@ -197,7 +213,7 @@ export default function GameScreen() {
         <StatsBar
           score={state.score}
           bestScore={bestScores[gameMode] ?? 0}
-          elapsedSeconds={elapsedSeconds}
+          gameStartTime={gameStartTime}
         />
       </View>
 

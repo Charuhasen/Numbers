@@ -3,8 +3,9 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { impact } from '@/lib/haptics';
 import { ImpactFeedbackStyle } from 'expo-haptics';
 import React, { useCallback } from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 import Animated, {
+  SharedValue,
   useAnimatedStyle,
   useSharedValue,
   withSequence,
@@ -16,18 +17,20 @@ export type TileFeedback = 'idle' | 'correct' | 'wrong';
 
 interface GridTileProps {
   number: number;
-  feedback: TileFeedback;
-  onPress: () => void;
+  tileIndex: number;
+  feedbackValues: SharedValue<TileFeedback[]>;
+  onTap: (index: number) => void;
   disabled: boolean;
   size: number;
 }
 
-const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export const GridTile = React.memo(function GridTile({
   number,
-  feedback,
-  onPress,
+  tileIndex,
+  feedbackValues,
+  onTap,
   disabled,
   size,
 }: GridTileProps) {
@@ -35,60 +38,62 @@ export const GridTile = React.memo(function GridTile({
   const theme = Colors[colorScheme ?? 'light'];
   const scale = useSharedValue(1);
 
-  const handlePress = useCallback(() => {
+  // Capture theme colors so worklets can close over them
+  const successColor = theme.success;
+  const errorColor = theme.error;
+  const surfaceColor = theme.surfaceVariant;
+  const onSurfaceColor = theme.onSurface;
+
+  const handlePressIn = useCallback(() => {
     if (disabled) return;
     scale.value = withSequence(
       withTiming(0.92, { duration: 50 }),
       withSpring(1, { damping: 15, stiffness: 300 }),
     );
     impact(ImpactFeedbackStyle.Light);
-    onPress();
-  }, [disabled, onPress, scale]);
+    onTap(tileIndex);
+  }, [disabled, onTap, scale, tileIndex]);
 
-  const animatedStyle = useAnimatedStyle(() => {
+  // Background + scale animate on UI thread — no React re-render needed
+  const bgAnimStyle = useAnimatedStyle(() => {
+    const fb = feedbackValues.value[tileIndex] ?? 'idle';
     return {
       transform: [{ scale: scale.value }],
+      backgroundColor:
+        fb === 'correct' ? successColor : fb === 'wrong' ? errorColor : surfaceColor,
     };
   });
 
-  const getBgColor = () => {
-    if (feedback === 'correct') return theme.success;
-    if (feedback === 'wrong') return theme.error;
-    return theme.surfaceVariant;
-  };
-
-  const getTextColor = () => {
-    if (feedback === 'correct' || feedback === 'wrong') return '#FFFFFF';
-    return theme.onSurface;
-  };
+  // Text color also on UI thread
+  const textAnimStyle = useAnimatedStyle(() => {
+    const fb = feedbackValues.value[tileIndex] ?? 'idle';
+    return {
+      color: fb === 'correct' || fb === 'wrong' ? '#FFFFFF' : onSurfaceColor,
+    };
+  });
 
   return (
-    <AnimatedTouchable
-      onPress={handlePress}
+    <AnimatedPressable
+      onPressIn={handlePressIn}
       disabled={disabled}
-      activeOpacity={0.8}
       style={[
         styles.tile,
-        animatedStyle,
+        bgAnimStyle,
         {
           width: size,
           height: size,
-          backgroundColor: getBgColor(),
           borderRadius: Spacing.tileRadius,
         },
       ]}
     >
-      <Text
-        style={[
-          styles.number,
-          { color: getTextColor() },
-        ]}
+      <Animated.Text
+        style={[styles.number, textAnimStyle]}
         numberOfLines={1}
         adjustsFontSizeToFit
       >
         {number}
-      </Text>
-    </AnimatedTouchable>
+      </Animated.Text>
+    </AnimatedPressable>
   );
 });
 

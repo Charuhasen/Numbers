@@ -5,7 +5,13 @@ import { Board, ChallengeType, GameMode, GameState, Grid } from '@/engine/types'
 import { impact } from '@/lib/haptics';
 import { ImpactFeedbackStyle } from 'expo-haptics';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { useSharedValue } from 'react-native-reanimated';
+import {
+  cancelAnimation,
+  Easing,
+  runOnJS,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 function boardToGrid(board: Board, gridIndex: number): Grid {
   return {
@@ -42,22 +48,20 @@ export function useGameEngine(
     createInitialState(mode, initialData.board),
   );
 
-  // Timer shared value for the animated bar (1.0 -> 0.0)
+  // Timer shared value for the animated bar (1.0 -> 0.0) — driven by withTiming on the UI thread
   const timerProgress = useSharedValue(1);
   const timerDuration = state.currentGrid.timeAllowedMs / 1000;
 
   // Refs for timer management (avoids re-renders)
   const timerStartRef = useRef<number>(Date.now());
   const timerDurationRef = useRef<number>(timerDuration);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const stateRef = useRef<GameState>(state);
   const isAdvancingRef = useRef(false);
   const isPausedRef = useRef(true); // start paused for initial banner
-  const pausedElapsedRef = useRef(0); // time already elapsed when paused
+  const pausedElapsedRef = useRef(0); // elapsed seconds at time of pause
 
-  // Elapsed time tracking
+  // Stable timestamp for elapsed time — StatsBar reads this and self-ticks
   const gameStartRef = useRef<number>(Date.now());
-  const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   // Keep stateRef in sync
   stateRef.current = state;
@@ -96,29 +100,51 @@ export function useGameEngine(
     return { nextGrid };
   }, [mode, pool]);
 
+  // Ref holds the latest timer-expiry handler for the UI-thread completion callback
+  const onTimerCompleteRef = useRef<() => void>(() => {});
+
+  // Start a UI-thread withTiming animation for the timer bar
+  const startTimerAnimation = useCallback((durationMs: number) => {
+    timerProgress.value = withTiming(0, {
+      duration: Math.max(0, durationMs),
+      easing: Easing.linear,
+    }, (finished) => {
+      if (finished) {
+        // Runs on UI thread — bounce to JS via stable ref wrapper
+        runOnJS(onTimerCompleteRef.current)();
+      }
+    });
+  }, [timerProgress]);
+
   // Reset timer for a new grid
   const resetTimer = useCallback((timeAllowedMs: number) => {
     const duration = timeAllowedMs / 1000;
     timerDurationRef.current = duration;
     timerStartRef.current = Date.now();
     pausedElapsedRef.current = 0;
-    timerProgress.value = 1;
-  }, [timerProgress]);
+    timerProgress.value = 1; // cancels any in-progress animation
+    if (!isPausedRef.current) {
+      startTimerAnimation(timeAllowedMs);
+    }
+  }, [timerProgress, startTimerAnimation]);
 
-  // Pause / resume timer (for challenge banner)
+  // Pause timer (for challenge banner)
   const pauseTimer = useCallback(() => {
     if (isPausedRef.current) return;
     isPausedRef.current = true;
-    // Snapshot how much time has elapsed so far
+    cancelAnimation(timerProgress);
     pausedElapsedRef.current = (Date.now() - timerStartRef.current) / 1000;
-  }, []);
+  }, [timerProgress]);
 
+  // Resume timer after banner dismissal
   const resumeTimer = useCallback(() => {
     if (!isPausedRef.current) return;
     isPausedRef.current = false;
-    // Shift the start time so the elapsed snapshot is preserved
+    // Restore effective start so getTimeRemaining stays accurate
     timerStartRef.current = Date.now() - pausedElapsedRef.current * 1000;
-  }, []);
+    const remainingMs = (timerDurationRef.current - pausedElapsedRef.current) * 1000;
+    startTimerAnimation(remainingMs);
+  }, [startTimerAnimation]);
 
   // Advance to next grid (called after correct answer or timeout)
   const advanceGrid = useCallback(() => {
@@ -128,18 +154,17 @@ export function useGameEngine(
 
     const s = stateRef.current;
     const isNewChallenge = s.gridIndex + 1 >= 5;
-    const nextGridIndex = isNewChallenge ? 0 : s.gridIndex + 1;
 
     const { nextGrid, nextChallengeType, nextInstruction } = generateNextGridData();
     dispatch({ type: 'ADVANCE_GRID', nextGrid, nextChallengeType, nextInstruction });
 
-    resetTimer(nextGrid.timeAllowedMs);
-
-    // Pause timer if a new challenge is starting (banner will resume it)
+    // Pause before resetTimer when a new challenge starts so the banner controls resume
     if (isNewChallenge) {
       isPausedRef.current = true;
       pausedElapsedRef.current = 0;
     }
+
+    resetTimer(nextGrid.timeAllowedMs);
 
     // Small delay before allowing next advance
     setTimeout(() => {
@@ -147,58 +172,37 @@ export function useGameEngine(
     }, 100);
   }, [generateNextGridData, resetTimer]);
 
-  // Timer tick (100ms interval)
+  // Handle timer expiry — called from UI thread via runOnJS
+  const handleTimerExpired = useCallback(() => {
+    if (isPausedRef.current) return;
+    if (isAdvancingRef.current) return;
+    if (stateRef.current.phase === 'gameOver') return;
+
+    isAdvancingRef.current = true;
+    impact(ImpactFeedbackStyle.Heavy);
+    dispatch({ type: 'TIMEOUT' });
+
+    const s = stateRef.current;
+    onTimeout();
+    onRevealCorrect(s.currentGrid.correctAnswers);
+
+    if (s.hearts - 1 > 0) {
+      setTimeout(() => {
+        isAdvancingRef.current = false;
+        advanceGrid();
+      }, 600);
+    }
+  }, [advanceGrid, onTimeout, onRevealCorrect]);
+
+  // Keep the completion ref pointing at the latest handler
+  onTimerCompleteRef.current = handleTimerExpired;
+
+  // Cancel animation when game ends
   useEffect(() => {
     if (state.phase === 'gameOver') {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-      return;
+      cancelAnimation(timerProgress);
     }
-
-    // Elapsed seconds tracker
-    const elapsedInterval = setInterval(() => {
-      setElapsedSeconds(Math.floor((Date.now() - gameStartRef.current) / 1000));
-    }, 1000);
-
-    intervalRef.current = setInterval(() => {
-      if (isPausedRef.current) return;
-
-      const elapsed = (Date.now() - timerStartRef.current) / 1000;
-      const duration = timerDurationRef.current;
-      const remaining = Math.max(0, duration - elapsed);
-      const progress = duration > 0 ? remaining / duration : 0;
-      timerProgress.value = progress;
-
-      if (remaining <= 0 && !isAdvancingRef.current) {
-        // Block re-entry during the reveal window
-        isAdvancingRef.current = true;
-        impact(ImpactFeedbackStyle.Heavy);
-        dispatch({ type: 'TIMEOUT' });
-
-        // Freeze the grid, then reveal the correct answer
-        const s = stateRef.current;
-        onTimeout();
-        onRevealCorrect(s.currentGrid.correctAnswers);
-
-        if (s.hearts - 1 > 0) {
-          setTimeout(() => {
-            isAdvancingRef.current = false;
-            advanceGrid();
-          }, 600);
-        }
-      }
-    }, 100);
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-      clearInterval(elapsedInterval);
-    };
-  }, [state.phase, timerProgress, advanceGrid]);
+  }, [state.phase, timerProgress]);
 
   // Handle cell tap
   const tapCell = useCallback((index: number) => {
@@ -218,9 +222,9 @@ export function useGameEngine(
 
     dispatch({ type: 'TAP_CELL', index, timeRemaining });
 
-    // Lock immediately so the timer tick cannot fire a TIMEOUT dispatch
-    // during the reveal window (which would cost a second heart).
+    // Lock immediately and freeze the bar animation
     isAdvancingRef.current = true;
+    cancelAnimation(timerProgress);
 
     if (isCorrect) {
       impact(ImpactFeedbackStyle.Medium);
@@ -241,7 +245,7 @@ export function useGameEngine(
         }
       }, 600);
     }
-  }, [advanceGrid]);
+  }, [advanceGrid, timerProgress]);
 
   const getTimeRemaining = useCallback(() => {
     const elapsed = (Date.now() - timerStartRef.current) / 1000;
@@ -253,7 +257,8 @@ export function useGameEngine(
     tapCell,
     timerProgress,
     timerDuration,
-    elapsedSeconds,
+    // Expose start timestamp so consumers can compute elapsed time locally
+    gameStartTime: gameStartRef.current,
     isReady,
     getTimeRemaining,
     pauseTimer,

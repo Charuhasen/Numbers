@@ -36,9 +36,9 @@ export function ModeCard({
 
   return (
     <View style={[styles.card, { backgroundColor: theme.surfaceVariant }]}>
-      {/* Decorative bg icon — rendered first, sits behind content */}
-      <View style={styles.decorativeIcon} pointerEvents="none">
-        <MaterialIcons name={iconName} size={140} color={`${iconColor}18`} />
+      {/* Decorative bg icon — opaque color with opacity on wrapper avoids GPU overdraw */}
+      <View style={[styles.decorativeIcon, styles.decorativeIconOpacity]} pointerEvents="none">
+        <MaterialIcons name={iconName} size={140} color={iconColor} />
       </View>
 
       {/* Top row: icon container + badge */}
@@ -97,6 +97,9 @@ const styles = StyleSheet.create({
     top: -20,
     right: -20,
     zIndex: 0,
+  },
+  decorativeIconOpacity: {
+    opacity: 0.08,
   },
   topRow: {
     flexDirection: 'row',

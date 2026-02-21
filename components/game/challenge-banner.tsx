@@ -1,18 +1,21 @@
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, {
   Easing,
   FadeIn,
   FadeOut,
   interpolateColor,
+  useAnimatedProps,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
+
+const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
 interface ChallengeBannerProps {
   challengeNumber: number;
@@ -31,8 +34,6 @@ export function ChallengeBanner({
   const theme = Colors[colorScheme ?? 'light'];
   const progressWidth = useSharedValue(100);
   const pulse = useSharedValue(0); // 0 = primary colour, 1 = error/red
-  const [countdown, setCountdown] = useState(Math.ceil(DISPLAY_DURATION / 1000));
-  const startTimeRef = useRef(Date.now());
 
   useEffect(() => {
     progressWidth.value = withTiming(0, {
@@ -50,16 +51,9 @@ export function ChallengeBanner({
       false,
     );
 
-    const interval = setInterval(() => {
-      const elapsed = Date.now() - startTimeRef.current;
-      const remaining = Math.max(0, DISPLAY_DURATION - elapsed);
-      setCountdown(Math.ceil(remaining / 1000));
-    }, 100);
-
     const timeout = setTimeout(onDismiss, DISPLAY_DURATION);
     return () => {
       clearTimeout(timeout);
-      clearInterval(interval);
     };
   }, [onDismiss, progressWidth, pulse]);
 
@@ -79,6 +73,13 @@ export function ChallengeBanner({
     ),
   }));
 
+  // Countdown text driven entirely on the UI thread — no setInterval, no React state
+  const countdownProps = useAnimatedProps(() => {
+    const remaining = Math.ceil((progressWidth.value / 100) * DISPLAY_DURATION / 1000);
+    const val = Math.max(0, remaining).toString();
+    return { text: val, defaultValue: val };
+  });
+
   return (
     <Animated.View
       entering={FadeIn.duration(200)}
@@ -96,9 +97,12 @@ export function ChallengeBanner({
         <Text style={[styles.instruction, { color: theme.onSurface }]}>
           {instruction}
         </Text>
-        <Animated.Text style={[styles.countdown, pulseColorStyle]}>
-          {countdown}
-        </Animated.Text>
+        {/* Countdown on UI thread via AnimatedProps — no React state updates */}
+        <AnimatedTextInput
+          animatedProps={countdownProps}
+          editable={false}
+          style={[styles.countdown, pulseColorStyle]}
+        />
         <View style={[styles.progressTrack, { backgroundColor: theme.surfaceDim }]}>
           <Animated.View
             style={[styles.progressFill, progressStyle, progressFillStyle]}
@@ -140,6 +144,8 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: '800',
     marginTop: 4,
+    textAlign: 'center',
+    minWidth: 40,
   },
   progressTrack: {
     width: '100%',
