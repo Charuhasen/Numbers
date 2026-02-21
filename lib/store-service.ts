@@ -11,7 +11,7 @@ export interface StoreItem {
   description: string | null;
   price_bits: number;
   price_fiat: number | null;
-  type: 'potion' | 'heart_refill' | 'bundle' | 'bits_pack';
+  type: 'potion' | 'bundle' | 'bits_pack';
   metadata: {
     column: string;
     qty: number;
@@ -26,7 +26,6 @@ export interface StoreItem {
 export interface UserInventory {
   potion_time_freeze: number;
   potion_second_chance: number;
-  potion_heart_refill: number;
   potion_50_50: number;
   potion_grid_skip: number;
   potion_revive: number;
@@ -78,7 +77,7 @@ export async function getUserInventory(): Promise<UserInventory> {
   const { data, error } = await supabase
     .from('inventory')
     .select(
-      'potion_time_freeze, potion_second_chance, potion_heart_refill, potion_50_50, potion_grid_skip, potion_revive, potion_fortune_tonic, potion_scanner',
+      'potion_time_freeze, potion_second_chance, potion_50_50, potion_grid_skip, potion_revive, potion_fortune_tonic, potion_scanner',
     )
     .single();
 

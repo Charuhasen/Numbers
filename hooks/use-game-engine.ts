@@ -8,10 +8,15 @@ import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'r
 import {
   cancelAnimation,
   Easing,
+  makeMutable,
   runOnJS,
+  SharedValue,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+
+const BLITZ_DURATION_SEC = 60;
+const TIME_FREEZE_DURATION_MS = 5000;
 
 function boardToGrid(board: Board, gridIndex: number): Grid {
   return {
@@ -29,6 +34,7 @@ export function useGameEngine(
   onRevealCorrect: (indices: number[]) => void,
   onTimeout: () => void,
 ) {
+  const isBlitz = mode === 'blitz';
   const pool = useMemo<Board[]>(() => loadBoardPool(mode), [mode]);
   const recentTypesRef = useRef<ChallengeType[]>([]);
   const recentBoardIdsRef = useRef<string[]>([]);
@@ -48,9 +54,12 @@ export function useGameEngine(
     createInitialState(mode, initialData.board),
   );
 
-  // Timer shared value for the animated bar (1.0 -> 0.0) — driven by withTiming on the UI thread
+  // Per-grid timer shared value (Classic only — 1.0 -> 0.0)
   const timerProgress = useSharedValue(1);
   const timerDuration = state.currentGrid.timeAllowedMs / 1000;
+
+  // Global timer for Blitz mode (60 -> 0)
+  const globalTimeRemaining = useSharedValue(BLITZ_DURATION_SEC);
 
   // Refs for timer management (avoids re-renders)
   const timerStartRef = useRef<number>(Date.now());
@@ -59,6 +68,14 @@ export function useGameEngine(
   const isAdvancingRef = useRef(false);
   const isPausedRef = useRef(true); // start paused for initial banner
   const pausedElapsedRef = useRef(0); // elapsed seconds at time of pause
+
+  // Blitz global timer refs
+  const globalTimerStartRef = useRef<number>(0);
+  const globalPausedElapsedRef = useRef(0); // how many seconds have elapsed when paused
+
+  // Time Freeze potion state
+  const timerFrozen = useSharedValue(0); // 0 = not frozen, 1 = frozen (for UI)
+  const freezeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Stable timestamp for elapsed time — StatsBar reads this and self-ticks
   const gameStartRef = useRef<number>(Date.now());
@@ -100,18 +117,19 @@ export function useGameEngine(
     return { nextGrid };
   }, [mode, pool]);
 
+  // ─── Per-grid timer logic (Classic only) ───────────────────────────
+
   // Holds the latest handler — never passed to a worklet, only read on the JS thread
   const handleTimerExpiredRef = useRef<() => void>(() => {});
 
   // Stable wrapper with empty deps — safe to capture inside a Reanimated worklet.
-  // When the UI thread fires the completion callback it runOnJS-bounces here, which
-  // then calls the mutable ref on the JS thread (no worklet access to the ref).
   const onTimerComplete = useCallback(() => {
     handleTimerExpiredRef.current();
   }, []);
 
-  // Start a UI-thread withTiming animation for the timer bar
+  // Start a UI-thread withTiming animation for the per-grid timer bar
   const startTimerAnimation = useCallback((durationMs: number) => {
+    if (isBlitz) return; // Blitz doesn't use per-grid timer
     timerProgress.value = withTiming(0, {
       duration: Math.max(0, durationMs),
       easing: Easing.linear,
@@ -120,10 +138,11 @@ export function useGameEngine(
         runOnJS(onTimerComplete)();
       }
     });
-  }, [timerProgress, onTimerComplete]);
+  }, [isBlitz, timerProgress, onTimerComplete]);
 
-  // Reset timer for a new grid
+  // Reset timer for a new grid (Classic only)
   const resetTimer = useCallback((timeAllowedMs: number) => {
+    if (isBlitz) return;
     const duration = timeAllowedMs / 1000;
     timerDurationRef.current = duration;
     timerStartRef.current = Date.now();
@@ -132,27 +151,117 @@ export function useGameEngine(
     if (!isPausedRef.current) {
       startTimerAnimation(timeAllowedMs);
     }
-  }, [timerProgress, startTimerAnimation]);
+  }, [isBlitz, timerProgress, startTimerAnimation]);
+
+  // ─── Blitz global timer logic ──────────────────────────────────────
+
+  const handleGlobalTimeUpRef = useRef<() => void>(() => {});
+
+  const onGlobalTimerComplete = useCallback(() => {
+    handleGlobalTimeUpRef.current();
+  }, []);
+
+  const startGlobalTimer = useCallback((remainingMs: number) => {
+    globalTimerStartRef.current = Date.now();
+    globalTimeRemaining.value = remainingMs / 1000;
+    globalTimeRemaining.value = withTiming(0, {
+      duration: Math.max(0, remainingMs),
+      easing: Easing.linear,
+    }, (finished) => {
+      if (finished) {
+        runOnJS(onGlobalTimerComplete)();
+      }
+    });
+  }, [globalTimeRemaining, onGlobalTimerComplete]);
+
+  const pauseGlobalTimer = useCallback(() => {
+    cancelAnimation(globalTimeRemaining);
+    const elapsedSinceStart = (Date.now() - globalTimerStartRef.current) / 1000;
+    globalPausedElapsedRef.current += elapsedSinceStart;
+  }, [globalTimeRemaining]);
+
+  const resumeGlobalTimer = useCallback(() => {
+    const remainingSec = BLITZ_DURATION_SEC - globalPausedElapsedRef.current;
+    if (remainingSec <= 0) return;
+    startGlobalTimer(remainingSec * 1000);
+  }, [startGlobalTimer]);
+
+  const getGlobalTimeRemaining = useCallback(() => {
+    if (isPausedRef.current) {
+      return Math.max(0, BLITZ_DURATION_SEC - globalPausedElapsedRef.current);
+    }
+    const elapsedSinceStart = (Date.now() - globalTimerStartRef.current) / 1000;
+    const totalElapsed = globalPausedElapsedRef.current + elapsedSinceStart;
+    return Math.max(0, BLITZ_DURATION_SEC - totalElapsed);
+  }, []);
+
+  // ─── Unified pause/resume ─────────────────────────────────────────
 
   // Pause timer (for challenge banner)
   const pauseTimer = useCallback(() => {
     if (isPausedRef.current) return;
     isPausedRef.current = true;
-    cancelAnimation(timerProgress);
-    pausedElapsedRef.current = (Date.now() - timerStartRef.current) / 1000;
-  }, [timerProgress]);
+    if (isBlitz) {
+      pauseGlobalTimer();
+    } else {
+      cancelAnimation(timerProgress);
+      pausedElapsedRef.current = (Date.now() - timerStartRef.current) / 1000;
+    }
+  }, [isBlitz, timerProgress, pauseGlobalTimer]);
 
   // Resume timer after banner dismissal
   const resumeTimer = useCallback(() => {
     if (!isPausedRef.current) return;
     isPausedRef.current = false;
-    // Restore effective start so getTimeRemaining stays accurate
-    timerStartRef.current = Date.now() - pausedElapsedRef.current * 1000;
-    const remainingMs = (timerDurationRef.current - pausedElapsedRef.current) * 1000;
-    startTimerAnimation(remainingMs);
-  }, [startTimerAnimation]);
+    if (isBlitz) {
+      resumeGlobalTimer();
+    } else {
+      // Restore effective start so getTimeRemaining stays accurate
+      timerStartRef.current = Date.now() - pausedElapsedRef.current * 1000;
+      const remainingMs = (timerDurationRef.current - pausedElapsedRef.current) * 1000;
+      startTimerAnimation(remainingMs);
+    }
+  }, [isBlitz, startTimerAnimation, resumeGlobalTimer]);
 
-  // Advance to next grid (called after correct answer or timeout)
+  // ─── Time Freeze potion ─────────────────────────────────────────────
+
+  const freezeTimer = useCallback(() => {
+    // Prevent double-freeze or freezing when already paused (e.g. banner)
+    if (timerFrozen.value === 1) return;
+    if (stateRef.current.phase === 'gameOver') return;
+
+    timerFrozen.value = 1;
+    pauseTimer();
+
+    freezeTimeoutRef.current = setTimeout(() => {
+      freezeTimeoutRef.current = null;
+      timerFrozen.value = 0;
+      // Only resume if the game hasn't ended or been paused by a banner during the freeze
+      if (stateRef.current.phase !== 'gameOver') {
+        resumeTimer();
+      }
+    }, TIME_FREEZE_DURATION_MS);
+  }, [pauseTimer, resumeTimer, timerFrozen]);
+
+  // Clean up freeze timeout on game over or unmount
+  useEffect(() => {
+    if (state.phase === 'gameOver' && freezeTimeoutRef.current) {
+      clearTimeout(freezeTimeoutRef.current);
+      freezeTimeoutRef.current = null;
+      timerFrozen.value = 0;
+    }
+  }, [state.phase, timerFrozen]);
+
+  useEffect(() => {
+    return () => {
+      if (freezeTimeoutRef.current) {
+        clearTimeout(freezeTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // ─── Advance grid ──────────────────────────────────────────────────
+
   const advanceGrid = useCallback(() => {
     if (isAdvancingRef.current) return;
     if (stateRef.current.phase === 'gameOver') return;
@@ -166,20 +275,34 @@ export function useGameEngine(
 
     // Pause before resetTimer when a new challenge starts so the banner controls resume
     if (isNewChallenge) {
+      // Cancel any active time freeze so it doesn't auto-resume into a banner
+      if (freezeTimeoutRef.current) {
+        clearTimeout(freezeTimeoutRef.current);
+        freezeTimeoutRef.current = null;
+        timerFrozen.value = 0;
+      }
       isPausedRef.current = true;
       pausedElapsedRef.current = 0;
+      if (isBlitz) {
+        pauseGlobalTimer();
+      }
     }
 
-    resetTimer(nextGrid.timeAllowedMs);
+    if (!isBlitz) {
+      resetTimer(nextGrid.timeAllowedMs);
+    }
 
     // Small delay before allowing next advance
     setTimeout(() => {
       isAdvancingRef.current = false;
     }, 100);
-  }, [generateNextGridData, resetTimer]);
+  }, [isBlitz, generateNextGridData, resetTimer, pauseGlobalTimer]);
 
-  // Handle timer expiry — called from UI thread via runOnJS
+  // ─── Timer expiry handlers ─────────────────────────────────────────
+
+  // Handle per-grid timer expiry (Classic only) — called from UI thread via runOnJS
   const handleTimerExpired = useCallback(() => {
+    if (isBlitz) return;
     if (isPausedRef.current) return;
     if (isAdvancingRef.current) return;
     if (stateRef.current.phase === 'gameOver') return;
@@ -198,31 +321,51 @@ export function useGameEngine(
         advanceGrid();
       }, 600);
     }
-  }, [advanceGrid, onTimeout, onRevealCorrect]);
+  }, [isBlitz, advanceGrid, onTimeout, onRevealCorrect]);
 
-  // Keep the JS-thread ref pointing at the latest handler (never read in a worklet)
+  // Handle global timer expiry (Blitz only)
+  const handleGlobalTimeUp = useCallback(() => {
+    if (!isBlitz) return;
+    if (stateRef.current.phase === 'gameOver') return;
+
+    impact(ImpactFeedbackStyle.Heavy);
+    dispatch({ type: 'GLOBAL_TIME_UP' });
+  }, [isBlitz]);
+
+  // Keep JS-thread refs pointing at the latest handlers
   handleTimerExpiredRef.current = handleTimerExpired;
+  handleGlobalTimeUpRef.current = handleGlobalTimeUp;
 
-  // Cancel animation when game ends
+  // Cancel animations when game ends
   useEffect(() => {
     if (state.phase === 'gameOver') {
       cancelAnimation(timerProgress);
+      if (isBlitz) {
+        cancelAnimation(globalTimeRemaining);
+      }
     }
-  }, [state.phase, timerProgress]);
+  }, [state.phase, timerProgress, globalTimeRemaining, isBlitz]);
 
-  // Handle cell tap
+  // ─── Cell tap ──────────────────────────────────────────────────────
+
   const tapCell = useCallback((index: number) => {
     const s = stateRef.current;
     if (s.phase === 'gameOver') return;
     if (isAdvancingRef.current) return;
 
-    const elapsed = (Date.now() - timerStartRef.current) / 1000;
-    const duration = timerDurationRef.current;
+    let timeRemaining: number;
 
-    // Reject taps only when the clock has actually reached zero
-    if (elapsed >= duration) return;
-
-    const timeRemaining = duration - elapsed;
+    if (isBlitz) {
+      // In Blitz, use global time remaining for score bonus
+      timeRemaining = getGlobalTimeRemaining();
+      if (timeRemaining <= 0) return;
+    } else {
+      const elapsed = (Date.now() - timerStartRef.current) / 1000;
+      const duration = timerDurationRef.current;
+      // Reject taps only when the clock has actually reached zero
+      if (elapsed >= duration) return;
+      timeRemaining = duration - elapsed;
+    }
 
     const isCorrect = s.currentGrid.correctAnswers.includes(index);
 
@@ -230,7 +373,9 @@ export function useGameEngine(
 
     // Lock immediately and freeze the bar animation
     isAdvancingRef.current = true;
-    cancelAnimation(timerProgress);
+    if (!isBlitz) {
+      cancelAnimation(timerProgress);
+    }
 
     if (isCorrect) {
       impact(ImpactFeedbackStyle.Medium);
@@ -251,23 +396,27 @@ export function useGameEngine(
         }
       }, 600);
     }
-  }, [advanceGrid, timerProgress]);
+  }, [isBlitz, advanceGrid, timerProgress, getGlobalTimeRemaining, onRevealCorrect]);
 
   const getTimeRemaining = useCallback(() => {
+    if (isBlitz) return getGlobalTimeRemaining();
     const elapsed = (Date.now() - timerStartRef.current) / 1000;
     return Math.max(0, timerDurationRef.current - elapsed);
-  }, []);
+  }, [isBlitz, getGlobalTimeRemaining]);
 
   return {
     state,
     tapCell,
     timerProgress,
     timerDuration,
+    globalTimeRemaining: isBlitz ? globalTimeRemaining : undefined,
     // Expose start timestamp so consumers can compute elapsed time locally
     gameStartTime: gameStartRef.current,
     isReady,
     getTimeRemaining,
     pauseTimer,
     resumeTimer,
+    freezeTimer,
+    timerFrozen,
   };
 }

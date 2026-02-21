@@ -49,7 +49,7 @@ export default function GameScreen() {
     feedbackValues.value = next;
   }, [feedbackValues]);
 
-  const { state, tapCell, timerProgress, timerDuration, gameStartTime, isReady, resumeTimer } = useGameEngine(gameMode, handleRevealCorrect, handleTimeout);
+  const { state, tapCell, timerProgress, timerDuration, globalTimeRemaining, gameStartTime, isReady, resumeTimer, freezeTimer, timerFrozen } = useGameEngine(gameMode, handleRevealCorrect, handleTimeout);
   const { bestScores, refreshProfile } = useProfile();
 
   // Session token: requested once from the server when the game screen is ready.
@@ -172,7 +172,7 @@ export default function GameScreen() {
           tapCell(firstCorrect);
         }
       } else if (potionColumn === 'potion_time_freeze') {
-        Alert.alert('Time Freeze', 'Potion consumed! (Active effect coming soon)');
+        freezeTimer();
       } else {
         Alert.alert('Potion Used', 'Potion consumed! (Active effect coming soon)');
       }
@@ -198,7 +198,7 @@ export default function GameScreen() {
         challengeIndex={state.challengeIndex}
         gridIndex={state.gridIndex}
         hearts={state.hearts}
-        showHearts={true}
+        showHearts={gameMode !== 'blitz'}
         onExit={handleExit}
         heartShake={heartShake}
       />
@@ -210,9 +210,13 @@ export default function GameScreen() {
         </Text>
       </View>
 
-      {/* Timer Bar */}
+      {/* Timer Bar — Classic: per-grid timer, Blitz: global 60s timer */}
       <View style={styles.timerContainer}>
-        <TimerBar progress={timerProgress} durationSec={timerDuration} />
+        {gameMode === 'blitz' && globalTimeRemaining ? (
+          <TimerBar progress={globalTimeRemaining} durationSec={60} isGlobal frozen={timerFrozen} />
+        ) : (
+          <TimerBar progress={timerProgress} durationSec={timerDuration} frozen={timerFrozen} />
+        )}
       </View>
 
       {/* Grid */}

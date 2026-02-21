@@ -1,3 +1,4 @@
+import { AUTO_USE_POTIONS } from '@/constants/potions';
 import { Colors } from '@/constants/theme';
 import { useProfile, type UserPotionSlot } from '@/context/profile-ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -20,7 +21,6 @@ import {
 const POTION_DISPLAY: Record<string, { icon: keyof typeof MaterialIcons.glyphMap; label: string }> = {
   potion_time_freeze:   { icon: 'timer',                label: 'Time Freeze'   },
   potion_second_chance: { icon: 'shield',               label: 'Second Chance' },
-  potion_heart_refill:  { icon: 'favorite',             label: 'Heart Refill'  },
   potion_50_50:         { icon: 'content-cut',          label: '50/50'         },
   potion_scanner:       { icon: 'center-focus-strong',  label: 'Scanner'       },
   potion_fortune_tonic: { icon: 'auto-awesome',         label: 'Fortune Tonic' },
@@ -187,7 +187,7 @@ export function PotionInventory() {
           )}
         </Pressable>
 
-        {slot && (
+        {slot && item?.metadata?.column && AUTO_USE_POTIONS.has(item.metadata.column) && (
           <View style={styles.autoUseRow}>
             <Text style={[styles.autoUseText, { color: theme.onSurface }]}>Auto-Use</Text>
             <Switch

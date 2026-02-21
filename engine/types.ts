@@ -63,4 +63,5 @@ export interface GameState {
 export type GameAction =
   | { type: 'TAP_CELL'; index: number; timeRemaining: number }
   | { type: 'TIMEOUT' }
-  | { type: 'ADVANCE_GRID'; nextGrid: Grid; nextChallengeType?: ChallengeType; nextInstruction?: string };
+  | { type: 'ADVANCE_GRID'; nextGrid: Grid; nextChallengeType?: ChallengeType; nextInstruction?: string }
+  | { type: 'GLOBAL_TIME_UP' };

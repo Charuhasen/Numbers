@@ -58,6 +58,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'TIMEOUT': {
+      // Blitz has no per-grid timeout penalty — only GLOBAL_TIME_UP ends the game
+      if (state.mode === 'blitz') return state;
+
       const event: GameEvent = {
         type: 'timeout',
         gridIndex: state.gridIndex,
@@ -65,7 +68,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         timeRemaining: 0,
         timestamp: Date.now(),
       };
-
 
       const newHearts = state.hearts - 1;
       if (newHearts <= 0) {
@@ -82,6 +84,14 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         ...state,
         hearts: newHearts,
         events: [...state.events, event],
+      };
+    }
+
+    case 'GLOBAL_TIME_UP': {
+      return {
+        ...state,
+        phase: 'gameOver',
+        bitsEarned: Math.floor(state.score / 100),
       };
     }
 

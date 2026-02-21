@@ -9,6 +9,7 @@ import Animated, {
   useAnimatedProps,
   useAnimatedReaction,
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
   withRepeat,
   withSequence,
@@ -17,29 +18,70 @@ import Animated, {
 
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
+const FREEZE_COLOR = '#42A5F5'; // bright blue for frozen state
+
 interface TimerBarProps {
-  /** Progress from 1.0 (full) to 0.0 (empty) — Reanimated shared value */
+  /** Progress from 1.0 (full) to 0.0 (empty) — OR seconds remaining when isGlobal */
   progress: SharedValue<number>;
   /** Total timer duration in seconds, used to derive the countdown number */
   durationSec: number;
+  /** When true, `progress` is in seconds (60→0) instead of normalized (1→0) */
+  isGlobal?: boolean;
+  /** 0 = not frozen, 1 = frozen (Time Freeze potion active) */
+  frozen?: SharedValue<number>;
 }
 
-export const TimerBar = React.memo(function TimerBar({ progress, durationSec }: TimerBarProps) {
+export const TimerBar = React.memo(function TimerBar({ progress, durationSec, isGlobal, frozen }: TimerBarProps) {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
 
-  // Pulse opacity — animates when ≤ 3 s remain
+  // Normalize progress to 0-1 range regardless of mode
+  const normalizedProgress = useDerivedValue(() => {
+    if (isGlobal) {
+      return Math.max(0, Math.min(1, progress.value / durationSec));
+    }
+    return progress.value;
+  });
+
+  // Pulse opacity — animates when ≤ 3 s remain OR when frozen
   const pulseOpacity = useSharedValue(1);
 
+  // Track frozen state for pulsing
   useAnimatedReaction(
-    () => progress.value * durationSec,
-    (secondsLeft, prev) => {
-      // "in zone" = timer is running and ≤ 3 s remain
-      const inZone = secondsLeft <= 3 && secondsLeft > 0;
-      const wasInZone = prev !== null && prev <= 3 && prev > 0;
+    () => frozen?.value ?? 0,
+    (isFrozen, wasFrozen) => {
+      if (isFrozen === 1 && (wasFrozen === null || wasFrozen === 0)) {
+        // Start frozen pulse
+        pulseOpacity.value = withRepeat(
+          withSequence(
+            withTiming(0.5, { duration: 600 }),
+            withTiming(1, { duration: 600 }),
+          ),
+          -1,
+          false,
+        );
+      } else if (isFrozen === 0 && wasFrozen === 1) {
+        // Stop frozen pulse — resume normal
+        cancelAnimation(pulseOpacity);
+        pulseOpacity.value = 1;
+      }
+    },
+  );
+
+  // Track low-time pulsing (only when not frozen)
+  useAnimatedReaction(
+    () => ({
+      secondsLeft: normalizedProgress.value * durationSec,
+      isFrozen: frozen?.value ?? 0,
+    }),
+    (cur, prev) => {
+      // Don't pulse for low time when frozen — the frozen pulse takes precedence
+      if (cur.isFrozen === 1) return;
+
+      const inZone = cur.secondsLeft <= 3 && cur.secondsLeft > 0;
+      const wasInZone = prev !== null && prev.secondsLeft <= 3 && prev.secondsLeft > 0;
 
       if (inZone && !wasInZone) {
-        // Just entered the last-3-seconds zone — start pulsing
         pulseOpacity.value = withRepeat(
           withSequence(
             withTiming(0.35, { duration: 350 }),
@@ -49,7 +91,6 @@ export const TimerBar = React.memo(function TimerBar({ progress, durationSec }: 
           false,
         );
       } else if (!inZone && wasInZone) {
-        // Left the zone (expired or new board reset above 3 s) — stop pulsing
         cancelAnimation(pulseOpacity);
         pulseOpacity.value = 1;
       }
@@ -58,22 +99,32 @@ export const TimerBar = React.memo(function TimerBar({ progress, durationSec }: 
   );
 
   const animatedBarStyle = useAnimatedStyle(() => {
-    const color = interpolateColor(
-      progress.value,
-      [0, 0.33, 1],
-      [theme.error, theme.error, theme.primary],
-    );
+    const isFrozen = (frozen?.value ?? 0) === 1;
+    const color = isFrozen
+      ? FREEZE_COLOR
+      : interpolateColor(
+          normalizedProgress.value,
+          [0, 0.33, 1],
+          [theme.error, theme.error, theme.primary],
+        );
     return {
-      width: `${progress.value * 100}%` as `${number}%`,
+      width: `${normalizedProgress.value * 100}%` as `${number}%`,
       backgroundColor: color,
       opacity: pulseOpacity.value,
     };
   });
 
   const animatedTextProps = useAnimatedProps(() => ({
-    text: `${Math.ceil(progress.value * durationSec)}`,
+    text: `${Math.ceil(normalizedProgress.value * durationSec)}`,
     defaultValue: `${durationSec}`,
   }));
+
+  const animatedTextStyle = useAnimatedStyle(() => {
+    const isFrozen = (frozen?.value ?? 0) === 1;
+    return {
+      color: isFrozen ? FREEZE_COLOR : theme.onSurfaceVariant,
+    };
+  });
 
   return (
     <View style={styles.row}>
@@ -83,7 +134,7 @@ export const TimerBar = React.memo(function TimerBar({ progress, durationSec }: 
       <AnimatedTextInput
         animatedProps={animatedTextProps}
         editable={false}
-        style={[styles.countdown, { color: theme.onSurfaceVariant }]}
+        style={[styles.countdown, animatedTextStyle]}
       />
     </View>
   );
