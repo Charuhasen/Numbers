@@ -51,7 +51,7 @@ function RootLayoutNav() {
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(setup)" options={{ headerShown: false }} />
         <Stack.Screen name="splash" options={{ headerShown: false }} />
-        <Stack.Screen name="game" options={{ headerShown: false }} />
+        <Stack.Screen name="game" options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="friends" options={{ headerShown: false }} />
         <Stack.Screen name="leaderboard" options={{ headerShown: false }} />
         <Stack.Screen name="settings" options={{ headerShown: false }} />

@@ -100,8 +100,15 @@ export function useGameEngine(
     return { nextGrid };
   }, [mode, pool]);
 
-  // Ref holds the latest timer-expiry handler for the UI-thread completion callback
-  const onTimerCompleteRef = useRef<() => void>(() => {});
+  // Holds the latest handler — never passed to a worklet, only read on the JS thread
+  const handleTimerExpiredRef = useRef<() => void>(() => {});
+
+  // Stable wrapper with empty deps — safe to capture inside a Reanimated worklet.
+  // When the UI thread fires the completion callback it runOnJS-bounces here, which
+  // then calls the mutable ref on the JS thread (no worklet access to the ref).
+  const onTimerComplete = useCallback(() => {
+    handleTimerExpiredRef.current();
+  }, []);
 
   // Start a UI-thread withTiming animation for the timer bar
   const startTimerAnimation = useCallback((durationMs: number) => {
@@ -110,11 +117,10 @@ export function useGameEngine(
       easing: Easing.linear,
     }, (finished) => {
       if (finished) {
-        // Runs on UI thread — bounce to JS via stable ref wrapper
-        runOnJS(onTimerCompleteRef.current)();
+        runOnJS(onTimerComplete)();
       }
     });
-  }, [timerProgress]);
+  }, [timerProgress, onTimerComplete]);
 
   // Reset timer for a new grid
   const resetTimer = useCallback((timeAllowedMs: number) => {
@@ -194,8 +200,8 @@ export function useGameEngine(
     }
   }, [advanceGrid, onTimeout, onRevealCorrect]);
 
-  // Keep the completion ref pointing at the latest handler
-  onTimerCompleteRef.current = handleTimerExpired;
+  // Keep the JS-thread ref pointing at the latest handler (never read in a worklet)
+  handleTimerExpiredRef.current = handleTimerExpired;
 
   // Cancel animation when game ends
   useEffect(() => {
