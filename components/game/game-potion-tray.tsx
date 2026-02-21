@@ -76,6 +76,9 @@ export function GamePotionTray({ onUsePotion, disabled, secondChanceActive, poti
               ]}
             >
               <MaterialIcons name={meta?.icon ?? 'science'} size={24} color={theme.primary} />
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{remainingUses}</Text>
+              </View>
             </View>
           );
         }
@@ -92,6 +95,9 @@ export function GamePotionTray({ onUsePotion, disabled, secondChanceActive, poti
               ]}
             >
               <MaterialIcons name={meta?.icon ?? 'science'} size={24} color={theme.onSurface} />
+              <View style={[styles.badge, { backgroundColor: '#9CA3AF' }]}>
+                <Text style={styles.badgeText}>0</Text>
+              </View>
             </View>
           );
         }
