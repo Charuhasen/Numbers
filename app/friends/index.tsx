@@ -13,10 +13,11 @@ import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Animated,
   FlatList,
   Pressable,
   SectionList,
@@ -26,16 +27,24 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import PagerView from 'react-native-pager-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type Tab = 'friends' | 'add' | 'requests';
+const TABS: Tab[] = ['friends', 'add', 'requests'];
+const TAB_LABELS: Record<Tab, string> = { friends: 'Friends', add: 'Add', requests: 'Requests' };
 
 export default function FriendsScreen() {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
   const router = useRouter();
 
-  const [activeTab, setActiveTab] = useState<Tab>('friends');
+  const pagerRef = useRef<PagerView>(null);
+  const activePageRef = useRef(0);
+  const [activePage, setActivePage] = useState(0);
+  const scrollOffset = useRef(new Animated.Value(0)).current;
+  const [tabBarWidth, setTabBarWidth] = useState(0);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -127,7 +136,13 @@ export default function FriendsScreen() {
     }
   };
 
-  // ── Render helpers ──────────────────────────────────────────────────────────
+  // ── Tab navigation ───────────────────────────────────────────────────────────
+
+  const goToPage = (index: number) => {
+    pagerRef.current?.setPage(index);
+  };
+
+  // ── Render helpers ───────────────────────────────────────────────────────────
 
   const renderFriend = ({ item }: { item: Friendship }) => (
     <TouchableOpacity
@@ -271,11 +286,99 @@ export default function FriendsScreen() {
 
   const requestBadge = incoming.length;
 
-  const tabs: { key: Tab; label: string }[] = [
-    { key: 'friends', label: 'Friends' },
-    { key: 'add', label: 'Add' },
-    { key: 'requests', label: 'Requests' },
-  ];
+  // ── Page content components ──────────────────────────────────────────────────
+
+  const FriendsPage = (
+    <View key="friends" style={styles.flex}>
+      {isLoadingData ? (
+        <ActivityIndicator style={styles.loader} color={theme.onSurfaceVariant} />
+      ) : (
+        <FlatList
+          data={friends}
+          keyExtractor={(item) => item.id}
+          renderItem={renderFriend}
+          contentContainerStyle={styles.listContent}
+          ListEmptyComponent={
+            <Text style={[styles.emptyText, { color: theme.onSurfaceVariant }]}>
+              No friends yet — search for players in the Add tab
+            </Text>
+          }
+        />
+      )}
+    </View>
+  );
+
+  const AddPage = (
+    <View key="add" style={styles.flex}>
+      <View style={[styles.searchBar, { backgroundColor: theme.surfaceVariant }]}>
+        <MaterialIcons name="person-add" size={20} color={theme.onSurfaceVariant} />
+        <TextInput
+          style={[styles.searchInput, { color: theme.onSurface }]}
+          placeholder="Search by username…"
+          placeholderTextColor={theme.onSurfaceVariant}
+          value={searchQuery}
+          onChangeText={handleSearch}
+          autoCapitalize="none"
+          autoCorrect={false}
+          returnKeyType="search"
+        />
+        {isSearching && <ActivityIndicator size="small" color={theme.onSurfaceVariant} />}
+        {searchQuery.length > 0 && !isSearching && (
+          <TouchableOpacity onPress={() => { setSearchQuery(''); setSearchResults([]); }}>
+            <MaterialIcons name="close" size={18} color={theme.onSurfaceVariant} />
+          </TouchableOpacity>
+        )}
+      </View>
+      <FlatList
+        data={searchResults}
+        keyExtractor={(item) => item.id}
+        renderItem={renderSearchResult}
+        contentContainerStyle={styles.listContent}
+        ListEmptyComponent={
+          searchQuery.length > 0 && !isSearching ? (
+            <Text style={[styles.emptyText, { color: theme.onSurfaceVariant }]}>
+              No users found
+            </Text>
+          ) : null
+        }
+      />
+    </View>
+  );
+
+  const RequestsPage = (
+    <View key="requests" style={styles.flex}>
+      {isLoadingData ? (
+        <ActivityIndicator style={styles.loader} color={theme.onSurfaceVariant} />
+      ) : incoming.length === 0 && sent.length === 0 ? (
+        <Text style={[styles.emptyText, { color: theme.onSurfaceVariant }]}>
+          No pending requests
+        </Text>
+      ) : (
+        <SectionList
+          sections={[
+            { key: 'incoming', title: 'Incoming', data: incoming },
+            { key: 'sent', title: 'Outgoing', data: sent },
+          ]}
+          keyExtractor={(item) => item.id}
+          renderSectionHeader={({ section }) =>
+            section.data.length > 0 ? (
+              <Text style={[styles.sectionLabel, { color: theme.onSurfaceVariant, backgroundColor: theme.surface }]}>
+                {section.title}
+              </Text>
+            ) : null
+          }
+          renderItem={({ item, section }) =>
+            section.key === 'incoming'
+              ? renderIncoming({ item })
+              : renderSent({ item })
+          }
+          contentContainerStyle={styles.listContent}
+        />
+      )}
+    </View>
+  );
+
+  // ── Main render ──────────────────────────────────────────────────────────────
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.surface }]}>
@@ -289,118 +392,68 @@ export default function FriendsScreen() {
       </View>
 
       {/* Tab bar */}
-      <View style={[styles.tabBar, { borderBottomColor: theme.outlineVariant }]}>
-        {tabs.map(({ key, label }) => (
-          <Pressable
-            key={key}
-            style={styles.tabItem}
-            onPress={() => setActiveTab(key)}
-          >
-            <Text style={[styles.tabLabel, { color: activeTab === key ? '#10B981' : theme.onSurfaceVariant }]}>
-              {label}
-            </Text>
-            {key === 'requests' && requestBadge > 0 && (
-              <View style={styles.badge}>
-                <Text style={styles.badgeText}>{requestBadge}</Text>
-              </View>
-            )}
-            {activeTab === key && <View style={styles.tabUnderline} />}
-          </Pressable>
-        ))}
+      <View
+        style={[styles.tabBar, { borderBottomColor: theme.outlineVariant }]}
+        onLayout={(e) => setTabBarWidth(e.nativeEvent.layout.width)}
+      >
+        {TABS.map((tab, i) => {
+          const active = activePage === i;
+          return (
+            <Pressable
+              key={tab}
+              style={styles.tabItem}
+              onPress={() => goToPage(i)}
+            >
+              <Text style={[styles.tabLabel, { color: active ? theme.primary : theme.onSurfaceVariant }]}>
+                {TAB_LABELS[tab]}
+              </Text>
+              {tab === 'requests' && requestBadge > 0 && (
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>{requestBadge}</Text>
+                </View>
+              )}
+            </Pressable>
+          );
+        })}
+        {tabBarWidth > 0 && (
+          <Animated.View
+            style={[
+              styles.tabUnderline,
+              {
+                width: tabBarWidth / TABS.length,
+                backgroundColor: theme.primary,
+                transform: [{
+                  translateX: scrollOffset.interpolate({
+                    inputRange: TABS.map((_, i) => i),
+                    outputRange: TABS.map((_, i) => i * (tabBarWidth / TABS.length)),
+                    extrapolate: 'clamp',
+                  }),
+                }],
+              },
+            ]}
+          />
+        )}
       </View>
 
-      {/* Friends tab */}
-      {activeTab === 'friends' && (
-        <View style={styles.flex}>
-          {isLoadingData ? (
-            <ActivityIndicator style={styles.loader} color={theme.onSurfaceVariant} />
-          ) : (
-            <FlatList
-              data={friends}
-              keyExtractor={(item) => item.id}
-              renderItem={renderFriend}
-              contentContainerStyle={styles.listContent}
-              ListEmptyComponent={
-                <Text style={[styles.emptyText, { color: theme.onSurfaceVariant }]}>
-                  No friends yet — search for players in the Add tab
-                </Text>
-              }
-            />
-          )}
-        </View>
-      )}
-
-      {/* Add tab */}
-      {activeTab === 'add' && (
-        <View style={styles.flex}>
-          <View style={[styles.searchBar, { backgroundColor: theme.surfaceVariant }]}>
-            <MaterialIcons name="person-add" size={20} color={theme.onSurfaceVariant} />
-            <TextInput
-              style={[styles.searchInput, { color: theme.onSurface }]}
-              placeholder="Search by username…"
-              placeholderTextColor={theme.onSurfaceVariant}
-              value={searchQuery}
-              onChangeText={handleSearch}
-              autoCapitalize="none"
-              autoCorrect={false}
-              returnKeyType="search"
-            />
-            {isSearching && <ActivityIndicator size="small" color={theme.onSurfaceVariant} />}
-            {searchQuery.length > 0 && !isSearching && (
-              <TouchableOpacity onPress={() => { setSearchQuery(''); setSearchResults([]); }}>
-                <MaterialIcons name="close" size={18} color={theme.onSurfaceVariant} />
-              </TouchableOpacity>
-            )}
-          </View>
-          <FlatList
-            data={searchResults}
-            keyExtractor={(item) => item.id}
-            renderItem={renderSearchResult}
-            contentContainerStyle={styles.listContent}
-            ListEmptyComponent={
-              searchQuery.length > 0 && !isSearching ? (
-                <Text style={[styles.emptyText, { color: theme.onSurfaceVariant }]}>
-                  No users found
-                </Text>
-              ) : null
-            }
-          />
-        </View>
-      )}
-
-      {/* Requests tab */}
-      {activeTab === 'requests' && (
-        <View style={styles.flex}>
-          {isLoadingData ? (
-            <ActivityIndicator style={styles.loader} color={theme.onSurfaceVariant} />
-          ) : incoming.length === 0 && sent.length === 0 ? (
-            <Text style={[styles.emptyText, { color: theme.onSurfaceVariant }]}>
-              No pending requests
-            </Text>
-          ) : (
-            <SectionList
-              sections={[
-                { key: 'incoming', title: 'Incoming', data: incoming },
-                { key: 'sent', title: 'Outgoing', data: sent },
-              ]}
-              keyExtractor={(item) => item.id}
-              renderSectionHeader={({ section }) =>
-                section.data.length > 0 ? (
-                  <Text style={[styles.sectionLabel, { color: theme.onSurfaceVariant, backgroundColor: theme.surface }]}>
-                    {section.title}
-                  </Text>
-                ) : null
-              }
-              renderItem={({ item, section }) =>
-                section.key === 'incoming'
-                  ? renderIncoming({ item })
-                  : renderSent({ item })
-              }
-              contentContainerStyle={styles.listContent}
-            />
-          )}
-        </View>
-      )}
+      {/* Swipeable pages */}
+      <PagerView
+        ref={pagerRef}
+        style={styles.flex}
+        initialPage={0}
+        onPageScroll={(e) => {
+          const { position, offset } = e.nativeEvent;
+          scrollOffset.setValue(position + offset);
+        }}
+        onPageSelected={(e) => {
+          const p = e.nativeEvent.position;
+          activePageRef.current = p;
+          setActivePage(p);
+        }}
+      >
+        {FriendsPage}
+        {AddPage}
+        {RequestsPage}
+      </PagerView>
     </SafeAreaView>
   );
 }
@@ -440,9 +493,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     left: 0,
-    right: 0,
     height: 2,
-    backgroundColor: '#10B981',
     borderRadius: 1,
   },
   badge: {

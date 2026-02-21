@@ -144,6 +144,8 @@ export default function LeaderboardScreen() {
   const pagerRef = useRef<PagerView>(null);
   // Track active page in a ref to avoid redundant setState calls during scroll
   const activePageRef = useRef(0);
+  const scopeScrollOffset = useRef(new Animated.Value(0)).current;
+  const [scopeRowWidth, setScopeRowWidth] = useState(0);
 
   // ---------------------------------------------------------------------------
   // Refs — read inside stable callbacks without dependency loops
@@ -327,25 +329,42 @@ export default function LeaderboardScreen() {
       </View>
 
       {/* Scope tabs — tap or swipe to navigate */}
-      <View style={styles.scopeRow}>
+      <View
+        style={styles.scopeRow}
+        onLayout={(e) => setScopeRowWidth(e.nativeEvent.layout.width)}
+      >
         {SCOPES.map((s, i) => {
           const active = activePage === i;
           return (
             <TouchableOpacity
               key={s}
               style={styles.scopeTab}
-              onPress={() => {
-                pagerRef.current?.setPage(i);
-                setActivePage(i);
-              }}
+              onPress={() => pagerRef.current?.setPage(i)}
             >
               <Text style={[styles.scopeTabText, { color: active ? theme.primary : theme.onSurfaceVariant }]}>
                 {s.charAt(0).toUpperCase() + s.slice(1)}
               </Text>
-              {active && <View style={[styles.scopeUnderline, { backgroundColor: theme.primary }]} />}
             </TouchableOpacity>
           );
         })}
+        {scopeRowWidth > 0 && (
+          <Animated.View
+            style={[
+              styles.scopeUnderline,
+              {
+                width: scopeRowWidth / SCOPES.length,
+                backgroundColor: theme.primary,
+                transform: [{
+                  translateX: scopeScrollOffset.interpolate({
+                    inputRange: SCOPES.map((_, i) => i),
+                    outputRange: SCOPES.map((_, i) => i * (scopeRowWidth / SCOPES.length)),
+                    extrapolate: 'clamp',
+                  }),
+                }],
+              },
+            ]}
+          />
+        )}
       </View>
 
       {/* Swipeable pages — one per scope */}
@@ -355,20 +374,12 @@ export default function LeaderboardScreen() {
         initialPage={0}
         onPageScroll={(e) => {
           const { position, offset } = e.nativeEvent;
-          // Update at the midpoint so the indicator tracks the dominant page instantly
-          const dominant = offset > 0.5 ? position + 1 : position;
-          if (dominant !== activePageRef.current) {
-            activePageRef.current = dominant;
-            setActivePage(dominant);
-          }
+          scopeScrollOffset.setValue(position + offset);
         }}
         onPageSelected={(e) => {
-          // Final confirmation once animation settles
           const p = e.nativeEvent.position;
-          if (p !== activePageRef.current) {
-            activePageRef.current = p;
-            setActivePage(p);
-          }
+          activePageRef.current = p;
+          setActivePage(p);
         }}
       >
         {SCOPES.map((s) => {
@@ -477,7 +488,7 @@ const styles = StyleSheet.create({
   scopeRow: { flexDirection: 'row', marginHorizontal: 24, marginTop: 16, marginBottom: 8 },
   scopeTab: { flex: 1, alignItems: 'center', paddingBottom: 8 },
   scopeTabText: { fontSize: 14, fontWeight: '500' },
-  scopeUnderline: { height: 2, width: '60%', borderRadius: 1, marginTop: 4 },
+  scopeUnderline: { position: 'absolute', bottom: 0, left: 0, height: 2, borderRadius: 1 },
   pager: { flex: 1 },
   scrollContent: { flexGrow: 1 },
   loadingSpinner: { marginTop: 60 },
