@@ -15,7 +15,7 @@ import {
   withTiming,
 } from 'react-native-reanimated';
 
-const BLITZ_DURATION_SEC = 60;
+const BLITZ_DURATION_SEC = 30;
 const TIME_FREEZE_DURATION_MS = 5000;
 
 function boardToGrid(board: Board, gridIndex: number): Grid {
@@ -75,6 +75,7 @@ export function useGameEngine(
 
   // Time Freeze potion state
   const timerFrozen = useSharedValue(0); // 0 = not frozen, 1 = frozen (for UI)
+  const freezeTimeRemaining = useSharedValue(0); // seconds remaining on freeze countdown
   const freezeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Stable timestamp for elapsed time — StatsBar reads this and self-ticks
@@ -231,17 +232,24 @@ export function useGameEngine(
     if (stateRef.current.phase === 'gameOver') return;
 
     timerFrozen.value = 1;
+    // Animate freeze countdown from 5 → 0
+    freezeTimeRemaining.value = TIME_FREEZE_DURATION_MS / 1000;
+    freezeTimeRemaining.value = withTiming(0, {
+      duration: TIME_FREEZE_DURATION_MS,
+      easing: Easing.linear,
+    });
     pauseTimer();
 
     freezeTimeoutRef.current = setTimeout(() => {
       freezeTimeoutRef.current = null;
       timerFrozen.value = 0;
+      freezeTimeRemaining.value = 0;
       // Only resume if the game hasn't ended or been paused by a banner during the freeze
       if (stateRef.current.phase !== 'gameOver') {
         resumeTimer();
       }
     }, TIME_FREEZE_DURATION_MS);
-  }, [pauseTimer, resumeTimer, timerFrozen]);
+  }, [pauseTimer, resumeTimer, timerFrozen, freezeTimeRemaining]);
 
   // Clean up freeze timeout on game over or unmount
   useEffect(() => {
@@ -249,8 +257,10 @@ export function useGameEngine(
       clearTimeout(freezeTimeoutRef.current);
       freezeTimeoutRef.current = null;
       timerFrozen.value = 0;
+      cancelAnimation(freezeTimeRemaining);
+      freezeTimeRemaining.value = 0;
     }
-  }, [state.phase, timerFrozen]);
+  }, [state.phase, timerFrozen, freezeTimeRemaining]);
 
   useEffect(() => {
     return () => {
@@ -385,6 +395,16 @@ export function useGameEngine(
           advanceGrid();
         }
       }, 300);
+    } else if (s.secondChanceCount > 0) {
+      // Second Chance absorbed — Medium haptic, stay on grid, keep playing
+      impact(ImpactFeedbackStyle.Medium);
+      isAdvancingRef.current = false;
+      // Resume per-grid timer (it was paused by cancelAnimation above)
+      if (!isBlitz && !isPausedRef.current) {
+        const elapsed = (Date.now() - timerStartRef.current) / 1000;
+        const remainingMs = (timerDurationRef.current - elapsed) * 1000;
+        startTimerAnimation(remainingMs);
+      }
     } else {
       impact(ImpactFeedbackStyle.Heavy);
       // Reveal the correct answer, then advance after the player has seen it
@@ -397,6 +417,10 @@ export function useGameEngine(
       }, 600);
     }
   }, [isBlitz, advanceGrid, timerProgress, getGlobalTimeRemaining, onRevealCorrect]);
+
+  const activateSecondChance = useCallback((count: number = 1) => {
+    dispatch({ type: 'ACTIVATE_SECOND_CHANCE', count });
+  }, []);
 
   const getTimeRemaining = useCallback(() => {
     if (isBlitz) return getGlobalTimeRemaining();
@@ -418,5 +442,7 @@ export function useGameEngine(
     resumeTimer,
     freezeTimer,
     timerFrozen,
+    freezeTimeRemaining,
+    activateSecondChance,
   };
 }

@@ -58,10 +58,12 @@ export interface GameState {
   currentChallengeType: ChallengeType;
   currentInstruction: string;
   events: GameEvent[];
+  secondChanceCount: number;
 }
 
 export type GameAction =
   | { type: 'TAP_CELL'; index: number; timeRemaining: number }
   | { type: 'TIMEOUT' }
   | { type: 'ADVANCE_GRID'; nextGrid: Grid; nextChallengeType?: ChallengeType; nextInstruction?: string }
-  | { type: 'GLOBAL_TIME_UP' };
+  | { type: 'GLOBAL_TIME_UP' }
+  | { type: 'ACTIVATE_SECOND_CHANCE'; count: number };

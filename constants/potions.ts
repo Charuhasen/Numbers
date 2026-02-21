@@ -1,3 +1,4 @@
+import { type AutoUseMode, type StoreItem } from '@/lib/store-service';
 import { MaterialIcons } from '@expo/vector-icons';
 
 export const POTION_DISPLAY: Record<string, { icon: keyof typeof MaterialIcons.glyphMap; label: string }> = {
@@ -10,9 +11,21 @@ export const POTION_DISPLAY: Record<string, { icon: keyof typeof MaterialIcons.g
     potion_revive: { icon: 'autorenew', label: 'Revive' },
 };
 
-/** Potions that support auto-use (passive activation during gameplay). */
-export const AUTO_USE_POTIONS = new Set([
-    'potion_time_freeze',
-    'potion_second_chance',
-    'potion_revive',
-]);
+/**
+ * Resolve the auto-use mode for a potion column.
+ * Reads from the store item's `metadata.auto_use_mode` (DB-driven).
+ * Falls back to hardcoded defaults if the field is missing (e.g. stale cache).
+ */
+export function getAutoUseMode(potionColumn: string, storeItems: StoreItem[]): AutoUseMode {
+    const item = storeItems.find((i) => i.metadata?.column === potionColumn);
+    if (item?.metadata?.auto_use_mode) return item.metadata.auto_use_mode;
+    // Fallback defaults — only used if DB hasn't been migrated yet
+    return FALLBACK_AUTO_USE_MODE[potionColumn] ?? 'manual';
+}
+
+const FALLBACK_AUTO_USE_MODE: Record<string, AutoUseMode> = {
+    potion_second_chance: 'always',
+    potion_revive: 'always',
+    potion_time_freeze: 'toggleable',
+    potion_fortune_tonic: 'toggleable',
+};

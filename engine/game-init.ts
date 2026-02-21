@@ -23,6 +23,7 @@ export function createInitialState(
     currentChallengeType: firstBoard.type,
     currentInstruction: firstBoard.instruction,
     events: [],
+    secondChanceCount: 0,
   };
 }
 

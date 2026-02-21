@@ -1,4 +1,4 @@
-import { AUTO_USE_POTIONS } from '@/constants/potions';
+import { getAutoUseMode } from '@/constants/potions';
 import { Colors } from '@/constants/theme';
 import { useProfile, type UserPotionSlot } from '@/context/profile-ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -63,7 +63,7 @@ export function PotionInventory() {
 
   if (!inventory || !profile) return null;
 
-  const applySlotUpdate = (slotIndex: number, potionType: string | null, autoUse: boolean) => {
+  const applySlotUpdate = (slotIndex: number, potionType: string | null, autoUse: boolean, quantity: number = 1) => {
     // Optimistic: update potionSlots immediately
     let nextSlots: UserPotionSlot[];
     if (potionType === null) {
@@ -73,13 +73,13 @@ export function PotionInventory() {
       if (existing) {
         nextSlots = potionSlots.map((s) =>
           s.slot_index === slotIndex
-            ? { ...s, potion_type: potionType, auto_use_enabled: autoUse }
+            ? { ...s, potion_type: potionType, auto_use_enabled: autoUse, quantity }
             : s,
         );
       } else {
         nextSlots = [
           ...potionSlots,
-          { slot_index: slotIndex, potion_type: potionType, auto_use_enabled: autoUse },
+          { slot_index: slotIndex, potion_type: potionType, auto_use_enabled: autoUse, quantity },
         ];
       }
     }
@@ -87,12 +87,12 @@ export function PotionInventory() {
     return nextSlots;
   };
 
-  const handleUpdateSlot = async (slotIndex: number, potionType: string | null, autoUse: boolean) => {
+  const handleUpdateSlot = async (slotIndex: number, potionType: string | null, autoUse: boolean, quantity: number = 1) => {
     if (!profile.id) return;
 
     // Apply optimistic update first
     const previousSlots = [...potionSlots];
-    applySlotUpdate(slotIndex, potionType, autoUse);
+    applySlotUpdate(slotIndex, potionType, autoUse, quantity);
 
     try {
       if (potionType === null) {
@@ -110,6 +110,7 @@ export function PotionInventory() {
             slot_index: slotIndex,
             potion_type: potionType,
             auto_use_enabled: autoUse,
+            quantity,
           });
         if (error) throw error;
       }
@@ -187,16 +188,30 @@ export function PotionInventory() {
           )}
         </Pressable>
 
-        {slot && item?.metadata?.column && AUTO_USE_POTIONS.has(item.metadata.column) && (
-          <View style={styles.autoUseRow}>
-            <Text style={[styles.autoUseText, { color: theme.onSurface }]}>Auto-Use</Text>
-            <Switch
-              value={slot.auto_use_enabled}
-              onValueChange={(val) => handleUpdateSlot(index, slot.potion_type, val)}
-              trackColor={{ false: theme.surfaceDim, true: theme.primary }}
-            />
-          </View>
-        )}
+        {slot && item?.metadata?.column && (() => {
+          const mode = getAutoUseMode(item.metadata!.column, storeItems);
+          if (mode === 'always') {
+            return (
+              <View style={styles.autoUseRow}>
+                <Text style={[styles.autoUseText, { color: theme.onSurfaceVariant }]}>Auto-Use</Text>
+              </View>
+            );
+          }
+          if (mode === 'toggleable') {
+            return (
+              <View style={styles.autoUseRow}>
+                <Text style={[styles.autoUseText, { color: theme.onSurface }]}>Auto-Use</Text>
+                <Switch
+                  value={slot.auto_use_enabled}
+                  onValueChange={(val) => handleUpdateSlot(index, slot.potion_type, val, slot.quantity)}
+                  trackColor={{ false: theme.surfaceDim, true: theme.primary }}
+                />
+              </View>
+            );
+          }
+          return null;
+        })()}
+
       </View>
     );
   };
@@ -269,7 +284,8 @@ export function PotionInventory() {
                         const slot = editingSlot;
                         setEditingSlot(null);
                         if (slot) {
-                          handleUpdateSlot(slot, potion.sku, false);
+                          const qty = Math.min(3, count);
+                          handleUpdateSlot(slot, potion.sku, false, qty);
                         }
                       }}
                     >

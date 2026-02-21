@@ -1,4 +1,4 @@
-import { POTION_DISPLAY } from '@/constants/potions';
+import { getAutoUseMode, POTION_DISPLAY } from '@/constants/potions';
 import { Colors, Spacing } from '@/constants/theme';
 import { useProfile } from '@/context/profile-ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -10,9 +10,11 @@ import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'rea
 interface GamePotionTrayProps {
   onUsePotion: (potionColumn: string) => Promise<void>;
   disabled?: boolean;
+  secondChanceActive?: boolean;
+  potionUsedCounts?: Record<string, number>;
 }
 
-export function GamePotionTray({ onUsePotion, disabled }: GamePotionTrayProps) {
+export function GamePotionTray({ onUsePotion, disabled, secondChanceActive, potionUsedCounts = {} }: GamePotionTrayProps) {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
   const { potionSlots, inventory } = useProfile();
@@ -43,10 +45,54 @@ export function GamePotionTray({ onUsePotion, disabled }: GamePotionTrayProps) {
         const count = column && inventory ? inventory[column] : 0;
         const meta = column ? POTION_DISPLAY[column] : null;
 
+        const slotQty = slot?.quantity ?? 1;
+        const usedCount = column ? (potionUsedCounts[column] ?? 0) : 0;
+        const remainingUses = Math.max(0, slotQty - usedCount);
+
         if (!slot || !item || !column || count <= 0) {
           // Empty or unequipped or out of stock slot
           return (
             <View key={index} style={[styles.potionSlot, { backgroundColor: theme.surfaceDim }]} />
+          );
+        }
+
+        const autoMode = getAutoUseMode(column, storeItems);
+        const isAutoUse = autoMode === 'always' || (autoMode === 'toggleable' && slot.auto_use_enabled);
+        // Check if this auto-use potion is currently active
+        const isActive = column === 'potion_second_chance' && secondChanceActive;
+        // Auto-use potion fully consumed — all copies used up
+        const isAutoConsumed = isAutoUse && !isActive && remainingUses <= 0 && usedCount > 0;
+
+        if (isAutoUse && isActive) {
+          // Active passive potion — non-tappable indicator with highlight
+          return (
+            <View
+              key={index}
+              style={[
+                styles.potionSlot,
+                styles.equippedSlot,
+                styles.activeSlot,
+                { backgroundColor: theme.surfaceVariant, borderColor: theme.primary },
+              ]}
+            >
+              <MaterialIcons name={meta?.icon ?? 'science'} size={24} color={theme.primary} />
+            </View>
+          );
+        }
+
+        if (isAutoConsumed) {
+          // Auto-use potion already consumed — dimmed indicator
+          return (
+            <View
+              key={index}
+              style={[
+                styles.potionSlot,
+                styles.equippedSlot,
+                { backgroundColor: theme.surfaceDim, borderColor: theme.surfaceDim, opacity: 0.4 },
+              ]}
+            >
+              <MaterialIcons name={meta?.icon ?? 'science'} size={24} color={theme.onSurface} />
+            </View>
           );
         }
 
@@ -58,7 +104,7 @@ export function GamePotionTray({ onUsePotion, disabled }: GamePotionTrayProps) {
               styles.equippedSlot,
               { backgroundColor: theme.surfaceVariant, borderColor: theme.primary },
             ]}
-            disabled={disabled || loadingSlot !== null || count <= 0}
+            disabled={disabled || loadingSlot !== null || count <= 0 || remainingUses <= 0}
             activeOpacity={0.7}
             onPress={() => handlePress(index, column as string)}
           >
@@ -68,7 +114,7 @@ export function GamePotionTray({ onUsePotion, disabled }: GamePotionTrayProps) {
               <>
                 <MaterialIcons name={meta?.icon ?? 'science'} size={24} color={theme.primary} />
                 <View style={styles.badge}>
-                  <Text style={styles.badgeText}>{count}</Text>
+                  <Text style={styles.badgeText}>{remainingUses}</Text>
                 </View>
               </>
             )}
@@ -97,6 +143,9 @@ const styles = StyleSheet.create({
   equippedSlot: {
     borderWidth: 1,
     position: 'relative',
+  },
+  activeSlot: {
+    borderWidth: 2,
   },
   badge: {
     position: 'absolute',

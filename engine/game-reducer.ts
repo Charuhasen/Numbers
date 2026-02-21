@@ -37,6 +37,14 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           timestamp: Date.now(),
         };
 
+        // Second Chance absorbs the wrong tap — no heart loss
+        if (state.secondChanceCount > 0) {
+          return {
+            ...state,
+            secondChanceCount: state.secondChanceCount - 1,
+            events: [...state.events, event],
+          };
+        }
 
         const newHearts = state.hearts - 1;
         if (newHearts <= 0) {
@@ -116,6 +124,10 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         gridIndex: nextGridIndex,
         currentGrid: nextGrid,
       };
+    }
+
+    case 'ACTIVATE_SECOND_CHANCE': {
+      return { ...state, secondChanceCount: action.count };
     }
 
     default:

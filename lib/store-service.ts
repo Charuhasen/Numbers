@@ -4,6 +4,9 @@ import { supabase } from './supabase';
 
 export type PotionRarity = 'rare' | 'epic' | 'legendary';
 
+/** How a potion behaves regarding auto-use. Stored in store_items.metadata. */
+export type AutoUseMode = 'always' | 'toggleable' | 'manual';
+
 export interface StoreItem {
   id: string;
   sku: string;
@@ -16,6 +19,7 @@ export interface StoreItem {
     column: string;
     qty: number;
     rarity: PotionRarity;
+    auto_use_mode?: AutoUseMode;
   } | null;
   is_active: boolean;
   discount_percentage: number;

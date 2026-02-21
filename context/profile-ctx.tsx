@@ -33,6 +33,7 @@ export interface UserPotionSlot {
   slot_index: number;
   potion_type: string | null;
   auto_use_enabled: boolean;
+  quantity: number;
 }
 
 const emptyBestScores = (): BestScores => ({
@@ -156,7 +157,7 @@ export function ProfileProvider({ children }: PropsWithChildren) {
     // Fetch Potion Slots
     const slotsResult = await supabase
       .from('user_potion_slots')
-      .select('slot_index, potion_type, auto_use_enabled')
+      .select('slot_index, potion_type, auto_use_enabled, quantity')
       .eq('user_id', userId);
 
     if (slotsResult.data) {
