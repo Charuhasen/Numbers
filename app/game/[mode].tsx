@@ -1,4 +1,5 @@
 import { ChallengeBanner } from '@/components/game/challenge-banner';
+import { GamePotionTray } from '@/components/game/game-potion-tray';
 import { GameTopBar } from '@/components/game/game-top-bar';
 import { GameGrid } from '@/components/game/grid';
 import { TileFeedback } from '@/components/game/grid-tile';
@@ -11,11 +12,11 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useGameEngine } from '@/hooks/use-game-engine';
 import { setGameSessionData } from '@/lib/game-session-store';
 import { startGameSession } from '@/lib/score-service';
+import { supabase } from '@/lib/supabase';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, InteractionManager, StyleSheet, Text, View } from 'react-native';
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
-import { useSharedValue } from 'react-native-reanimated';
+import { ActivityIndicator, Alert, InteractionManager, StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeIn, FadeOut, useSharedValue } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { triggerHeartShake } from '@/components/game/hearts-display';
@@ -49,7 +50,7 @@ export default function GameScreen() {
   }, [feedbackValues]);
 
   const { state, tapCell, timerProgress, timerDuration, gameStartTime, isReady, resumeTimer } = useGameEngine(gameMode, handleRevealCorrect, handleTimeout);
-  const { bestScores } = useProfile();
+  const { bestScores, refreshProfile } = useProfile();
 
   // Session token: requested once from the server when the game screen is ready.
   // Null if the player is offline — the score will still submit but without timing validation.
@@ -157,6 +158,31 @@ export default function GameScreen() {
     router.replace('/');
   }, [router]);
 
+  const handleUsePotion = useCallback(async (potionColumn: string) => {
+    if (state.phase === 'gameOver') return;
+
+    try {
+      const { error } = await supabase.rpc('consume_potion', { p_potion_column: potionColumn });
+      if (error) throw error;
+
+      // Apply effect
+      if (potionColumn === 'potion_grid_skip') {
+        const firstCorrect = state.currentGrid.correctAnswers[0];
+        if (firstCorrect !== undefined) {
+          tapCell(firstCorrect);
+        }
+      } else if (potionColumn === 'potion_time_freeze') {
+        Alert.alert('Time Freeze', 'Potion consumed! (Active effect coming soon)');
+      } else {
+        Alert.alert('Potion Used', 'Potion consumed! (Active effect coming soon)');
+      }
+
+      refreshProfile();
+    } catch (err: any) {
+      Alert.alert('Error', err.message || 'Could not use potion.');
+    }
+  }, [state, tapCell, refreshProfile]);
+
   if (!isReady) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: theme.surface }]}>
@@ -217,12 +243,13 @@ export default function GameScreen() {
         />
       </View>
 
-      {/* Potion tray placeholder */}
-      <View style={styles.potionTray}>
-        <View style={[styles.potionSlot, { backgroundColor: theme.surfaceDim }]} />
-        <View style={[styles.potionSlot, { backgroundColor: theme.surfaceDim }]} />
-        <View style={[styles.potionSlot, { backgroundColor: theme.surfaceDim }]} />
-      </View>
+      {/* Potion Tray (Blitz only, or configured by gameMode) */}
+      {gameMode === 'blitz' && (
+        <GamePotionTray
+          onUsePotion={handleUsePotion}
+          disabled={inputDisabled || state.phase === 'gameOver' || showBanner}
+        />
+      )}
 
       {/* Challenge banner overlay */}
       {showBanner && (
