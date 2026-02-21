@@ -7,6 +7,7 @@ import 'react-native-url-polyfill/auto';
 
 import { SessionProvider, useSession } from '@/context/ctx';
 import { ProfileProvider } from '@/context/profile-ctx';
+import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export const unstable_settings = {
@@ -41,9 +42,11 @@ function RootLayoutNav() {
     }
   }, [isLoading, session]);
 
+  const bgColor = Colors[colorScheme ?? 'light'].surface;
+
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
+      <Stack screenOptions={{ contentStyle: { backgroundColor: bgColor } }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(setup)" options={{ headerShown: false }} />

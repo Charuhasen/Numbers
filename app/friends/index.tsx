@@ -440,6 +440,7 @@ export default function FriendsScreen() {
         ref={pagerRef}
         style={styles.flex}
         initialPage={0}
+        overdrag={false}
         onPageScroll={(e) => {
           const { position, offset } = e.nativeEvent;
           scrollOffset.setValue(position + offset);

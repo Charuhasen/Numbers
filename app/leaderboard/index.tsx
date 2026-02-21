@@ -372,6 +372,7 @@ export default function LeaderboardScreen() {
         ref={pagerRef}
         style={styles.pager}
         initialPage={0}
+        overdrag={false}
         onPageScroll={(e) => {
           const { position, offset } = e.nativeEvent;
           scopeScrollOffset.setValue(position + offset);
