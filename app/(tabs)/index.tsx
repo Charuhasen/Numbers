@@ -28,6 +28,9 @@ export default function HomeScreen() {
   const handlePlayClassic = () => {
     router.push('/game/classic');
   };
+  const handleProfilePress = () => {
+    router.push('/profile');
+  };
   const handleSettingsPress = () => {
     router.push('/settings');
   };
@@ -48,6 +51,8 @@ export default function HomeScreen() {
         <PlayerInfoRow
           username={username}
           bits={profile?.bits ?? 0}
+          avatarUrl={profile?.avatarUrl ?? undefined}
+          onProfilePress={handleProfilePress}
           onSettingsPress={handleSettingsPress}
         />
 

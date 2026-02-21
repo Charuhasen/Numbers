@@ -11,22 +11,6 @@ import React, { useState } from 'react';
 import { Alert, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-/** Convert an ISO 3166-1 alpha-2 code to its emoji flag (e.g. "US" → 🇺🇸). */
-function countryFlag(code: string): string {
-  return [...code.toUpperCase()].map(
-    (c) => String.fromCodePoint(0x1f1e6 + c.charCodeAt(0) - 65),
-  ).join('');
-}
-
-/** Return the English display name for an ISO country code (e.g. "US" → "United States"). */
-function countryName(code: string): string {
-  try {
-    return new Intl.DisplayNames(['en'], { type: 'region' }).of(code) ?? code;
-  } catch {
-    return code;
-  }
-}
-
 export default function SettingsScreen() {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
@@ -34,7 +18,6 @@ export default function SettingsScreen() {
   const router = useRouter();
   const { signOut } = useSession();
   const { profile, refreshProfile } = useProfile();
-  const regionCode = profile?.countryCode ?? null;
 
   const [hapticsOn, setHapticsOn] = useState(isHapticsEnabled);
   const [friendRequestsOn, setFriendRequestsOn] = useState(
@@ -93,21 +76,6 @@ export default function SettingsScreen() {
               trackColor={{ false: theme.surfaceDim, true: '#10B981' }}
               thumbColor="#FFFFFF"
             />
-          </View>
-
-          <View style={[styles.divider, { backgroundColor: theme.surfaceDim }]} />
-
-          {/* Read-only — region is detected automatically via GPS / IP */}
-          <View style={styles.row}>
-            <MaterialIcons name="public" size={20} color={theme.onSurface} />
-            <Text style={[styles.rowLabel, { color: theme.onSurface }]}>Region</Text>
-            {regionCode ? (
-              <Text style={[styles.rowValue, { color: theme.onSurfaceVariant }]}>
-                {countryFlag(regionCode)}{'  '}{countryName(regionCode)}
-              </Text>
-            ) : (
-              <Text style={[styles.rowValue, { color: theme.onSurfaceVariant }]}>Not detected</Text>
-            )}
           </View>
         </View>
       </View>

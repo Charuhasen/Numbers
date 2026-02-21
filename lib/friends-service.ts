@@ -31,6 +31,68 @@ export interface SearchResult {
   isSender?: boolean;
 }
 
+// ─── RPC row shapes ──────────────────────────────────────────────────────────
+
+interface RpcFriendRow {
+  friendship_id: string;
+  created_at: string;
+  is_sender: boolean;
+  friend_id: string;
+  username: string | null;
+  display_name: string | null;
+  avatar_url: string | null;
+  country_code: string | null;
+  classic_best: number | null;
+  blitz_best: number | null;
+}
+
+interface RpcRequestRow {
+  friendship_id: string;
+  created_at: string;
+  is_sender: boolean;
+  friend_id: string;
+  username: string | null;
+  display_name: string | null;
+  avatar_url: string | null;
+}
+
+// ─── Mappers ─────────────────────────────────────────────────────────────────
+
+function mapFriendRow(row: RpcFriendRow): Friendship {
+  return {
+    id: row.friendship_id,
+    status: 'accepted',
+    createdAt: row.created_at,
+    isSender: row.is_sender,
+    friend: {
+      id: row.friend_id,
+      username: row.username ?? row.friend_id,
+      displayName: row.display_name ?? row.username ?? row.friend_id,
+      avatarUrl: row.avatar_url ?? undefined,
+      countryCode: row.country_code ?? undefined,
+      classicBest: row.classic_best ?? undefined,
+      blitzBest: row.blitz_best ?? undefined,
+    },
+  };
+}
+
+function mapRequestRow(row: RpcRequestRow, status: FriendshipStatus): Friendship {
+  return {
+    id: row.friendship_id,
+    status,
+    createdAt: row.created_at,
+    isSender: row.is_sender,
+    friend: {
+      id: row.friend_id,
+      username: row.username ?? row.friend_id,
+      displayName: row.display_name ?? row.username ?? row.friend_id,
+      avatarUrl: row.avatar_url ?? undefined,
+    },
+  };
+}
+
+// ─── Public API ──────────────────────────────────────────────────────────────
+
 /**
  * Search users by username (case-insensitive partial match).
  * Annotates each result with the existing friendship status if any.
@@ -135,244 +197,23 @@ export async function removeFriendship(friendshipId: string): Promise<void> {
   if (error) throw error;
 }
 
-/** Get all accepted friends with their profile + best scores. */
+/** Get all accepted friends with their profile + best scores. Single RPC call. */
 export async function getFriends(): Promise<Friendship[]> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Not authenticated');
-
-  // Fetch all friendships using pagination to bypass 1,000 row limits
-  let allFriendships: any[] = [];
-  let offset = 0;
-  const PAGE_SIZE = 1000;
-  let hasMore = true;
-
-  while (hasMore) {
-    const { data, error } = await supabase
-      .from('friendships')
-      .select('id, requester_id, addressee_id, status, created_at')
-      .eq('status', 'accepted')
-      .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`)
-      .range(offset, offset + PAGE_SIZE - 1);
-
-    if (error) throw error;
-    if (data && data.length > 0) {
-      allFriendships = allFriendships.concat(data);
-      offset += PAGE_SIZE;
-      hasMore = data.length === PAGE_SIZE;
-    } else {
-      hasMore = false;
-    }
-  }
-
-  if (allFriendships.length === 0) return [];
-
-  const friendIds = allFriendships.map(f =>
-    f.requester_id === user.id ? f.addressee_id : f.requester_id
-  );
-
-  // Chunk array to prevent URI Too Long errors when using .in()
-  const CHUNK_SIZE = 100;
-  const chunkedIds = [];
-  for (let i = 0; i < friendIds.length; i += CHUNK_SIZE) {
-    chunkedIds.push(friendIds.slice(i, i + CHUNK_SIZE));
-  }
-
-  const [profilesResult, scoresResult] = await Promise.all([
-    // Fetch profiles in chunks
-    Promise.all(chunkedIds.map(chunk =>
-      supabase
-        .from('profiles')
-        .select('id, username, display_name, avatar_url, country_code')
-        .in('id', chunk)
-    )),
-    // Fetch scores in chunks
-    Promise.all(chunkedIds.map(chunk =>
-      supabase
-        .from('scores')
-        .select('user_id, mode, score')
-        .in('user_id', chunk)
-    ))
-  ]);
-
-  // Check for errors in any chunk
-  for (const res of profilesResult) if (res.error) throw res.error;
-  for (const res of scoresResult) if (res.error) throw res.error;
-
-  const allProfiles = profilesResult.flatMap(res => res.data || []);
-  const allScores = scoresResult.flatMap(res => res.data || []);
-
-  const profileMap = new Map<string, { id: string; username: string | null; display_name: string | null; avatar_url: string | null; country_code: string | null }>();
-  for (const p of allProfiles) {
-    profileMap.set(p.id, p);
-  }
-
-  // Aggregate best scores per friend per mode
-  const bestScores = new Map<string, { classic: number; blitz: number }>();
-  for (const s of allScores) {
-    const entry = bestScores.get(s.user_id) ?? { classic: 0, blitz: 0 };
-    if (s.mode === 'classic' && s.score > entry.classic) entry.classic = s.score;
-    if (s.mode === 'blitz' && s.score > entry.blitz) entry.blitz = s.score;
-    bestScores.set(s.user_id, entry);
-  }
-
-  return allFriendships.map((f: { id: string; requester_id: string; addressee_id: string; status: string; created_at: string }) => {
-    const friendId = f.requester_id === user.id ? f.addressee_id : f.requester_id;
-    const profile = profileMap.get(friendId);
-    const scores = bestScores.get(friendId);
-    return {
-      id: f.id,
-      status: f.status as FriendshipStatus,
-      createdAt: f.created_at,
-      isSender: f.requester_id === user.id,
-      friend: {
-        id: friendId,
-        username: profile?.username ?? friendId,
-        displayName: profile?.display_name ?? profile?.username ?? friendId,
-        avatarUrl: profile?.avatar_url ?? undefined,
-        countryCode: profile?.country_code ?? undefined,
-        classicBest: scores?.classic,
-        blitzBest: scores?.blitz,
-      },
-    };
-  });
+  const { data, error } = await supabase.rpc('get_friends');
+  if (error) throw error;
+  return ((data as RpcFriendRow[]) ?? []).map(mapFriendRow);
 }
 
-/** Get incoming (pending) friend requests addressed to the current user. */
+/** Get incoming (pending) friend requests addressed to the current user. Single RPC call. */
 export async function getIncomingRequests(): Promise<Friendship[]> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Not authenticated');
-
-  let allRequests: any[] = [];
-  let offset = 0;
-  const PAGE_SIZE = 1000;
-  let hasMore = true;
-
-  while (hasMore) {
-    const { data, error } = await supabase
-      .from('friendships')
-      .select('id, requester_id, created_at')
-      .eq('addressee_id', user.id)
-      .eq('status', 'pending')
-      .range(offset, offset + PAGE_SIZE - 1);
-
-    if (error) throw error;
-    if (data && data.length > 0) {
-      allRequests = allRequests.concat(data);
-      offset += PAGE_SIZE;
-      hasMore = data.length === PAGE_SIZE;
-    } else {
-      hasMore = false;
-    }
-  }
-
-  if (allRequests.length === 0) return [];
-
-  const requesterIds = allRequests.map(f => f.requester_id);
-
-  const CHUNK_SIZE = 100;
-  const chunkedIds = [];
-  for (let i = 0; i < requesterIds.length; i += CHUNK_SIZE) {
-    chunkedIds.push(requesterIds.slice(i, i + CHUNK_SIZE));
-  }
-
-  const profilesResult = await Promise.all(
-    chunkedIds.map(chunk =>
-      supabase
-        .from('profiles')
-        .select('id, username, display_name, avatar_url')
-        .in('id', chunk)
-    )
-  );
-
-  for (const res of profilesResult) if (res.error) throw res.error;
-  const allProfiles = profilesResult.flatMap(res => res.data || []);
-
-  const profileMap = new Map<string, { id: string; username: string | null; display_name: string | null; avatar_url: string | null }>();
-  for (const p of allProfiles) profileMap.set(p.id, p);
-
-  return allRequests.map((f: { id: string; requester_id: string; created_at: string }) => {
-    const profile = profileMap.get(f.requester_id);
-    return {
-      id: f.id,
-      status: 'pending' as FriendshipStatus,
-      createdAt: f.created_at,
-      isSender: false,
-      friend: {
-        id: f.requester_id,
-        username: profile?.username ?? f.requester_id,
-        displayName: profile?.display_name ?? profile?.username ?? f.requester_id,
-        avatarUrl: profile?.avatar_url ?? undefined,
-      },
-    };
-  });
+  const { data, error } = await supabase.rpc('get_incoming_requests');
+  if (error) throw error;
+  return ((data as RpcRequestRow[]) ?? []).map(row => mapRequestRow(row, 'pending'));
 }
 
-/** Get outgoing (pending) friend requests sent by the current user. */
+/** Get outgoing (pending) friend requests sent by the current user. Single RPC call. */
 export async function getSentRequests(): Promise<Friendship[]> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Not authenticated');
-
-  let allRequests: any[] = [];
-  let offset = 0;
-  const PAGE_SIZE = 1000;
-  let hasMore = true;
-
-  while (hasMore) {
-    const { data, error } = await supabase
-      .from('friendships')
-      .select('id, addressee_id, created_at')
-      .eq('requester_id', user.id)
-      .eq('status', 'pending')
-      .range(offset, offset + PAGE_SIZE - 1);
-
-    if (error) throw error;
-    if (data && data.length > 0) {
-      allRequests = allRequests.concat(data);
-      offset += PAGE_SIZE;
-      hasMore = data.length === PAGE_SIZE;
-    } else {
-      hasMore = false;
-    }
-  }
-
-  if (allRequests.length === 0) return [];
-
-  const addresseeIds = allRequests.map(f => f.addressee_id);
-
-  const CHUNK_SIZE = 100;
-  const chunkedIds = [];
-  for (let i = 0; i < addresseeIds.length; i += CHUNK_SIZE) {
-    chunkedIds.push(addresseeIds.slice(i, i + CHUNK_SIZE));
-  }
-
-  const profilesResult = await Promise.all(
-    chunkedIds.map(chunk =>
-      supabase
-        .from('profiles')
-        .select('id, username, display_name, avatar_url')
-        .in('id', chunk)
-    )
-  );
-
-  for (const res of profilesResult) if (res.error) throw res.error;
-  const allProfiles = profilesResult.flatMap(res => res.data || []);
-
-  const profileMap = new Map<string, { id: string; username: string | null; display_name: string | null; avatar_url: string | null }>();
-  for (const p of allProfiles) profileMap.set(p.id, p);
-
-  return allRequests.map((f: { id: string; addressee_id: string; created_at: string }) => {
-    const profile = profileMap.get(f.addressee_id);
-    return {
-      id: f.id,
-      status: 'pending' as FriendshipStatus,
-      createdAt: f.created_at,
-      isSender: true,
-      friend: {
-        id: f.addressee_id,
-        username: profile?.username ?? f.addressee_id,
-        displayName: profile?.display_name ?? profile?.username ?? f.addressee_id,
-        avatarUrl: profile?.avatar_url ?? undefined,
-      },
-    };
-  });
+  const { data, error } = await supabase.rpc('get_sent_requests');
+  if (error) throw error;
+  return ((data as RpcRequestRow[]) ?? []).map(row => mapRequestRow(row, 'pending'));
 }
