@@ -76,19 +76,19 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.surface }]}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} bounces={false} overScrollMode="never">
+      {/* Static Header */}
+      <PlayerInfoRow
+        username={username}
+        bits={profile?.bits ?? 0}
+        avatarUrl={profile?.avatarUrl ?? undefined}
+        isOnline={isOnline}
+        isSyncing={isSyncing}
+        lastSyncedAt={lastSyncedAt}
+        onProfilePress={handleProfilePress}
+        onSettingsPress={handleSettingsPress}
+      />
 
-        {/* Header */}
-        <PlayerInfoRow
-          username={username}
-          bits={profile?.bits ?? 0}
-          avatarUrl={profile?.avatarUrl ?? undefined}
-          isOnline={isOnline}
-          isSyncing={isSyncing}
-          lastSyncedAt={lastSyncedAt}
-          onProfilePress={handleProfilePress}
-          onSettingsPress={handleSettingsPress}
-        />
+      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} bounces={false} overScrollMode="never">
 
         {/* Quick Actions - 2 column grid */}
         <View style={styles.quickActions}>
