@@ -3,15 +3,17 @@ import { useProfile } from '@/context/profile-ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { loadHapticsPreference } from '@/lib/haptics';
 import { detectAndSaveRegion } from '@/lib/region-service';
+import { MaterialIcons } from '@expo/vector-icons';
+import NetInfo from '@react-native-community/netinfo';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withDelay,
-  withTiming,
+    useAnimatedStyle,
+    useSharedValue,
+    withDelay,
+    withTiming,
 } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -28,6 +30,10 @@ export default function SplashScreen() {
   const [timerReady, setTimerReady] = useState(false);
   const [regionReady, setRegionReady] = useState(false);
 
+  // Network State
+  const [isConnected, setIsConnected] = useState<boolean | null>(null);
+  const [isCheckingNetwork, setIsCheckingNetwork] = useState(true);
+
   // Fade-in animation
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(12);
@@ -42,7 +48,35 @@ export default function SplashScreen() {
     transform: [{ translateY: translateY.value }],
   }));
 
-  // Minimum 2-second display time + bootstrap side-effects
+  const checkNetwork = useCallback(async () => {
+    setIsCheckingNetwork(true);
+    
+    // Add artificial delay for UX feedback so the user sees it actually checking
+    const [state] = await Promise.all([
+      NetInfo.fetch(),
+      new Promise((res) => setTimeout(res, 600)),
+    ]);
+    
+    const online = !!state.isConnected;
+    setIsConnected(online);
+    
+    // If we re-established connection, force a profile refresh because
+    // the initial load on mount likely failed or timed out while offline.
+    if (online) {
+      try {
+        await refreshProfile();
+      } catch (err) {}
+    }
+
+    setIsCheckingNetwork(false);
+  }, [refreshProfile]);
+
+  // Initial network check
+  useEffect(() => {
+    checkNetwork();
+  }, [checkNetwork]);
+
+  // Always kick off timer immediately so we don't wait 2s on every retry
   useEffect(() => {
     loadHapticsPreference();
     const timer = setTimeout(() => setTimerReady(true), 2000);
@@ -91,7 +125,16 @@ export default function SplashScreen() {
 
   // Navigate only when timer, profile, and region detection are all done
   useEffect(() => {
-    if (!profileReady || !timerReady || !regionReady || hasNavigated.current) return;
+    if (isConnected === false) return;
+    if (!profileReady || !timerReady || hasNavigated.current) return;
+    
+    // If profile doesn't exist yet but it's "ready", it means the fetch failed (e.g., spotty connection).
+    // Do not navigate until we fetch it properly.
+    if (!profile?.id) return;
+
+    // Profile exists — wait for region ready
+    if (!regionReady) return;
+
     hasNavigated.current = true;
 
     const hasValidUsername = USERNAME_RE.test(profile?.username ?? '');
@@ -100,7 +143,11 @@ export default function SplashScreen() {
     } else {
       router.replace('/(setup)/username');
     }
-  }, [profileReady, timerReady, regionReady, profile?.username]);
+  }, [profileReady, timerReady, regionReady, profile?.id, profile?.username, isConnected]);
+
+  // If the profile fetch finished but there is no profile ID, it was a DB failure.
+  const hasProfileError = profileReady && !profile?.id;
+  const showOfflineUI = isConnected === false || hasProfileError;
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.surface }]}>
@@ -122,9 +169,32 @@ export default function SplashScreen() {
         </Text>
       </Animated.View>
 
-      {/* Loader pinned to bottom */}
-      <View style={styles.loaderWrap}>
-        <ActivityIndicator size="small" color={theme.onSurfaceVariant} />
+      <View style={styles.bottomWrap}>
+        {showOfflineUI ? (
+          <Animated.View style={[styles.offlineWrap, animStyle]}>
+            <View style={styles.offlineHeader}>
+              <MaterialIcons name="cloud-off" size={20} color={theme.error} />
+              <Text style={[styles.offlineText, { color: theme.error }]}>
+                {isConnected === false ? "No Internet Connection" : "Connection Failed"}
+              </Text>
+            </View>
+            
+            <TouchableOpacity 
+              style={[styles.reconnectButton, { backgroundColor: theme.primary }]}
+              onPress={checkNetwork}
+              activeOpacity={0.8}
+              disabled={isCheckingNetwork}
+            >
+              {isCheckingNetwork ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text style={styles.reconnectText}>Reconnect</Text>
+              )}
+            </TouchableOpacity>
+          </Animated.View>
+        ) : (
+          <ActivityIndicator size="small" color={theme.onSurfaceVariant} />
+        )}
       </View>
     </SafeAreaView>
   );
@@ -160,8 +230,35 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '400',
   },
-  loaderWrap: {
+  bottomWrap: {
     position: 'absolute',
     bottom: 48,
+    alignItems: 'center',
+    width: '100%',
+  },
+  offlineWrap: {
+    alignItems: 'center',
+    gap: 16,
+  },
+  offlineHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  offlineText: {
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  reconnectButton: {
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 12,
+    minWidth: 140,
+    alignItems: 'center',
+  },
+  reconnectText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '700',
   },
 });

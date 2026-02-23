@@ -80,91 +80,81 @@ function PotionCard({ item, inventory, userBits, rarityColor, onBuy, buying }: P
   const isDark = colorScheme === 'dark';
 
   const meta = POTION_DISPLAY[item.metadata?.column ?? ''];
-  const rarity = item.metadata?.rarity ?? 'rare';
   const effectivePrice = getEffectivePrice(item);
   const discounted = isDiscountActive(item);
   const owned = getOwnedCount(item, inventory);
   const canAfford = userBits >= effectivePrice;
 
-  const iconBg = isDark
-    ? `${rarityColor}22`
-    : `${rarityColor}18`;
+  const cardBg = isDark ? `${theme.surfaceVariant}AA` : theme.surfaceVariant;
+  const imageBg = isDark ? `${rarityColor}1A` : `${rarityColor}12`;
 
   return (
-    <View style={[styles.card, { backgroundColor: theme.surfaceVariant }]}>
-      {/* Icon */}
-      <View style={[styles.iconWrap, { backgroundColor: iconBg }]}>
-        <MaterialIcons name={meta?.icon ?? 'science'} size={26} color={rarityColor} />
+    <View style={[styles.card, { backgroundColor: cardBg }]}>
+      {/* Discount Badge */}
+      {discounted && (
+        <View style={[styles.discountBadge, { backgroundColor: theme.error }]}>
+          <Text style={styles.discountText}>-{item.discount_percentage}%</Text>
+        </View>
+      )}
+
+      {/* Potion Image Block */}
+      <View style={[styles.imageContainer, { backgroundColor: imageBg }]}>
+        <MaterialIcons name={meta?.icon ?? 'science'} size={48} color={rarityColor} />
+        {/* Glow effect simulated with shadow on an underlying element */}
+        <View style={[styles.glowLayer, { shadowColor: rarityColor }]} />
+        
+        {owned > 0 && (
+          <View style={[styles.ownedBadge, { backgroundColor: theme.surface }]}>
+            <Text style={[styles.ownedText, { color: theme.onSurface }]}>x{owned}</Text>
+          </View>
+        )}
       </View>
 
-      {/* Info */}
-      <View style={styles.cardInfo}>
-        <View style={styles.cardNameRow}>
-          <Text style={[styles.cardName, { color: theme.onSurface }]} numberOfLines={1}>
-            {item.name}
-          </Text>
-          <View style={[styles.rarityBadge, { backgroundColor: iconBg }]}>
-            <Text style={[styles.rarityText, { color: rarityColor }]}>
-              {RARITY_LABEL[rarity]}
+      {/* Info Block */}
+      <View style={styles.infoContainer}>
+        <Text style={[styles.cardName, { color: theme.onSurface }]} numberOfLines={1}>
+          {item.name}
+        </Text>
+        <Text style={[styles.cardDesc, { color: theme.onSurfaceVariant }]} numberOfLines={1}>
+          {/* Replace full description with a shorter punchier one based on title for the grid */}
+          {meta?.label === 'Time Freeze' ? '+5s Frozen Time' :
+           meta?.label === 'Second Chance' ? '+1 Mistake Forgiven' :
+           meta?.label === '50/50' ? 'Hides 4 Wrong Answers' :
+           meta?.label === 'Scanner' ? 'Highlights Correct Area' :
+           meta?.label === 'Grid Skip' ? 'Auto-solves Grid' :
+           item.name}
+        </Text>
+      </View>
+
+      {/* Buy Button inside Card */}
+      <TouchableOpacity
+        style={[
+          styles.buyButton,
+          {
+            backgroundColor: canAfford ? rarityColor : theme.surfaceDim,
+            opacity: buying ? 0.7 : 1,
+          },
+        ]}
+        onPress={() => onBuy(item)}
+        disabled={buying || !canAfford}
+        activeOpacity={0.8}
+      >
+        {buying ? (
+          <ActivityIndicator size="small" color="#fff" />
+        ) : (
+          <View style={styles.priceRow}>
+            {discounted && (
+              <Text style={styles.originalPriceText}>
+                {item.price_bits.toLocaleString()}
+              </Text>
+            )}
+            <MaterialIcons name="toll" size={16} color={canAfford ? '#fff' : theme.onSurfaceVariant} />
+            <Text style={[styles.buyText, { color: canAfford ? '#fff' : theme.onSurfaceVariant }]}>
+              {effectivePrice.toLocaleString()}
             </Text>
           </View>
-        </View>
-        <Text style={[styles.cardDesc, { color: theme.onSurfaceVariant }]} numberOfLines={2}>
-          {item.description}
-        </Text>
-
-        {/* Price + Buy row */}
-        <View style={styles.cardFooter}>
-          <View style={styles.priceBlock}>
-            <MaterialIcons name="toll" size={14} color={theme.onSurfaceVariant} />
-            {discounted ? (
-              <>
-                <Text style={[styles.originalPrice, { color: theme.onSurfaceVariant }]}>
-                  {item.price_bits.toLocaleString()}
-                </Text>
-                <Text style={[styles.price, { color: rarityColor }]}>
-                  {effectivePrice.toLocaleString()}
-                </Text>
-                <View style={[styles.discountBadge, { backgroundColor: rarityColor }]}>
-                  <Text style={styles.discountText}>-{item.discount_percentage}%</Text>
-                </View>
-              </>
-            ) : (
-              <Text style={[styles.price, { color: theme.onSurface }]}>
-                {effectivePrice.toLocaleString()}
-              </Text>
-            )}
-          </View>
-
-          <View style={styles.rightBlock}>
-            {owned > 0 && (
-              <Text style={[styles.ownedText, { color: theme.onSurfaceVariant }]}>
-                Owned: {owned}
-              </Text>
-            )}
-            <TouchableOpacity
-              style={[
-                styles.buyButton,
-                {
-                  backgroundColor: canAfford ? rarityColor : theme.surfaceDim,
-                  opacity: buying ? 0.6 : 1,
-                },
-              ]}
-              onPress={() => onBuy(item)}
-              disabled={buying || !canAfford}
-              activeOpacity={0.75}
-            >
-              {buying ? (
-                <ActivityIndicator size="small" color="#fff" />
-              ) : (
-                <Text style={[styles.buyText, { color: canAfford ? '#fff' : theme.onSurfaceVariant }]}>
-                  Buy
-                </Text>
-              )}
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+        )}
+      </TouchableOpacity>
     </View>
   );
 }
@@ -181,7 +171,7 @@ export default function StoreScreen() {
   const [inventory, setInventory] = useState<UserInventory | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [buying, setBuying] = useState<string | null>(null); // sku being purchased
+  const [buying, setBuying] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -218,18 +208,15 @@ export default function StoreScreen() {
     setBuying(item.sku);
     try {
       await purchaseItem(item.sku);
-      // Refresh bits balance + inventory in parallel
       await Promise.all([refreshProfile(), load()]);
     } catch (err: unknown) {
-      const msg =
-        err instanceof Error ? err.message : 'Purchase failed. Please try again.';
+      const msg = err instanceof Error ? err.message : 'Purchase failed. Please try again.';
       Alert.alert('Purchase failed', msg);
     } finally {
       setBuying(null);
     }
   }, [profile?.bits, refreshProfile, load]);
 
-  // Group items by rarity
   const grouped = RARITY_ORDER.reduce<Record<PotionRarity, StoreItem[]>>(
     (acc, r) => {
       acc[r] = items.filter((i) => i.metadata?.rarity === r);
@@ -248,13 +235,11 @@ export default function StoreScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.surface }]}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} hitSlop={12} style={styles.backButton}>
           <MaterialIcons name="arrow-back" size={24} color={theme.onSurface} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: theme.onSurface }]}>Potion Store</Text>
-        {/* Bits balance */}
         <View style={[styles.bitsChip, { backgroundColor: theme.surfaceVariant }]}>
           <MaterialIcons name="toll" size={16} color={theme.potionLegendary} />
           <Text style={[styles.bitsText, { color: theme.onSurface }]}>
@@ -289,17 +274,20 @@ export default function StoreScreen() {
             return (
               <View key={rarity}>
                 <SectionHeader label={RARITY_LABEL[rarity]} />
-                {sectionItems.map((item) => (
-                  <PotionCard
-                    key={item.sku}
-                    item={item}
-                    inventory={inventory!}
-                    userBits={userBits}
-                    rarityColor={rarityColor[rarity]}
-                    onBuy={handleBuy}
-                    buying={buying === item.sku}
-                  />
-                ))}
+                <View style={styles.gridContainer}>
+                  {sectionItems.map((item) => (
+                    <View key={item.sku} style={styles.gridItem}>
+                      <PotionCard
+                        item={item}
+                        inventory={inventory!}
+                        userBits={userBits}
+                        rarityColor={rarityColor[rarity]}
+                        onBuy={handleBuy}
+                        buying={buying === item.sku}
+                      />
+                    </View>
+                  ))}
+                </View>
               </View>
             );
           })}
@@ -358,7 +346,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: Spacing.screenPadding,
     paddingBottom: 40,
-    gap: 8,
   },
   subtitle: {
     fontSize: 13,
@@ -369,125 +356,142 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    marginTop: 16,
-    marginBottom: 8,
+    marginTop: 20,
+    marginBottom: 12,
   },
   sectionTitle: {
-    fontSize: 10,
-    fontWeight: '700',
+    fontSize: 12,
+    fontWeight: '800',
     letterSpacing: 1.5,
     textTransform: 'uppercase',
   },
   sectionLine: {
     flex: 1,
     height: 1,
+    opacity: 0.5,
   },
-  // Card
-  card: {
+  
+  // Grid System
+  gridContainer: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    borderRadius: Spacing.cardRadius,
-    padding: 14,
-    gap: 14,
-    marginBottom: 8,
+    flexWrap: 'wrap',
+    gap: 12,
   },
-  iconWrap: {
-    width: 52,
-    height: 52,
+  gridItem: {
+    width: '48%',
+    // removed flexGrow/Shrink so they strictly adhere to width
+  },
+
+  // Redesigned Card
+  card: {
+    flex: 1, // forces item to expand vertically and match the tallest sibling in a row
+    borderRadius: 20,
+    padding: 10,
+    gap: 12,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: '100%', // Critical for flex row height matching in RN
+  },
+  imageContainer: {
+    width: '100%',
+    aspectRatio: 1,
     borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
-    flexShrink: 0,
+    position: 'relative',
+    overflow: 'hidden',
   },
-  cardInfo: {
-    flex: 1,
-    gap: 4,
+  glowLayer: {
+    position: 'absolute',
+    width: 40,
+    height: 40,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 4,
   },
-  cardNameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    flexWrap: 'wrap',
-  },
-  cardName: {
-    fontSize: 15,
-    fontWeight: '700',
-    flexShrink: 1,
-  },
-  rarityBadge: {
-    paddingHorizontal: 8,
+  ownedBadge: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 99,
-  },
-  rarityText: {
-    fontSize: 9,
-    fontWeight: '700',
-    letterSpacing: 0.6,
-    textTransform: 'uppercase',
-  },
-  cardDesc: {
-    fontSize: 12,
-    lineHeight: 17,
-  },
-  cardFooter: {
-    flexDirection: 'row',
+    borderRadius: 10,
+    minWidth: 24,
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 6,
   },
-  priceBlock: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    flex: 1,
-    flexWrap: 'wrap',
-  },
-  price: {
-    fontSize: 15,
-    fontWeight: '700',
-  },
-  originalPrice: {
-    fontSize: 12,
-    textDecorationLine: 'line-through',
-    opacity: 0.6,
+  ownedText: {
+    fontSize: 10,
+    fontWeight: '800',
   },
   discountBadge: {
-    paddingHorizontal: 5,
-    paddingVertical: 1,
-    borderRadius: 4,
+    position: 'absolute',
+    top: -6,
+    left: 8,
+    zIndex: 10,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 6,
+    transform: [{ rotate: '-2deg' }],
   },
   discountText: {
-    fontSize: 9,
+    fontSize: 10,
     fontWeight: '800',
     color: '#fff',
   },
-  rightBlock: {
-    flexDirection: 'row',
+
+  // Info Block
+  infoContainer: {
+    width: '100%',
     alignItems: 'center',
-    gap: 8,
-  },
-  ownedText: {
-    fontSize: 11,
-    fontWeight: '600',
-  },
-  buyButton: {
-    paddingHorizontal: 18,
-    paddingVertical: 7,
-    borderRadius: 10,
-    minWidth: 56,
-    alignItems: 'center',
+    gap: 2,
+    height: 40, // rigid height so short and long titles take same space
     justifyContent: 'center',
   },
-  buyText: {
-    fontSize: 13,
-    fontWeight: '700',
+  cardName: {
+    fontSize: 15,
+    fontWeight: '800',
+    textAlign: 'center',
   },
+  cardDesc: {
+    fontSize: 11,
+    fontWeight: '500',
+    textAlign: 'center',
+    opacity: 0.8,
+  },
+
+  // Button
+  buyButton: {
+    width: '100%',
+    height: 44,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  priceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  buyText: {
+    fontSize: 15,
+    fontWeight: '800',
+  },
+  originalPriceText: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.7)',
+    textDecorationLine: 'line-through',
+    marginRight: 4,
+  },
+
+  // Footer
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    marginTop: 16,
+    marginTop: 32,
   },
   footerText: {
     fontSize: 12,
