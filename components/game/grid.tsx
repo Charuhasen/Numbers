@@ -28,11 +28,11 @@ export const GameGrid = React.memo(function GameGrid({
 }: GridProps) {
   const tileSize = useMemo(calculateTileSize, []);
 
-  const rows = [
+  const rows = useMemo(() => [
     numbers.slice(0, 3),
     numbers.slice(3, 6),
     numbers.slice(6, 9),
-  ];
+  ], [numbers]);
 
   return (
     <View style={styles.grid}>

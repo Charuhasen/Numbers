@@ -13,11 +13,10 @@ import { useGameEngine } from '@/hooks/use-game-engine';
 import { useGamePotions } from '@/hooks/use-game-potions';
 import { setGameSessionData } from '@/lib/game-session-store';
 import { startGameSession } from '@/lib/score-service';
-import { supabase } from '@/lib/supabase';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, InteractionManager, StyleSheet, Text, View } from 'react-native';
-import Animated, { FadeIn, FadeOut, useSharedValue } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeOut, runOnJS, useAnimatedReaction, useSharedValue } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { triggerHeartShake } from '@/components/game/hearts-display';
@@ -138,38 +137,48 @@ export default function GameScreen() {
     timeFreezeRemainingRef.current = isAuto ? slot.initialQty : 0;
   }, [potions]);
 
-  // Poll global timer every 100ms
-  useEffect(() => {
-    if (gameMode !== 'blitz' || !isReady) return;
-    const interval = setInterval(() => {
-      if (timeFreezeActiveRef.current) return;
-      if (timeFreezeRemainingRef.current <= 0) return;
-      if (!timeFreezeEquippedRef.current) return;
-      const remaining = getTimeRemaining();
-      if (remaining <= 1 && remaining > 0) {
-        timeFreezeActiveRef.current = true;
-        timeFreezeRemainingRef.current -= 1;
-        markEffectActive('potion_time_freeze');
-        freezeTimer();
-        potions.consumeOne('potion_time_freeze');
-      }
-    }, 100);
-    return () => clearInterval(interval);
-  }, [gameMode, isReady, getTimeRemaining, freezeTimer, potions]);
+  const triggerTimeFreeze = useCallback(() => {
+    if (timeFreezeActiveRef.current) return;
+    if (timeFreezeRemainingRef.current <= 0) return;
+    if (!timeFreezeEquippedRef.current) return;
+    
+    const remaining = getTimeRemaining();
+    if (remaining <= 1 && remaining > 0) {
+      timeFreezeActiveRef.current = true;
+      timeFreezeRemainingRef.current -= 1;
+      markEffectActive('potion_time_freeze');
+      freezeTimer();
+      potions.consumeOne('potion_time_freeze');
+    }
+  }, [getTimeRemaining, markEffectActive, freezeTimer, potions]);
 
-  // Reset guard when freeze expires (timerFrozen shared value 1→0)
-  const prevTimerFrozenRef = useRef(0);
-  useEffect(() => {
-    const checkInterval = setInterval(() => {
-      const cur = timerFrozen.value;
-      if (prevTimerFrozenRef.current === 1 && cur === 0) {
-        timeFreezeActiveRef.current = false;
-        markEffectInactive('potion_time_freeze');
+  useAnimatedReaction(
+    () => globalTimeRemaining?.value ?? 0,
+    (remaining, prev) => {
+      if (gameMode !== 'blitz' || !isReady) return;
+      if (prev === null) return;
+      
+      if (remaining <= 1 && remaining > 0 && prev > 1) {
+        runOnJS(triggerTimeFreeze)();
       }
-      prevTimerFrozenRef.current = cur;
-    }, 200);
-    return () => clearInterval(checkInterval);
-  }, [timerFrozen, markEffectInactive]);
+    },
+    [gameMode, isReady, triggerTimeFreeze]
+  );
+
+  const handleFreezeExpired = useCallback(() => {
+    timeFreezeActiveRef.current = false;
+    markEffectInactive('potion_time_freeze');
+  }, [markEffectInactive]);
+
+  useAnimatedReaction(
+    () => timerFrozen.value,
+    (cur, prev) => {
+      if (prev === 1 && cur === 0) {
+        runOnJS(handleFreezeExpired)();
+      }
+    },
+    [handleFreezeExpired]
+  );
 
   // ─── UI state ────────────────────────────────────────────────────────────
   const heartShake = useSharedValue(0);

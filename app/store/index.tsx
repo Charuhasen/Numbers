@@ -2,28 +2,28 @@ import { Colors, Spacing } from '@/constants/theme';
 import { useProfile } from '@/context/profile-ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import {
-  StoreItem,
-  UserInventory,
-  getEffectivePrice,
-  getOwnedCount,
-  getStoreItems,
-  getUserInventory,
-  isDiscountActive,
-  purchaseItem,
-  type PotionRarity,
+    StoreItem,
+    UserInventory,
+    getEffectivePrice,
+    getOwnedCount,
+    getStoreItems,
+    getUserInventory,
+    isDiscountActive,
+    purchaseItem,
+    type PotionRarity,
 } from '@/lib/store-service';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Alert,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -215,30 +215,18 @@ export default function StoreScreen() {
       return;
     }
 
-    Alert.alert(
-      `Buy ${item.name}?`,
-      `This will cost ${effectivePrice.toLocaleString()} bits. You currently have ${userBits.toLocaleString()} bits.`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Buy',
-          onPress: async () => {
-            setBuying(item.sku);
-            try {
-              await purchaseItem(item.sku);
-              // Refresh bits balance + inventory in parallel
-              await Promise.all([refreshProfile(), load()]);
-            } catch (err: unknown) {
-              const msg =
-                err instanceof Error ? err.message : 'Purchase failed. Please try again.';
-              Alert.alert('Purchase failed', msg);
-            } finally {
-              setBuying(null);
-            }
-          },
-        },
-      ],
-    );
+    setBuying(item.sku);
+    try {
+      await purchaseItem(item.sku);
+      // Refresh bits balance + inventory in parallel
+      await Promise.all([refreshProfile(), load()]);
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error ? err.message : 'Purchase failed. Please try again.';
+      Alert.alert('Purchase failed', msg);
+    } finally {
+      setBuying(null);
+    }
   }, [profile?.bits, refreshProfile, load]);
 
   // Group items by rarity
