@@ -5,15 +5,14 @@ import { GameGrid } from '@/components/game/grid';
 import { TileFeedback } from '@/components/game/grid-tile';
 import { StatsBar } from '@/components/game/stats-bar';
 import { TimerBar } from '@/components/game/timer-bar';
-import { getAutoUseMode } from '@/constants/potions';
 import { Colors, Spacing } from '@/constants/theme';
 import { useProfile } from '@/context/profile-ctx';
 import { GameMode } from '@/engine/types';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useGameEngine } from '@/hooks/use-game-engine';
+import { useGamePotions } from '@/hooks/use-game-potions';
 import { setGameSessionData } from '@/lib/game-session-store';
 import { startGameSession } from '@/lib/score-service';
-import { getStoreItems, StoreItem } from '@/lib/store-service';
 import { supabase } from '@/lib/supabase';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -32,9 +31,9 @@ export default function GameScreen() {
   const gameMode = (mode as GameMode) || 'classic';
 
   const [showTimeUp, setShowTimeUp] = useState(false);
+  const [potionToast, setPotionToast] = useState<string | null>(null);
+  const potionToastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Called by the engine on timeout — freezes all tiles blue before the
-  // correct answer is revealed on top (onRevealCorrect overrides the correct tile to green).
   const handleTimeout = useCallback(() => {
     setShowTimeUp(true);
   }, []);
@@ -42,8 +41,6 @@ export default function GameScreen() {
   // feedbackValues: SharedValue array — updates go directly to UI thread, no root re-render
   const feedbackValues = useSharedValue<TileFeedback[]>(Array(9).fill('idle'));
 
-  // Called by the engine whenever the correct answer should be revealed
-  // (wrong tap or timeout). Updates the SharedValue — no React state change.
   const handleRevealCorrect = useCallback((correctIndices: number[]) => {
     setInputDisabled(true);
     const next = feedbackValues.value.slice() as TileFeedback[];
@@ -52,21 +49,26 @@ export default function GameScreen() {
   }, [feedbackValues]);
 
   const { state, tapCell, timerProgress, timerDuration, globalTimeRemaining, gameStartTime, isReady, getTimeRemaining, resumeTimer, freezeTimer, timerFrozen, freezeTimeRemaining, activateSecondChance } = useGameEngine(gameMode, handleRevealCorrect, handleTimeout);
-  const { bestScores, refreshProfile, potionSlots, inventory } = useProfile();
+  const { bestScores, refreshProfile } = useProfile();
 
-  // Track how many copies of each potion have been consumed this session (for tray badge)
-  const [potionUsedCounts, setPotionUsedCounts] = useState<Record<string, number>>({});
+  // ─── Potions: single source of truth ─────────────────────────────────────
+  const potions = useGamePotions();
 
-  // Store items — needed to read auto_use_mode from DB metadata
-  const [storeItems, setStoreItems] = useState<StoreItem[]>([]);
-  useEffect(() => {
-    getStoreItems().then(setStoreItems).catch(() => {});
+  // Track which potion effects are currently active (blocks re-use from tray)
+  const [activeEffects, setActiveEffects] = useState<Set<string>>(new Set());
+  const markEffectActive = useCallback((col: string) => {
+    setActiveEffects((prev) => new Set(prev).add(col));
+  }, []);
+  const markEffectInactive = useCallback((col: string) => {
+    setActiveEffects((prev) => {
+      const next = new Set(prev);
+      next.delete(col);
+      return next;
+    });
   }, []);
 
-  // Session token: requested once from the server when the game screen is ready.
-  // Null if the player is offline — the score will still submit but without timing validation.
+  // Session token
   const sessionIdRef = useRef<string | null>(null);
-
   useEffect(() => {
     if (!isReady) return;
     startGameSession(gameMode).then((id) => {
@@ -74,111 +76,72 @@ export default function GameScreen() {
     });
   }, [isReady, gameMode]);
 
-  // ─── Helper: resolve slot SKU → inventory column name ────────────────
-  const getSlotColumn = useCallback((slot: { potion_type: string | null }) => {
-    if (!slot.potion_type) return null;
-    const item = storeItems.find((i) => i.sku === slot.potion_type);
-    return (item?.metadata?.column as string) ?? null;
-  }, [storeItems]);
-
-  // ─── Auto-consume potions at game start (DB-driven) ──────────────────
-  // Skips Second Chance (consume-on-use) and Time Freeze (timer-threshold trigger).
+  // ─── Auto-consume at game start (non-SC, non-TF potions) ────────────────
   const autoConsumedRef = useRef<Set<string>>(new Set());
   useEffect(() => {
-    if (!isReady || !inventory || storeItems.length === 0) return;
-    for (const slot of potionSlots) {
-      const col = getSlotColumn(slot);
-      if (!col || autoConsumedRef.current.has(col)) continue;
-      // Second Chance: handled via activate-at-start + consume-on-use below
-      if (col === 'potion_second_chance') continue;
-      // Time Freeze: handled via timer-threshold watcher below
-      if (col === 'potion_time_freeze') continue;
+    if (!isReady || !potions.ready) return;
+    for (const slot of potions.slots) {
+      if (autoConsumedRef.current.has(slot.potionColumn)) continue;
+      // Second Chance: consume-on-use (below)
+      if (slot.potionColumn === 'potion_second_chance') continue;
+      // Time Freeze: timer-threshold trigger (below)
+      if (slot.potionColumn === 'potion_time_freeze') continue;
 
-      const autoMode = getAutoUseMode(col, storeItems);
-      if (autoMode === 'manual') continue;
-      if (autoMode === 'toggleable' && !slot.auto_use_enabled) continue;
+      const isAuto = slot.autoUseMode === 'always' ||
+        (slot.autoUseMode === 'toggleable' && slot.autoUseEnabled);
+      if (!isAuto) continue;
 
-      const count = inventory[col as keyof typeof inventory] ?? 0;
-      if (count <= 0) continue;
-
-      autoConsumedRef.current.add(col);
-      supabase.rpc('consume_potion', { p_potion_column: col }).then(({ error }) => {
-        if (!error) refreshProfile();
-      });
+      autoConsumedRef.current.add(slot.potionColumn);
+      potions.consumeOne(slot.potionColumn);
     }
-  }, [isReady, potionSlots, inventory, storeItems, getSlotColumn, refreshProfile]);
+  }, [isReady, potions]);
 
-  // ─── Second Chance: activate at start with stacking, consume on each use ──
-  // Arms the engine with count = min(slot.quantity, inventory). Each decrement
-  // fires one consume_potion RPC.
+  // ─── Second Chance: arm at start, consume on each absorption ─────────────
   const secondChanceArmedRef = useRef(false);
-  const secondChanceTotalRef = useRef(0); // how many copies were armed
   useEffect(() => {
-    if (!isReady || secondChanceArmedRef.current || storeItems.length === 0) return;
-    const slot = potionSlots.find((s) => getSlotColumn(s) === 'potion_second_chance');
-    if (!slot) return;
-    const owned = inventory?.potion_second_chance ?? 0;
-    if (owned <= 0) return;
-    const qty = Math.min(slot.quantity, owned);
+    if (!isReady || !potions.ready || secondChanceArmedRef.current) return;
+    const slot = potions.getSlot('potion_second_chance');
+    if (!slot || slot.initialQty <= 0) return;
     secondChanceArmedRef.current = true;
-    secondChanceTotalRef.current = qty;
-    activateSecondChance(qty);
-  }, [isReady, potionSlots, inventory, storeItems, getSlotColumn, activateSecondChance]);
+    activateSecondChance(slot.initialQty);
+  }, [isReady, potions, activateSecondChance]);
 
-  // Track previous secondChanceCount to detect each decrement → fire 1 consume RPC
+  // Detect each secondChanceCount decrement → consume one copy
   const prevSecondChanceCountRef = useRef(state.secondChanceCount);
   useEffect(() => {
     const prev = prevSecondChanceCountRef.current;
     const cur = state.secondChanceCount;
     if (prev > cur) {
-      // Consumed (prev - cur) copies — typically 1 at a time
       const consumed = prev - cur;
       for (let i = 0; i < consumed; i++) {
-        supabase.rpc('consume_potion', { p_potion_column: 'potion_second_chance' }).then(({ error }) => {
-          if (!error) refreshProfile();
-        });
+        potions.consumeOne('potion_second_chance');
       }
-      setPotionUsedCounts((prev) => ({
-        ...prev,
-        potion_second_chance: (prev.potion_second_chance ?? 0) + consumed,
-      }));
     }
     prevSecondChanceCountRef.current = cur;
-  }, [state.secondChanceCount, refreshProfile]);
+  }, [state.secondChanceCount, potions]);
 
-  // ─── Time Freeze: auto-use at 1 second remaining (Blitz only) ──────
-  // Counter-based: supports up to slot.quantity copies. Each freeze trigger
-  // decrements the counter and consumes one copy via RPC. After freeze expires,
-  // the guard resets so the polling interval can fire again when timer hits 1s.
-  const timeFreezeRemainingRef = useRef(0); // copies left to auto-trigger
-  const timeFreezeActiveRef = useRef(false); // true while a freeze is in progress
-  const timeFreezeInitializedRef = useRef(false); // ensures one-time init
+  // ─── Time Freeze: auto-use at ≤1s remaining (Blitz) ─────────────────────
+  const timeFreezeActiveRef = useRef(false); // true while freeze is in progress
+  const timeFreezeInitRef = useRef(false);
   const timeFreezeEquippedRef = useRef(false);
+  const timeFreezeRemainingRef = useRef(0);
 
-  // Initialize counter ONCE at game start — never re-run on inventory changes
+  // Init once
   useEffect(() => {
-    if (timeFreezeInitializedRef.current) return;
-    if (storeItems.length === 0 || !inventory) return;
-    timeFreezeInitializedRef.current = true;
+    if (timeFreezeInitRef.current || !potions.ready) return;
+    timeFreezeInitRef.current = true;
+    const slot = potions.getSlot('potion_time_freeze');
+    if (!slot) return;
+    const isAuto = slot.autoUseMode === 'always' ||
+      (slot.autoUseMode === 'toggleable' && slot.autoUseEnabled);
+    timeFreezeEquippedRef.current = isAuto;
+    timeFreezeRemainingRef.current = isAuto ? slot.initialQty : 0;
+  }, [potions]);
 
-    const slot = potionSlots.find((s) => getSlotColumn(s) === 'potion_time_freeze');
-    const autoEnabled = slot ? (
-      getAutoUseMode('potion_time_freeze', storeItems) === 'always' ||
-      (getAutoUseMode('potion_time_freeze', storeItems) === 'toggleable' && slot.auto_use_enabled)
-    ) : false;
-    timeFreezeEquippedRef.current = autoEnabled;
-
-    if (slot && autoEnabled) {
-      const owned = inventory.potion_time_freeze ?? 0;
-      timeFreezeRemainingRef.current = Math.min(slot.quantity, owned);
-    }
-  }, [potionSlots, inventory, storeItems, getSlotColumn]);
-
-  // Poll global timer every 100ms in Blitz — trigger Time Freeze at ≤1 second
+  // Poll global timer every 100ms
   useEffect(() => {
     if (gameMode !== 'blitz' || !isReady) return;
     const interval = setInterval(() => {
-      // Don't trigger while a freeze is active or no copies remain
       if (timeFreezeActiveRef.current) return;
       if (timeFreezeRemainingRef.current <= 0) return;
       if (!timeFreezeEquippedRef.current) return;
@@ -186,43 +149,37 @@ export default function GameScreen() {
       if (remaining <= 1 && remaining > 0) {
         timeFreezeActiveRef.current = true;
         timeFreezeRemainingRef.current -= 1;
-        // Fire RPC, then activate freeze. Don't let RPC failure block the freeze.
+        markEffectActive('potion_time_freeze');
         freezeTimer();
-        setPotionUsedCounts((prev) => ({
-          ...prev,
-          potion_time_freeze: (prev.potion_time_freeze ?? 0) + 1,
-        }));
-        supabase.rpc('consume_potion', { p_potion_column: 'potion_time_freeze' }).then(({ error }) => {
-          if (!error) refreshProfile();
-        });
+        potions.consumeOne('potion_time_freeze');
       }
     }, 100);
     return () => clearInterval(interval);
-  }, [gameMode, isReady, getTimeRemaining, freezeTimer, refreshProfile]);
+  }, [gameMode, isReady, getTimeRemaining, freezeTimer, potions]);
 
-  // Reset the active guard when freeze expires (timerFrozen goes 1→0)
+  // Reset guard when freeze expires (timerFrozen shared value 1→0)
   const prevTimerFrozenRef = useRef(0);
   useEffect(() => {
-    // Check on an interval since timerFrozen is a SharedValue
     const checkInterval = setInterval(() => {
       const cur = timerFrozen.value;
       if (prevTimerFrozenRef.current === 1 && cur === 0) {
         timeFreezeActiveRef.current = false;
+        markEffectInactive('potion_time_freeze');
       }
       prevTimerFrozenRef.current = cur;
     }, 200);
     return () => clearInterval(checkInterval);
-  }, [timerFrozen]);
+  }, [timerFrozen, markEffectInactive]);
 
+  // ─── UI state ────────────────────────────────────────────────────────────
   const heartShake = useSharedValue(0);
   const [inputDisabled, setInputDisabled] = useState(false);
   const prevGridRef = useRef(state.currentGrid);
 
   // Challenge banner state
-  const [showBanner, setShowBanner] = useState(true); // show for first challenge
+  const [showBanner, setShowBanner] = useState(true);
   const prevChallengeIndexRef = useRef(state.challengeIndex);
 
-  // Show banner when challenge index changes
   useEffect(() => {
     if (state.challengeIndex !== prevChallengeIndexRef.current) {
       setShowBanner(true);
@@ -245,12 +202,11 @@ export default function GameScreen() {
     }
   }, [state.currentGrid, feedbackValues]);
 
-  // Navigate to game over when phase changes
+  // Navigate to game over
   useEffect(() => {
     if (state.phase === 'gameOver') {
       const timeout = setTimeout(async () => {
         const elapsedSeconds = Math.floor((Date.now() - gameStartTime) / 1000);
-        // Persist session to AsyncStorage before navigating so it survives app kills.
         await setGameSessionData({
           mode: gameMode,
           score: state.score,
@@ -260,8 +216,6 @@ export default function GameScreen() {
           events: state.events,
           sessionId: sessionIdRef.current,
         });
-        // Defer navigation until after any in-progress interactions finish
-        // so the game-over transition doesn't stutter while AsyncStorage serializes.
         InteractionManager.runAfterInteractions(() => {
           router.replace({
             pathname: '/game/game-over',
@@ -279,7 +233,7 @@ export default function GameScreen() {
     }
   }, [state.phase, state.score, state.challengeIndex, state.bitsEarned, gameStartTime, gameMode, router]);
 
-  // handleTap written to a ref so the stable wrapper never invalidates GridTile memos
+  // ─── Tap handler ─────────────────────────────────────────────────────────
   const handleTapImpl = useCallback((index: number) => {
     if (inputDisabled) return;
 
@@ -288,11 +242,9 @@ export default function GameScreen() {
     if (isCorrect) {
       setInputDisabled(true);
     } else if (state.secondChanceCount > 0) {
-      // Second Chance absorbs — show wrong feedback briefly, don't lock input
       const next = feedbackValues.value.slice() as TileFeedback[];
       next[index] = 'wrong';
       feedbackValues.value = next;
-      // Clear the wrong feedback after a brief flash
       setTimeout(() => {
         const reset = feedbackValues.value.slice() as TileFeedback[];
         reset[index] = 'idle';
@@ -318,7 +270,6 @@ export default function GameScreen() {
   const handleTapRef = useRef(handleTapImpl);
   handleTapRef.current = handleTapImpl;
 
-  // Stable tap handler — never recreates, so GameGrid/GridTile React.memo is never defeated
   const stableHandleTap = useCallback((index: number) => {
     handleTapRef.current(index);
   }, []);
@@ -327,38 +278,34 @@ export default function GameScreen() {
     router.replace('/');
   }, [router]);
 
+  // ─── Manual potion use (tray tap) ───────────────────────────────────────
   const handleUsePotion = useCallback(async (potionColumn: string) => {
     if (state.phase === 'gameOver') return;
-
-    try {
-      const { error } = await supabase.rpc('consume_potion', { p_potion_column: potionColumn });
-      if (error) throw error;
-
-      // Track usage for tray badge
-      setPotionUsedCounts((prev) => ({
-        ...prev,
-        [potionColumn]: (prev[potionColumn] ?? 0) + 1,
-      }));
-
-      // Apply effect
-      if (potionColumn === 'potion_second_chance') {
-        activateSecondChance(1);
-      } else if (potionColumn === 'potion_grid_skip') {
-        const firstCorrect = state.currentGrid.correctAnswers[0];
-        if (firstCorrect !== undefined) {
-          tapCell(firstCorrect);
-        }
-      } else if (potionColumn === 'potion_time_freeze') {
-        freezeTimer();
-      } else {
-        Alert.alert('Potion Used', 'Potion consumed! (Active effect coming soon)');
-      }
-
-      refreshProfile();
-    } catch (err: any) {
-      Alert.alert('Error', err.message || 'Could not use potion.');
+    // Block if this potion's effect is still active
+    if (activeEffects.has(potionColumn)) {
+      if (potionToastTimer.current) clearTimeout(potionToastTimer.current);
+      setPotionToast('Potion already in use!');
+      potionToastTimer.current = setTimeout(() => setPotionToast(null), 1000);
+      return;
     }
-  }, [state, tapCell, freezeTimer, activateSecondChance, refreshProfile]);
+
+    const consumed = potions.consumeOne(potionColumn);
+    if (!consumed) return;
+
+    if (potionColumn === 'potion_second_chance') {
+      activateSecondChance(1);
+    } else if (potionColumn === 'potion_grid_skip') {
+      const firstCorrect = state.currentGrid.correctAnswers[0];
+      if (firstCorrect !== undefined) {
+        tapCell(firstCorrect);
+      }
+    } else if (potionColumn === 'potion_time_freeze') {
+      markEffectActive('potion_time_freeze');
+      freezeTimer();
+    } else {
+      Alert.alert('Potion Used', 'Potion consumed! (Active effect coming soon)');
+    }
+  }, [state, potions, activeEffects, tapCell, freezeTimer, activateSecondChance, markEffectActive]);
 
   if (!isReady) {
     return (
@@ -370,7 +317,6 @@ export default function GameScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.surface }]}>
-      {/* Top Bar: Exit, Challenge label, Hearts */}
       <GameTopBar
         challengeIndex={state.challengeIndex}
         gridIndex={state.gridIndex}
@@ -380,14 +326,23 @@ export default function GameScreen() {
         heartShake={heartShake}
       />
 
-      {/* Instruction */}
       <View style={styles.instructionContainer}>
         <Text style={[styles.instruction, { color: theme.onSurface }]}>
           {state.currentInstruction}
         </Text>
+        <View style={styles.potionToastSlot}>
+          {potionToast && (
+            <Animated.Text
+              entering={FadeIn.duration(100)}
+              exiting={FadeOut.duration(100)}
+              style={[styles.potionToastText, { color: theme.error }]}
+            >
+              {potionToast}
+            </Animated.Text>
+          )}
+        </View>
       </View>
 
-      {/* Timer Bar — Classic: per-grid timer, Blitz: global 60s timer */}
       <View style={styles.timerContainer}>
         {gameMode === 'blitz' && globalTimeRemaining ? (
           <TimerBar progress={globalTimeRemaining} durationSec={30} isGlobal frozen={timerFrozen} freezeTimeRemaining={freezeTimeRemaining} />
@@ -396,7 +351,6 @@ export default function GameScreen() {
         )}
       </View>
 
-      {/* Grid */}
       <View style={styles.gridContainer}>
         {showTimeUp && (
           <Animated.Text
@@ -415,7 +369,6 @@ export default function GameScreen() {
         />
       </View>
 
-      {/* Stats Bar */}
       <View style={styles.statsContainer}>
         <StatsBar
           score={state.score}
@@ -424,15 +377,13 @@ export default function GameScreen() {
         />
       </View>
 
-      {/* Potion Tray */}
       <GamePotionTray
+        slots={potions.slots}
         onUsePotion={handleUsePotion}
-        disabled={inputDisabled || state.phase === 'gameOver' || showBanner}
+        disabled={state.phase === 'gameOver' || showBanner}
         secondChanceActive={state.secondChanceCount > 0}
-        potionUsedCounts={potionUsedCounts}
       />
 
-      {/* Challenge banner overlay */}
       {showBanner && (
         <ChallengeBanner
           challengeNumber={state.challengeIndex + 1}
@@ -477,16 +428,13 @@ const styles = StyleSheet.create({
   statsContainer: {
     marginTop: 'auto',
   },
-  potionTray: {
-    flexDirection: 'row',
+  potionToastSlot: {
+    height: 18,
     justifyContent: 'center',
-    gap: 12,
-    paddingVertical: 16,
-    paddingHorizontal: Spacing.screenPadding,
+    alignItems: 'center',
   },
-  potionSlot: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
+  potionToastText: {
+    fontSize: 13,
+    fontWeight: '600',
   },
 });

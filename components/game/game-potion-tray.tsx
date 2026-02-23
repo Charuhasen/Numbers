@@ -1,30 +1,22 @@
-import { getAutoUseMode, POTION_DISPLAY } from '@/constants/potions';
+import { POTION_DISPLAY } from '@/constants/potions';
 import { Colors, Spacing } from '@/constants/theme';
-import { useProfile } from '@/context/profile-ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { getStoreItems, StoreItem } from '@/lib/store-service';
+import { ResolvedSlot } from '@/hooks/use-game-potions';
 import { MaterialIcons } from '@expo/vector-icons';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface GamePotionTrayProps {
+  slots: ResolvedSlot[];
   onUsePotion: (potionColumn: string) => Promise<void>;
   disabled?: boolean;
   secondChanceActive?: boolean;
-  potionUsedCounts?: Record<string, number>;
 }
 
-export function GamePotionTray({ onUsePotion, disabled, secondChanceActive, potionUsedCounts = {} }: GamePotionTrayProps) {
+export function GamePotionTray({ slots, onUsePotion, disabled, secondChanceActive }: GamePotionTrayProps) {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
-  const { potionSlots, inventory } = useProfile();
-  
-  const [storeItems, setStoreItems] = useState<StoreItem[]>([]);
-  const [loadingSlot, setLoadingSlot] = useState<number | null>(null);
-
-  useEffect(() => {
-    getStoreItems().then(setStoreItems).catch(() => {});
-  }, []);
+  const [loadingSlot, setLoadingSlot] = React.useState<number | null>(null);
 
   const handlePress = async (slotIndex: number, potionCol: string) => {
     if (disabled || loadingSlot !== null) return;
@@ -39,32 +31,19 @@ export function GamePotionTray({ onUsePotion, disabled, secondChanceActive, poti
   return (
     <View style={styles.potionTray}>
       {[1, 2, 3].map((index) => {
-        const slot = potionSlots?.find((s) => s.slot_index === index);
-        const item = slot?.potion_type ? storeItems.find((i) => i.sku === slot.potion_type) : null;
-        const column = item?.metadata?.column as keyof typeof inventory | undefined;
-        const count = column && inventory ? inventory[column] : 0;
-        const meta = column ? POTION_DISPLAY[column] : null;
+        const slot = slots.find((s) => s.slotIndex === index);
 
-        const slotQty = slot?.quantity ?? 1;
-        const usedCount = column ? (potionUsedCounts[column] ?? 0) : 0;
-        const remainingUses = Math.max(0, slotQty - usedCount);
-
-        if (!slot || !item || !column || count <= 0) {
-          // Empty or unequipped or out of stock slot
+        if (!slot) {
           return (
             <View key={index} style={[styles.potionSlot, { backgroundColor: theme.surfaceDim }]} />
           );
         }
 
-        const autoMode = getAutoUseMode(column, storeItems);
-        const isAutoUse = autoMode === 'always' || (autoMode === 'toggleable' && slot.auto_use_enabled);
-        // Check if this auto-use potion is currently active
-        const isActive = column === 'potion_second_chance' && secondChanceActive;
-        // Auto-use potion fully consumed — all copies used up
-        const isAutoConsumed = isAutoUse && !isActive && remainingUses <= 0 && usedCount > 0;
-
+        const meta = POTION_DISPLAY[slot.potionColumn];
+        const isAutoUse = slot.autoUseMode === 'always' ||
+          (slot.autoUseMode === 'toggleable' && slot.autoUseEnabled);
+        const isActive = slot.potionColumn === 'potion_second_chance' && secondChanceActive;
         if (isAutoUse && isActive) {
-          // Active passive potion — non-tappable indicator with highlight
           return (
             <View
               key={index}
@@ -77,26 +56,7 @@ export function GamePotionTray({ onUsePotion, disabled, secondChanceActive, poti
             >
               <MaterialIcons name={meta?.icon ?? 'science'} size={24} color={theme.primary} />
               <View style={styles.badge}>
-                <Text style={styles.badgeText}>{remainingUses}</Text>
-              </View>
-            </View>
-          );
-        }
-
-        if (isAutoConsumed) {
-          // Auto-use potion already consumed — dimmed indicator
-          return (
-            <View
-              key={index}
-              style={[
-                styles.potionSlot,
-                styles.equippedSlot,
-                { backgroundColor: theme.surfaceDim, borderColor: theme.surfaceDim, opacity: 0.4 },
-              ]}
-            >
-              <MaterialIcons name={meta?.icon ?? 'science'} size={24} color={theme.onSurface} />
-              <View style={[styles.badge, { backgroundColor: '#9CA3AF' }]}>
-                <Text style={styles.badgeText}>0</Text>
+                <Text style={styles.badgeText}>{slot.remainingUses}</Text>
               </View>
             </View>
           );
@@ -110,9 +70,9 @@ export function GamePotionTray({ onUsePotion, disabled, secondChanceActive, poti
               styles.equippedSlot,
               { backgroundColor: theme.surfaceVariant, borderColor: theme.primary },
             ]}
-            disabled={disabled || loadingSlot !== null || count <= 0 || remainingUses <= 0}
+            disabled={disabled || loadingSlot !== null || slot.remainingUses <= 0}
             activeOpacity={0.7}
-            onPress={() => handlePress(index, column as string)}
+            onPress={() => handlePress(index, slot.potionColumn)}
           >
             {loadingSlot === index ? (
               <ActivityIndicator size="small" color={theme.primary} />
@@ -120,7 +80,7 @@ export function GamePotionTray({ onUsePotion, disabled, secondChanceActive, poti
               <>
                 <MaterialIcons name={meta?.icon ?? 'science'} size={24} color={theme.primary} />
                 <View style={styles.badge}>
-                  <Text style={styles.badgeText}>{remainingUses}</Text>
+                  <Text style={styles.badgeText}>{slot.remainingUses}</Text>
                 </View>
               </>
             )}
