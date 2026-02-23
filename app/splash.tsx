@@ -60,13 +60,11 @@ export default function SplashScreen() {
     const online = !!state.isConnected;
     setIsConnected(online);
     
-    // If we re-established connection, force a profile refresh because
-    // the initial load on mount likely failed or timed out while offline.
-    if (online) {
-      try {
-        await refreshProfile();
-      } catch (err) {}
-    }
+    // Regardless of online/offline status, we try to refresh profile. 
+    // profile-ctx will now gracefully fall back to local DB if offline.
+    try {
+      await refreshProfile();
+    } catch (err) {}
 
     setIsCheckingNetwork(false);
   }, [refreshProfile]);
@@ -125,15 +123,11 @@ export default function SplashScreen() {
 
   // Navigate only when timer, profile, and region detection are all done
   useEffect(() => {
-    if (isConnected === false) return;
     if (!profileReady || !timerReady || hasNavigated.current) return;
     
-    // If profile doesn't exist yet but it's "ready", it means the fetch failed (e.g., spotty connection).
-    // Do not navigate until we fetch it properly.
-    if (!profile?.id) return;
-
-    // Profile exists — wait for region ready
-    if (!regionReady) return;
+    // Safety net - wait for region ready if possible, but don't block forever if offline.
+    // If we are completely offline, region detection might fail instantly or stall.
+    if (!regionReady && isConnected !== false) return;
 
     hasNavigated.current = true;
 
@@ -145,9 +139,8 @@ export default function SplashScreen() {
     }
   }, [profileReady, timerReady, regionReady, profile?.id, profile?.username, isConnected]);
 
-  // If the profile fetch finished but there is no profile ID, it was a DB failure.
-  const hasProfileError = profileReady && !profile?.id;
-  const showOfflineUI = isConnected === false || hasProfileError;
+  // We no longer show an Offline blocker because the app is Offline-First.
+  const showOfflineUI = false;
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.surface }]}>

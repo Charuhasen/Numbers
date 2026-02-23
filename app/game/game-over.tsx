@@ -67,6 +67,7 @@ export default function GameOverScreen() {
         mode: sessionData.mode,
         events: sessionData.events,
         roundReached: sessionData.challengeIndex,
+        score: sessionData.score,
         sessionId: sessionData.sessionId ?? null,
       });
       await clearGameSessionData();

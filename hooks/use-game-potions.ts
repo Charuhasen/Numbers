@@ -8,9 +8,11 @@
  */
 
 import { getAutoUseMode } from '@/constants/potions';
-import { Inventory, UserPotionSlot, useProfile } from '@/context/profile-ctx';
+import { Inventory, useProfile } from '@/context/profile-ctx';
+import { consumeLocalPotion, insertLocalTransaction } from '@/lib/local-db';
 import { getStoreItems, type AutoUseMode, type StoreItem } from '@/lib/store-service';
-import { supabase } from '@/lib/supabase';
+import { processPendingTransactions } from '@/lib/sync-service';
+import * as Crypto from 'expo-crypto';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 // ─── Public types ────────────────────────────────────────────────────────────
@@ -43,7 +45,7 @@ export interface UseGamePotionsReturn {
 // ─── Hook ────────────────────────────────────────────────────────────────────
 
 export function useGamePotions(): UseGamePotionsReturn {
-  const { inventory, potionSlots, refreshProfile } = useProfile();
+  const { profile, inventory, potionSlots, refreshProfile } = useProfile();
   const [storeItems, setStoreItems] = useState<StoreItem[]>([]);
   const [slots, setSlots] = useState<ResolvedSlot[]>([]);
   const [ready, setReady] = useState(false);
@@ -54,7 +56,7 @@ export function useGamePotions(): UseGamePotionsReturn {
 
   // Load store items once
   useEffect(() => {
-    getStoreItems().then(setStoreItems).catch(() => {});
+    getStoreItems().then(setStoreItems).catch(() => { });
   }, []);
 
   // ─── One-time snapshot ───────────────────────────────────────────────────
@@ -117,15 +119,29 @@ export function useGamePotions(): UseGamePotionsReturn {
       }),
     );
 
-    if (consumed) {
-      // Fire-and-forget RPC — don't block game logic
-      supabase.rpc('consume_potion', { p_potion_column: potionColumn }).then(({ error }) => {
-        if (!error) refreshProfile();
+    if (consumed && profile?.id) {
+      // 1. Immediately reduce local inventory SQLite
+      consumeLocalPotion(profile.id, potionColumn as any);
+
+      // 2. Insert into local transactions queue
+      const txId = Crypto.randomUUID();
+      insertLocalTransaction({
+        id: txId,
+        user_id: profile.id,
+        type: 'potion_used',
+        details: JSON.stringify({ potion_column: potionColumn }),
+        created_at: new Date().toISOString(),
+        sync_status: 'pending',
       });
+
+      refreshProfile(); // Trigger context update for inventory changes
+
+      // 3. Fire-and-forget sync — don't block game logic
+      processPendingTransactions(profile.id).catch(console.error);
     }
 
     return consumed;
-  }, [refreshProfile]);
+  }, [profile?.id, refreshProfile]);
 
   // ─── Helpers ─────────────────────────────────────────────────────────────
   const getSlot = useCallback(

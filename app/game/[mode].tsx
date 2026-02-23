@@ -532,7 +532,7 @@ export default function GameScreen() {
 
       <View style={styles.timerContainer}>
         {gameMode === 'blitz' && globalTimeRemaining ? (
-          <TimerBar progress={globalTimeRemaining} durationSec={30} isGlobal frozen={timerFrozen} freezeTimeRemaining={freezeTimeRemaining} />
+          <TimerBar progress={globalTimeRemaining} durationSec={60} isGlobal frozen={timerFrozen} freezeTimeRemaining={freezeTimeRemaining} />
         ) : (
           <TimerBar progress={timerProgress} durationSec={timerDuration} frozen={timerFrozen} freezeTimeRemaining={freezeTimeRemaining} />
         )}

@@ -1,13 +1,13 @@
 import { GameEvent, GameMode } from '@/engine/types';
+import { getPendingScores, insertLocalScore, markScoreSynced } from '@/lib/local-db';
 import { supabase } from '@/lib/supabase';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const PENDING_SCORES_KEY = 'taptapmath_pending_scores';
+import * as Crypto from 'expo-crypto';
 
 interface ScoreSubmission {
   mode: GameMode;
   events: GameEvent[];
   roundReached: number;
+  score: number;
   sessionId: string | null;
 }
 
@@ -75,41 +75,46 @@ export async function submitGameScore(
 
 /** Queue a failed score submission for offline retry. */
 export async function queuePendingScore(submission: ScoreSubmission) {
-  const existing = await AsyncStorage.getItem(PENDING_SCORES_KEY);
-  const queue: ScoreSubmission[] = existing ? JSON.parse(existing) : [];
-  queue.push(submission);
-  await AsyncStorage.setItem(PENDING_SCORES_KEY, JSON.stringify(queue));
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return; // Cant queue if not logged into an account in the first place
+
+  const scoreId = Crypto.randomUUID();
+  insertLocalScore({
+    id: scoreId,
+    user_id: user.id,
+    mode: submission.mode,
+    score: submission.score,
+    round_reached: submission.roundReached,
+    played_at: new Date().toISOString(),
+    sync_status: 'pending',
+    events_json: JSON.stringify(submission.events),
+  });
 }
 
 /** Flush all queued score submissions. Returns the number successfully processed. */
 export async function processPendingScores(): Promise<number> {
-  const existing = await AsyncStorage.getItem(PENDING_SCORES_KEY);
-  if (!existing) return 0;
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return 0;
 
-  const queue: ScoreSubmission[] = JSON.parse(existing);
-  if (queue.length === 0) return 0;
+  const pending = getPendingScores(user.id);
+  if (pending.length === 0) return 0;
 
-  const remaining: ScoreSubmission[] = [];
   let processed = 0;
 
-  for (const submission of queue) {
+  for (const score of pending) {
     try {
+      const events: GameEvent[] = JSON.parse(score.events_json);
       await submitGameScore(
-        submission.mode,
-        submission.events,
-        submission.roundReached,
-        submission.sessionId ?? null,
+        score.mode,
+        events,
+        score.round_reached,
+        null, // Session IDs expire anyway, and offline games don't have them
       );
+      markScoreSynced(score.id);
       processed++;
-    } catch {
-      remaining.push(submission);
+    } catch (e) {
+      console.error('Failed to sync offline score:', e);
     }
-  }
-
-  if (remaining.length > 0) {
-    await AsyncStorage.setItem(PENDING_SCORES_KEY, JSON.stringify(remaining));
-  } else {
-    await AsyncStorage.removeItem(PENDING_SCORES_KEY);
   }
 
   return processed;

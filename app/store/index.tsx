@@ -13,6 +13,7 @@ import {
     type PotionRarity,
 } from '@/lib/store-service';
 import { MaterialIcons } from '@expo/vector-icons';
+import NetInfo from '@react-native-community/netinfo';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -172,8 +173,19 @@ export default function StoreScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [buying, setBuying] = useState<string | null>(null);
+  const [isOnline, setIsOnline] = useState<boolean>(true);
 
   const load = useCallback(async () => {
+    const netState = await NetInfo.fetch();
+    if (!netState.isConnected) {
+       setIsOnline(false);
+       setLoading(false);
+       setRefreshing(false);
+       return;
+    }
+    
+    setIsOnline(true);
+    
     try {
       const [storeItems, inv] = await Promise.all([getStoreItems(), getUserInventory()]);
       setItems(storeItems);
@@ -251,6 +263,20 @@ export default function StoreScreen() {
       {loading ? (
         <View style={styles.centered}>
           <ActivityIndicator size="large" color={theme.primary} />
+        </View>
+      ) : !isOnline ? (
+        <View style={styles.centered}>
+          <MaterialIcons name="cloud-off" size={48} color={theme.onSurfaceVariant} style={{ marginBottom: 16 }} />
+          <Text style={[styles.headerTitle, { color: theme.onSurface, marginBottom: 8 }]}>Offline</Text>
+          <Text style={[styles.subtitle, { color: theme.onSurfaceVariant, textAlign: 'center', marginHorizontal: 32 }]}>
+            An active internet connection is required to browse the Potion Store.
+          </Text>
+          <TouchableOpacity 
+             style={[styles.buyButton, { backgroundColor: theme.primary, width: 140, marginTop: 24 }]} 
+             onPress={onRefresh}
+          >
+             <Text style={styles.buyText}>Retry</Text>
+          </TouchableOpacity>
         </View>
       ) : (
         <ScrollView

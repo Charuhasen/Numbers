@@ -1,3 +1,4 @@
+import { getLocalStoreItems } from './local-db';
 import { supabase } from './supabase';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -67,14 +68,16 @@ export function getOwnedCount(item: StoreItem, inventory: UserInventory): number
 // ─── API calls ────────────────────────────────────────────────────────────────
 
 export async function getStoreItems(): Promise<StoreItem[]> {
-  const { data, error } = await supabase
-    .from('store_items')
-    .select('*')
-    .eq('is_active', true)
-    .order('price_bits', { ascending: true });
-
-  if (error) throw error;
-  return (data ?? []) as StoreItem[];
+  try {
+    const localItems = getLocalStoreItems();
+    return localItems.map(item => ({
+      ...item,
+      metadata: item.metadata ? JSON.parse(item.metadata) : null,
+    })) as StoreItem[];
+  } catch (error) {
+    console.error("Error fetching local store items:", error);
+    return [];
+  }
 }
 
 export async function getUserInventory(): Promise<UserInventory> {

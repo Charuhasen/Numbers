@@ -4,23 +4,46 @@ import { PotionInventory } from '@/components/potion-inventory';
 import { Colors } from '@/constants/theme';
 import { useProfile } from '@/context/profile-ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { getLastSyncedAt } from '@/lib/sync-service';
 import { MaterialIcons } from '@expo/vector-icons';
+import NetInfo from '@react-native-community/netinfo';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
-  const isDark = colorScheme === 'dark';
   const { profile, bestScores, refreshProfile } = useProfile();
   const router = useRouter();
+  
+  const [isOnline, setIsOnline] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null);
+
+  useEffect(() => {
+    const fetchSyncState = async () => {
+       const netInfo = await NetInfo.fetch();
+       setIsOnline(!!netInfo.isConnected);
+       setLastSyncedAt(getLastSyncedAt());
+    };
+    fetchSyncState();
+    
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setIsOnline(!!state.isConnected);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
-      refreshProfile();
+      setIsSyncing(true);
+      refreshProfile().finally(() => {
+        setIsSyncing(false);
+        setLastSyncedAt(getLastSyncedAt());
+      });
     }, [refreshProfile])
   );
 
@@ -44,15 +67,15 @@ export default function HomeScreen() {
   };
 
   // Icon colors: dark-mode aware
-  const indigoIconBg = isDark ? 'rgba(99,102,241,0.2)' : '#EEF2FF';
-  const roseIconBg = isDark ? 'rgba(244,63,94,0.2)' : '#FFF1F2';
-  const emeraldIconBg = isDark ? 'rgba(16,185,129,0.2)' : '#D1FAE5';
-  const blueIconBg = isDark ? 'rgba(59,130,246,0.2)' : '#DBEAFE';
-  const orangeIconBg = isDark ? 'rgba(249,115,22,0.2)' : '#FFEDD5';
+  const indigoIconBg = colorScheme === 'dark' ? 'rgba(99,102,241,0.2)' : '#EEF2FF';
+  const roseIconBg = colorScheme === 'dark' ? 'rgba(244,63,94,0.2)' : '#FFF1F2';
+  const emeraldIconBg = colorScheme === 'dark' ? 'rgba(16,185,129,0.2)' : '#D1FAE5';
+  const blueIconBg = colorScheme === 'dark' ? 'rgba(59,130,246,0.2)' : '#DBEAFE';
+  const orangeIconBg = colorScheme === 'dark' ? 'rgba(249,115,22,0.2)' : '#FFEDD5';
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.surface }]}>
-      <StatusBar style={isDark ? 'light' : 'dark'} />
+      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} bounces={false} overScrollMode="never">
 
         {/* Header */}
@@ -60,6 +83,9 @@ export default function HomeScreen() {
           username={username}
           bits={profile?.bits ?? 0}
           avatarUrl={profile?.avatarUrl ?? undefined}
+          isOnline={isOnline}
+          isSyncing={isSyncing}
+          lastSyncedAt={lastSyncedAt}
           onProfilePress={handleProfilePress}
           onSettingsPress={handleSettingsPress}
         />

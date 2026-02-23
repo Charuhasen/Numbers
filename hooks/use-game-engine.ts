@@ -8,14 +8,12 @@ import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'r
 import {
   cancelAnimation,
   Easing,
-  makeMutable,
   runOnJS,
-  SharedValue,
   useSharedValue,
-  withTiming,
+  withTiming
 } from 'react-native-reanimated';
 
-const BLITZ_DURATION_SEC = 30;
+const BLITZ_DURATION_SEC = 60;
 const TIME_FREEZE_DURATION_MS = 5000;
 
 function boardToGrid(board: Board, gridIndex: number): Grid {
@@ -121,7 +119,7 @@ export function useGameEngine(
   // ─── Per-grid timer logic (Classic only) ───────────────────────────
 
   // Holds the latest handler — never passed to a worklet, only read on the JS thread
-  const handleTimerExpiredRef = useRef<() => void>(() => {});
+  const handleTimerExpiredRef = useRef<() => void>(() => { });
 
   // Stable wrapper with empty deps — safe to capture inside a Reanimated worklet.
   const onTimerComplete = useCallback(() => {
@@ -156,7 +154,7 @@ export function useGameEngine(
 
   // ─── Blitz global timer logic ──────────────────────────────────────
 
-  const handleGlobalTimeUpRef = useRef<() => void>(() => {});
+  const handleGlobalTimeUpRef = useRef<() => void>(() => { });
 
   const onGlobalTimerComplete = useCallback(() => {
     handleGlobalTimeUpRef.current();

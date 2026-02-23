@@ -46,7 +46,8 @@
         {
           "locationWhenInUsePermission": "TapTapMath uses your location to show you the regional leaderboard."
         }
-      ]
+      ],
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true,

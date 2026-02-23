@@ -1,7 +1,9 @@
 import { useSession } from '@/context/ctx';
 import { clearGameSessionData, getGameSessionData } from '@/lib/game-session-store';
-import { processPendingScores, queuePendingScore } from '@/lib/score-service';
+import { getLocalInventory, getLocalPotionSlots, getLocalProfile } from '@/lib/local-db';
+import { queuePendingScore } from '@/lib/score-service';
 import { supabase } from '@/lib/supabase';
+import { syncDataWithSupabase } from '@/lib/sync-service';
 import { createContext, useCallback, useContext, useEffect, useState, type PropsWithChildren } from 'react';
 
 export interface Profile {
@@ -85,46 +87,44 @@ export function ProfileProvider({ children }: PropsWithChildren) {
 
     const userId = session.user.id;
 
-    // Fetch profile
-    let profileResult = await supabase
-      .from('profiles')
-      .select('id, username, display_name, bits, avatar_url, country_code, allow_friend_requests')
-      .eq('id', userId)
-      .single();
+    // 1. Sync from cloud if possible (Push pending offline scores, then pull latest profile/inventory)
+    await syncDataWithSupabase(userId);
 
-    // Safety net: create profile if trigger didn't fire (e.g. pre-existing user)
-    if (!profileResult.data) {
+    // 2. Read exact mirror from Local DB
+    const localProfile = getLocalProfile(userId);
+    
+    // Safety net: in case user exists in Auth but hasn't synced profile yet
+    if (!localProfile) {
       const meta = session.user.user_metadata;
       const displayName = meta?.full_name ?? meta?.name ?? session.user.email?.split('@')[0] ?? null;
+      // We still try to create it in Supabase for first time users
       await supabase.from('profiles').insert({
         id: userId,
         username: null,
         display_name: displayName,
         avatar_url: meta?.avatar_url ?? null,
       });
-      // Also ensure inventory exists
       await supabase.from('inventory').insert({ user_id: userId });
-      // Re-fetch after creation
-      profileResult = await supabase
-        .from('profiles')
-        .select('id, username, display_name, bits, avatar_url, country_code, allow_friend_requests')
-        .eq('id', userId)
-        .single();
+      // Re-pull to local DB
+      await syncDataWithSupabase(userId);
     }
 
-    if (profileResult.data) {
+    const finalProfile = getLocalProfile(userId);
+    if (finalProfile) {
       setProfile({
-        id: profileResult.data.id,
-        username: profileResult.data.username,
-        displayName: profileResult.data.display_name,
-        bits: profileResult.data.bits ?? 0,
-        avatarUrl: profileResult.data.avatar_url,
-        countryCode: profileResult.data.country_code ?? null,
-        allowFriendRequests: profileResult.data.allow_friend_requests ?? false,
+        id: finalProfile.id,
+        username: finalProfile.username,
+        displayName: finalProfile.display_name,
+        bits: finalProfile.bits ?? 0,
+        avatarUrl: finalProfile.avatar_url,
+        countryCode: finalProfile.country_code ?? null,
+        allowFriendRequests: false, 
       });
     }
 
-    // Fetch best scores per mode (max across all difficulties)
+    // Best scores are still pulled directly since they are global rankings,
+    // though ideally they would also be synced to local DB `scores` table.
+    // Setting up the basic scores fetch here for now.
     const scoresResult = await supabase
       .from('scores')
       .select('mode, score')
@@ -141,27 +141,18 @@ export function ProfileProvider({ children }: PropsWithChildren) {
       setBestScores(best);
     }
 
-    // Fetch Inventory
-    const inventoryResult = await supabase
-      .from('inventory')
-      .select('potion_time_freeze, potion_second_chance, potion_50_50, potion_grid_skip, potion_revive, potion_fortune_tonic, potion_scanner')
-      .eq('user_id', userId)
-      .single();
-
-    if (inventoryResult.data) {
-      setInventory(inventoryResult.data as unknown as Inventory);
+    // Fetch Inventory strictly from local mirror
+    const localInventory = getLocalInventory(userId);
+    if (localInventory) {
+      setInventory(localInventory as unknown as Inventory);
     } else {
       setInventory(null);
     }
 
-    // Fetch Potion Slots
-    const slotsResult = await supabase
-      .from('user_potion_slots')
-      .select('slot_index, potion_type, auto_use_enabled, quantity')
-      .eq('user_id', userId);
-
-    if (slotsResult.data) {
-      setPotionSlots(slotsResult.data as UserPotionSlot[]);
+    // Fetch Potion Slots strictly from local mirror
+    const localSlots = getLocalPotionSlots(userId);
+    if (localSlots.length > 0) {
+      setPotionSlots(localSlots as unknown as UserPotionSlot[]);
     } else {
       setPotionSlots([]);
     }
@@ -193,13 +184,13 @@ export function ProfileProvider({ children }: PropsWithChildren) {
           mode: staleSession.mode,
           events: staleSession.events,
           roundReached: staleSession.challengeIndex,
+          score: staleSession.score,
           sessionId: staleSession.sessionId ?? null,
         });
         await clearGameSessionData();
       }
 
-      // Flush any scores queued while offline
-      await processPendingScores();
+      // Sync data handles pushing any scores queued while offline + pulling latest state
       if (!cancelled) await fetchProfile();
     })();
 

@@ -8,6 +8,9 @@ interface PlayerInfoRowProps {
   username: string;
   bits: number;
   avatarUrl?: string;
+  isOnline: boolean;
+  isSyncing: boolean;
+  lastSyncedAt: Date | null;
   onProfilePress?: () => void;
   onSettingsPress?: () => void;
 }
@@ -16,12 +19,15 @@ export function PlayerInfoRow({
   username,
   bits,
   avatarUrl,
+  isOnline,
+  isSyncing,
+  lastSyncedAt,
   onProfilePress,
   onSettingsPress,
 }: PlayerInfoRowProps) {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
-
+  
   return (
     <View style={styles.container}>
       {/* Avatar — tappable, navigates to profile */}
@@ -42,6 +48,25 @@ export function PlayerInfoRow({
       </TouchableOpacity>
 
       <View style={styles.rightSection}>
+        {/* Sync Status Icon */}
+        <TouchableOpacity
+          style={[styles.syncBadge, { backgroundColor: theme.surfaceVariant }]}
+          activeOpacity={0.7}
+          onPress={() => {
+            if (lastSyncedAt) {
+               alert(`Last synced: ${lastSyncedAt.toLocaleTimeString()}`);
+            } else {
+               alert(isOnline ? 'Online and syncing...' : 'Offline mode');
+            }
+          }}
+        >
+          {isOnline && !isSyncing ? (
+            <MaterialIcons name="cloud" size={20} color={theme.primary} />
+          ) : (
+             <MaterialIcons name="cloud-off" size={20} color={theme.onSurfaceVariant} />
+          )}
+        </TouchableOpacity>
+
         <View style={[styles.bitsBadge, { backgroundColor: theme.surfaceVariant, borderColor: `${theme.primary}0D` }]}>
           <MaterialIcons name="paid" size={16} color="#D4A017" />
           <Text style={[styles.bitsText, { color: theme.primary }]}>{bits.toLocaleString()}</Text>
@@ -114,6 +139,13 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     borderWidth: 1,
     gap: 8,
+  },
+  syncBadge: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   bitsText: {
     fontSize: 14,
