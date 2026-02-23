@@ -850,7 +850,7 @@ Potions are consumable items that offer strategic advantages.
 * **50/50:** Removes 4 incorrect numbers from the current grid (leaving 1 correct + 4 others). Manual activation.
 
 ### Legendary (Game Breakers)
-* **Grid Skip:** Instantly solves the current grid. Awards 100 base points + max time bonus for that grid's index. Manual activation.
+* **Grid Skip:** Instantly solves the current grid. Awards 100 base points + max time bonus for that grid's index. Manual activation. Max 1 per grid.
 * **Revive:** If hearts reach 0, resurrect immediately with 1 Heart instead of game over. Auto-triggered (passive). Consumed on death.
 * **Fortune Tonic:** For the next 5 rounds (challenges), drop rate is doubled (40% standard, guaranteed on milestones unchanged) and Legendary rarity chance is +5%. Manual activation. Engine tracks `fortuneTonicRoundsLeft`.
 * **Scanner:** Highlights the correct answer on the grid for 3 seconds. Timer keeps running during highlight. Manual activation.

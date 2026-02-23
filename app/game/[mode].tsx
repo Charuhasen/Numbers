@@ -185,10 +185,11 @@ export default function GameScreen() {
   const [inputDisabled, setInputDisabled] = useState(false);
   const prevGridRef = useRef(state.currentGrid);
 
-  // 50/50 & Scanner: track gridIndex they were used on (once per grid each).
+  // 50/50 & Scanner & Grid Skip: track gridIndex they were used on (once per grid each).
   // Scanner and 50/50 cannot be used on the same grid.
   const fiftyFiftyUsedGridRef = useRef<number | null>(null);
   const scannerUsedGridRef = useRef<number | null>(null);
+  const gridSkipUsedGridRef = useRef<number | null>(null);
 
   // Challenge banner state
   const [showBanner, setShowBanner] = useState(true);
@@ -322,7 +323,7 @@ export default function GameScreen() {
   // ├─────────────────────┼──────────────────────────────────────────────────────────┤
   // │ potion_grid_skip    │ Manual tap: auto-solves the current grid for full score   │
   // │                     │ points. Instant effect — no active duration, so no        │
-  // │                     │ re-use blocking needed.                                   │
+  // │                     │ re-use blocking needed. Once per GRID.                    │
   // ├─────────────────────┼──────────────────────────────────────────────────────────┤
   // │ potion_scanner      │ Manual tap: subtle glow on correct tile + 2 adjacent       │
   // │                     │ tiles in opposite directions for 1s. All 3 look the same. │
@@ -358,6 +359,14 @@ export default function GameScreen() {
       }
       if (scannerUsedGridRef.current === state.gridIndex) {
         showPotionToast('Cannot use with Scanner on same grid!');
+        return;
+      }
+    }
+
+    // Grid Skip: once per grid
+    if (potionColumn === 'potion_grid_skip') {
+      if (gridSkipUsedGridRef.current === state.gridIndex) {
+        showPotionToast('Already used on this grid!');
         return;
       }
     }
@@ -413,7 +422,8 @@ export default function GameScreen() {
 
     } else if (potionColumn === 'potion_grid_skip') {
       // Auto-solve: tap the correct answer instantly for full score.
-      // Instant effect — no active duration, no re-use blocking needed.
+      // Instant effect — no active duration, no re-use blocking needed. Once per grid.
+      gridSkipUsedGridRef.current = state.gridIndex;
       const firstCorrect = state.currentGrid.correctAnswers[0];
       if (firstCorrect !== undefined) {
         tapCell(firstCorrect);
