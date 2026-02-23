@@ -13,7 +13,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-export type TileFeedback = 'idle' | 'correct' | 'wrong';
+export type TileFeedback = 'idle' | 'correct' | 'wrong' | 'hidden' | 'glow';
 
 interface GridTileProps {
   number: number;
@@ -36,6 +36,7 @@ export const GridTile = React.memo(function GridTile({
 }: GridTileProps) {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
+  const isDark = colorScheme === 'dark';
   const scale = useSharedValue(1);
 
   // Capture theme colors so worklets can close over them
@@ -43,9 +44,11 @@ export const GridTile = React.memo(function GridTile({
   const errorColor = theme.error;
   const surfaceColor = theme.surfaceVariant;
   const onSurfaceColor = theme.onSurface;
+  // Subtle glow: slightly lighter/brighter version of surface
+  const glowColor = isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.08)';
 
   const handlePressIn = useCallback(() => {
-    if (disabled) return;
+    if (disabled || feedbackValues.value[tileIndex] === 'hidden') return;
     scale.value = withSequence(
       withTiming(0.92, { duration: 50 }),
       withSpring(1, { damping: 15, stiffness: 300 }),
@@ -54,13 +57,26 @@ export const GridTile = React.memo(function GridTile({
     onTap(tileIndex);
   }, [disabled, onTap, scale, tileIndex]);
 
-  // Background + scale animate on UI thread — no React re-render needed
+  // Background + scale + opacity animate on UI thread — no React re-render needed
   const bgAnimStyle = useAnimatedStyle(() => {
     const fb = feedbackValues.value[tileIndex] ?? 'idle';
     return {
       transform: [{ scale: scale.value }],
+      opacity: fb === 'hidden' ? 0 : 1,
       backgroundColor:
-        fb === 'correct' ? successColor : fb === 'wrong' ? errorColor : surfaceColor,
+        fb === 'correct' ? successColor
+        : fb === 'wrong' ? errorColor
+        : surfaceColor,
+    };
+  });
+
+  // Glow border — only visible when scanner is active
+  const glowBorderStyle = useAnimatedStyle(() => {
+    const fb = feedbackValues.value[tileIndex] ?? 'idle';
+    return {
+      borderWidth: fb === 'glow' ? 2 : 0,
+      borderColor: fb === 'glow' ? glowColor : 'transparent',
+      shadowOpacity: fb === 'glow' ? 0.6 : 0,
     };
   });
 
@@ -79,10 +95,15 @@ export const GridTile = React.memo(function GridTile({
       style={[
         styles.tile,
         bgAnimStyle,
+        glowBorderStyle,
         {
           width: size,
           height: size,
           borderRadius: Spacing.tileRadius,
+          shadowColor: '#FFFFFF',
+          shadowOffset: { width: 0, height: 0 },
+          shadowRadius: 8,
+          elevation: 0,
         },
       ]}
     >

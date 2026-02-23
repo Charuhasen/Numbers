@@ -16,7 +16,7 @@ import { startGameSession } from '@/lib/score-service';
 import { supabase } from '@/lib/supabase';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, InteractionManager, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, InteractionManager, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeOut, useSharedValue } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -176,6 +176,11 @@ export default function GameScreen() {
   const [inputDisabled, setInputDisabled] = useState(false);
   const prevGridRef = useRef(state.currentGrid);
 
+  // 50/50 & Scanner: track gridIndex they were used on (once per grid each).
+  // Scanner and 50/50 cannot be used on the same grid.
+  const fiftyFiftyUsedGridRef = useRef<number | null>(null);
+  const scannerUsedGridRef = useRef<number | null>(null);
+
   // Challenge banner state
   const [showBanner, setShowBanner] = useState(true);
   const prevChallengeIndexRef = useRef(state.challengeIndex);
@@ -278,34 +283,197 @@ export default function GameScreen() {
     router.replace('/');
   }, [router]);
 
+  // ─── Helper: show potion toast ─────────────────────────────────────────
+  const showPotionToast = useCallback((message: string) => {
+    if (potionToastTimer.current) clearTimeout(potionToastTimer.current);
+    setPotionToast(message);
+    potionToastTimer.current = setTimeout(() => setPotionToast(null), 1000);
+  }, []);
+
   // ─── Manual potion use (tray tap) ───────────────────────────────────────
+  //
+  // POTION RULES — each potion has independent validation.
+  // Multiple DIFFERENT potions can be active simultaneously (e.g. Time Freeze + 50/50).
+  // The same potion CANNOT be re-used while its effect is still active.
+  //
+  // ┌─────────────────────┬──────────────────────────────────────────────────────────┐
+  // │ Potion              │ Rules                                                    │
+  // ├─────────────────────┼──────────────────────────────────────────────────────────┤
+  // │ potion_time_freeze  │ Manual tap: freezes timer for 5s. Cannot re-use while    │
+  // │                     │ freeze is active. Marked active on use, inactive on      │
+  // │                     │ freeze expiry. Also auto-triggers in Blitz at ≤1s.       │
+  // ├─────────────────────┼──────────────────────────────────────────────────────────┤
+  // │ potion_second_chance│ Passive: auto-armed at game start. Each copy absorbs 1   │
+  // │                     │ wrong tap without losing a heart. Manual tap adds +1 to  │
+  // │                     │ the absorption counter.                                  │
+  // ├─────────────────────┼──────────────────────────────────────────────────────────┤
+  // │ potion_50_50        │ Manual tap: hides 4 random wrong tiles, leaving correct  │
+  // │                     │ + 4 distractors. Once per GRID — resets on grid change.  │
+  // │                     │ Cannot combine with Scanner on the same grid.             │
+  // ├─────────────────────┼──────────────────────────────────────────────────────────┤
+  // │ potion_grid_skip    │ Manual tap: auto-solves the current grid for full score   │
+  // │                     │ points. Instant effect — no active duration, so no        │
+  // │                     │ re-use blocking needed.                                   │
+  // ├─────────────────────┼──────────────────────────────────────────────────────────┤
+  // │ potion_scanner      │ Manual tap: subtle glow on correct tile + 2 adjacent       │
+  // │                     │ tiles in opposite directions for 1s. All 3 look the same. │
+  // │                     │ Timer keeps running. Cannot combine with 50/50 same grid. │
+  // ├─────────────────────┼──────────────────────────────────────────────────────────┤
+  // │ potion_fortune_tonic│ Passive: doubles potion drop rates for 5 rounds.         │
+  // │                     │ Auto-consumed at game start. Not manually tappable.       │
+  // │                     │ (TODO: implement drop rate logic)                         │
+  // ├─────────────────────┼──────────────────────────────────────────────────────────┤
+  // │ potion_revive       │ Passive: auto-triggers on death, resurrects with 1 heart.│
+  // │                     │ Not manually tappable.                                    │
+  // │                     │ (TODO: implement revive logic)                            │
+  // └─────────────────────┴──────────────────────────────────────────────────────────┘
+  //
   const handleUsePotion = useCallback(async (potionColumn: string) => {
     if (state.phase === 'gameOver') return;
-    // Block if this potion's effect is still active
-    if (activeEffects.has(potionColumn)) {
-      if (potionToastTimer.current) clearTimeout(potionToastTimer.current);
-      setPotionToast('Potion already in use!');
-      potionToastTimer.current = setTimeout(() => setPotionToast(null), 1000);
-      return;
+
+    // ── Per-potion validation ──────────────────────────────────────────────
+
+    // Time Freeze: block re-use while freeze effect is still active
+    if (potionColumn === 'potion_time_freeze') {
+      if (activeEffects.has('potion_time_freeze')) {
+        showPotionToast('Time Freeze already active!');
+        return;
+      }
     }
 
+    // 50/50: once per grid, and cannot be used on a grid where Scanner was used
+    if (potionColumn === 'potion_50_50') {
+      if (fiftyFiftyUsedGridRef.current === state.gridIndex) {
+        showPotionToast('Already used on this grid!');
+        return;
+      }
+      if (scannerUsedGridRef.current === state.gridIndex) {
+        showPotionToast('Cannot use with Scanner on same grid!');
+        return;
+      }
+    }
+
+    // Scanner: once per grid, block while glow is active, cannot combine with 50/50 on same grid
+    if (potionColumn === 'potion_scanner') {
+      if (activeEffects.has('potion_scanner')) {
+        showPotionToast('Scanner already active!');
+        return;
+      }
+      if (scannerUsedGridRef.current === state.gridIndex) {
+        showPotionToast('Already used on this grid!');
+        return;
+      }
+      if (fiftyFiftyUsedGridRef.current === state.gridIndex) {
+        showPotionToast('Cannot use with 50/50 on same grid!');
+        return;
+      }
+    }
+
+    // ── Consume one copy from inventory ────────────────────────────────────
     const consumed = potions.consumeOne(potionColumn);
     if (!consumed) return;
 
-    if (potionColumn === 'potion_second_chance') {
+    // ── Apply potion effect ────────────────────────────────────────────────
+
+    if (potionColumn === 'potion_time_freeze') {
+      // Freeze the timer for 5s. Marked active to prevent stacking.
+      // Cleared automatically when freeze expires (see timerFrozen watcher).
+      markEffectActive('potion_time_freeze');
+      freezeTimer();
+
+    } else if (potionColumn === 'potion_second_chance') {
+      // Add +1 absorption to the counter. Each point absorbs 1 wrong tap.
       activateSecondChance(1);
+
+    } else if (potionColumn === 'potion_50_50') {
+      // Hide 4 random wrong tiles. Correct answers always remain visible.
+      // Tracked per gridIndex so it resets on each new grid.
+      fiftyFiftyUsedGridRef.current = state.gridIndex;
+      const correctSet = new Set(state.currentGrid.correctAnswers);
+      const wrongIndices = Array.from({ length: 9 }, (_, i) => i)
+        .filter((i) => !correctSet.has(i));
+      // Fisher-Yates shuffle, then take first 4
+      for (let i = wrongIndices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [wrongIndices[i], wrongIndices[j]] = [wrongIndices[j], wrongIndices[i]];
+      }
+      const toHide = wrongIndices.slice(0, 4);
+      const next = feedbackValues.value.slice() as TileFeedback[];
+      for (const idx of toHide) next[idx] = 'hidden';
+      feedbackValues.value = next;
+
     } else if (potionColumn === 'potion_grid_skip') {
+      // Auto-solve: tap the correct answer instantly for full score.
+      // Instant effect — no active duration, no re-use blocking needed.
       const firstCorrect = state.currentGrid.correctAnswers[0];
       if (firstCorrect !== undefined) {
         tapCell(firstCorrect);
       }
-    } else if (potionColumn === 'potion_time_freeze') {
-      markEffectActive('potion_time_freeze');
-      freezeTimer();
+
+    } else if (potionColumn === 'potion_scanner') {
+      // Scanner: shows a subtle glow on the correct tile + 2 adjacent tiles in
+      // opposite directions for 1 second. All 3 tiles look the same (glow) so
+      // the player knows the answer is in this cluster but must still figure out
+      // which one. Timer keeps running. Cannot combine with 50/50 on same grid.
+      //
+      // Grid layout (3x3):   0 1 2
+      //                       3 4 5
+      //                       6 7 8
+      //
+      // We pick a random axis (horizontal, vertical, or diagonal) and glow
+      // the neighbor on each side. Edge/corner tiles may have fewer neighbors.
+      scannerUsedGridRef.current = state.gridIndex;
+      markEffectActive('potion_scanner');
+      const correctIdx = state.currentGrid.correctAnswers[0];
+      if (correctIdx !== undefined) {
+        const row = Math.floor(correctIdx / 3);
+        const col = correctIdx % 3;
+
+        // Collect ALL adjacent tile indices (up to 8 neighbors on a 3x3 grid)
+        const directions: [number, number][] = [
+          [-1, -1], [-1, 0], [-1, 1],
+          [0, -1],           [0, 1],
+          [1, -1],  [1, 0],  [1, 1],
+        ];
+        const allNeighbors: number[] = [];
+        for (const [dr, dc] of directions) {
+          const nr = row + dr, nc = col + dc;
+          if (nr >= 0 && nr < 3 && nc >= 0 && nc < 3) {
+            allNeighbors.push(nr * 3 + nc);
+          }
+        }
+
+        // Shuffle neighbors and pick 2 so we always glow exactly 3 tiles
+        for (let i = allNeighbors.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [allNeighbors[i], allNeighbors[j]] = [allNeighbors[j], allNeighbors[i]];
+        }
+        const adjacentIndices = allNeighbors.slice(0, 2);
+
+        // Apply uniform glow to all tiles — no distinction between correct and adjacent
+        const next = feedbackValues.value.slice() as TileFeedback[];
+        const glowTiles = [correctIdx, ...adjacentIndices];
+        for (const idx of glowTiles) next[idx] = 'glow';
+        feedbackValues.value = next;
+
+        // Revert after 1 second
+        setTimeout(() => {
+          const cur = feedbackValues.value.slice() as TileFeedback[];
+          for (const idx of glowTiles) {
+            if (cur[idx] === 'glow') cur[idx] = 'idle';
+          }
+          feedbackValues.value = cur;
+          markEffectInactive('potion_scanner');
+        }, 1000);
+      } else {
+        markEffectInactive('potion_scanner');
+      }
+
     } else {
-      Alert.alert('Potion Used', 'Potion consumed! (Active effect coming soon)');
+      // Unhandled potion type — log for debugging
+      console.warn(`Potion effect not implemented: ${potionColumn}`);
     }
-  }, [state, potions, activeEffects, tapCell, freezeTimer, activateSecondChance, markEffectActive]);
+  }, [state, potions, activeEffects, tapCell, freezeTimer, activateSecondChance, markEffectActive, markEffectInactive, showPotionToast, feedbackValues]);
 
   if (!isReady) {
     return (
