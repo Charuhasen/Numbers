@@ -156,10 +156,8 @@ class GameEvent {
 ```dart
 class ActivePotionEffects {
   final bool secondChanceActive;     // Next wrong tap absorbed (consumed on use)
-  final int fortuneTonicRoundsLeft;  // Countdown: 5 → 0, doubles drop rate while > 0
   final bool timerFrozen;            // Time Freeze active (5s real-time, then auto-expires)
   final double timerFreezeRemaining; // Seconds left on freeze
-  final bool reviveAvailable;        // Revive potion queued (triggers on death instead of game over)
 }
 ```
 
@@ -255,8 +253,7 @@ double calculateTime({
 * **Feedback:** Heavy Haptic + Error Sound.
 
 ### Game Over (hearts reach 0)
-1. Check if Revive potion is queued → if yes, resurrect with 1 Heart, consume Revive, continue.
-2. Otherwise → transition to Game Over screen.
+1. Transition to Game Over screen.
 3. Game Over screen shows: final score, bits earned, round reached, potions dropped.
 4. Options: Submit score to leaderboard, return to menu, play again.
 
@@ -608,7 +605,7 @@ Auth redirect guard: unauthenticated users → `/auth`.
 ### Potion Tray (bottom of game screen)
 * Shows up to 3 pre-selected potions
 * Manual-activation potions (Scanner, 50/50, Time Freeze, Grid Skip) are tappable
-* Auto-activation potions (Second Chance, Revive) show as passive indicators
+* Auto-activation potions (Second Chance) show as passive indicators
 * Greyed out when consumed or not applicable
 
 ---
@@ -762,12 +759,12 @@ Apple App Store Review Guideline 5.1.1(v) requires apps with account creation to
 
 ### Unit Tests (mandatory, pure Dart)
 
-* Game engine state transitions (correct, wrong, timeout, game over, revive)
+* Game engine state transitions (correct, wrong, timeout, game over)
 * Timer logic (decay formula, freeze interaction, Blitz countdown)
 * Grid generation (correct answer count, no duplicates, distractor constraints)
 * Scoring formula (base + bonus, grid skip scoring)
-* Potion effect logic (all 8 potions, activation, consumption, expiry)
-* Potion drop logic (probability, milestone guarantees, rarity scaling, Fortune Tonic modifier)
+* Potion effect logic (all 6 potions, activation, consumption, expiry)
+* Potion drop logic (probability, milestone guarantees, rarity scaling)
 * Bits calculation
 * Difficulty tier selection based on challenge index
 ### Widget Tests
@@ -851,8 +848,6 @@ Potions are consumable items that offer strategic advantages.
 
 ### Legendary (Game Breakers)
 * **Grid Skip:** Instantly solves the current grid. Awards 100 base points + max time bonus for that grid's index. Manual activation. Max 1 per grid.
-* **Revive:** If hearts reach 0, resurrect immediately with 1 Heart instead of game over. Auto-triggered (passive). Consumed on death.
-* **Fortune Tonic:** For the next 5 rounds (challenges), drop rate is doubled (40% standard, guaranteed on milestones unchanged) and Legendary rarity chance is +5%. Manual activation. Engine tracks `fortuneTonicRoundsLeft`.
 * **Scanner:** Highlights the correct answer on the grid for 3 seconds. Timer keeps running during highlight. Manual activation.
 
 ## 19.2 Potion Activation Model
@@ -862,8 +857,8 @@ Potions are consumable items that offer strategic advantages.
 * Selected potions are "loaded" into the session. Unselected potions are unavailable during that game.
 
 ### In-Game Activation
-* **Auto-triggered potions (passive):** Second Chance, Revive. These activate automatically when their trigger condition is met. Shown as passive indicators in the potion tray.
-* **Manual potions (active):** Time Freeze, 50/50, Grid Skip, Scanner, Heart Refill, Fortune Tonic. Player taps the potion icon in the tray to activate. Cannot be activated during transition animations.
+* **Auto-triggered potions (passive):** Second Chance. Activates automatically when its trigger condition is met. Shown as passive indicator in the potion tray.
+* **Manual potions (active):** Time Freeze, 50/50, Grid Skip, Scanner, Heart Refill. Player taps the potion icon in the tray to activate. Cannot be activated during transition animations.
 
 ### Constraints
 * Only one manual potion can be active at a time (e.g. can't stack Time Freeze + Scanner simultaneously).
@@ -873,7 +868,7 @@ Potions are consumable items that offer strategic advantages.
 ## 19.3 Drop Logic (Hybrid Loot)
 
 * **Drop evaluation:** After each completed round (challenge = 5 grids).
-* **Standard Rounds:** 20% chance for a drop. (40% if Fortune Tonic active.)
+* **Standard Rounds:** 20% chance for a drop.
 * **Milestone Rounds (5, 10, 15, 20, ...):** **Guaranteed** drop.
 * **Rarity Weights:**
 
@@ -883,7 +878,6 @@ Potions are consumable items that offer strategic advantages.
 | 11-20 | 40% | 45% | 15% |
 | 21+ | 20% | 45% | 35% |
 
-* **Fortune Tonic modifier:** +5% Legendary (subtracted from Rare).
 * **Dropped potions** are added to inventory immediately (or queued for sync if offline).
 * **Blitz mode:** No potion drops (session is too short).
 

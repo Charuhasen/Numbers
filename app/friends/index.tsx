@@ -12,6 +12,7 @@ import {
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { MaterialIcons } from '@expo/vector-icons';
+import NetInfo from '@react-native-community/netinfo';
 import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback, useRef, useState } from 'react';
 import {
@@ -53,8 +54,16 @@ export default function FriendsScreen() {
   const [incoming, setIncoming] = useState<Friendship[]>([]);
   const [sent, setSent] = useState<Friendship[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(false);
+  const [isOffline, setIsOffline] = useState(false);
 
   const loadSocialData = useCallback(async () => {
+    const netState = await NetInfo.fetch();
+    if (!netState.isConnected) {
+      setIsOffline(true);
+      setIsLoadingData(false);
+      return;
+    }
+    setIsOffline(false);
     setIsLoadingData(true);
     try {
       const [f, inc, s] = await Promise.all([
@@ -290,7 +299,11 @@ export default function FriendsScreen() {
 
   const FriendsPage = (
     <View key="friends" style={styles.flex}>
-      {isLoadingData ? (
+      {isOffline && friends.length === 0 ? (
+        <Text style={[styles.emptyText, { color: theme.onSurfaceVariant }]}>
+          Friends list requires an internet connection.{'\n'}Pull to refresh when online.
+        </Text>
+      ) : isLoadingData ? (
         <ActivityIndicator style={styles.loader} color={theme.onSurfaceVariant} />
       ) : (
         <FlatList

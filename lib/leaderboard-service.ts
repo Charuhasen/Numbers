@@ -1,3 +1,4 @@
+import { getLeaderboardCache, upsertLeaderboardCache } from '@/lib/local-db';
 import { supabase } from '@/lib/supabase';
 import type { FriendProfile } from '@/lib/friends-service';
 
@@ -5,24 +6,26 @@ export type LeaderboardMode = 'classic' | 'blitz';
 export type LeaderboardScope = 'global' | 'regional' | 'friends';
 
 // ---------------------------------------------------------------------------
-// Module-level TTL cache — survives tab switches, cleared on pull-to-refresh
+// SQLite-backed cache — survives app restarts
 // ---------------------------------------------------------------------------
 
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
-
-interface CacheEntry {
-  result: LeaderboardResult;
-  fetchedAt: number;
-}
-
-const _cache = new Map<string, CacheEntry>();
 
 function cacheKey(mode: LeaderboardMode, countryCode: string | null): string {
   return countryCode ? `${mode}:${countryCode}` : mode;
 }
 
+function getCachedEntry(key: string): { result: LeaderboardResult; fetchedAt: number } | null {
+  const row = getLeaderboardCache(key);
+  if (!row) return null;
+  return {
+    result: JSON.parse(row.result_json),
+    fetchedAt: new Date(row.fetched_at + 'Z').getTime(),
+  };
+}
+
 function isFresh(key: string): boolean {
-  const entry = _cache.get(key);
+  const entry = getCachedEntry(key);
   return !!entry && Date.now() - entry.fetchedAt < CACHE_TTL_MS;
 }
 
@@ -39,7 +42,7 @@ export function getLeaderboardFetchedAt(
   mode: LeaderboardMode,
   countryCode: string | null = null,
 ): Date | null {
-  const entry = _cache.get(cacheKey(mode, countryCode));
+  const entry = getCachedEntry(cacheKey(mode, countryCode));
   return entry ? new Date(entry.fetchedAt) : null;
 }
 
@@ -54,6 +57,7 @@ export interface LeaderboardEntry {
 export interface LeaderboardResult {
   entries: LeaderboardEntry[];
   playerRank: number | null;
+  stale?: boolean;
 }
 
 interface RpcRow {
@@ -75,6 +79,10 @@ function mapRow(row: RpcRow): LeaderboardEntry {
   };
 }
 
+function cacheResult(key: string, result: LeaderboardResult): void {
+  upsertLeaderboardCache(key, JSON.stringify(result));
+}
+
 /** Fetch global leaderboard (all countries) for the given mode. */
 export async function fetchGlobalLeaderboard(
   mode: LeaderboardMode,
@@ -83,26 +91,33 @@ export async function fetchGlobalLeaderboard(
   const key = cacheKey(mode, null);
 
   if (isFresh(key)) {
-    return _cache.get(key)!.result;
+    return getCachedEntry(key)!.result;
   }
 
-  const { data, error } = await supabase.rpc('get_leaderboard', {
-    p_mode: mode,
-    p_country_code: null,
-    p_limit: limit,
-    p_offset: 0,
-  });
+  try {
+    const { data, error } = await supabase.rpc('get_leaderboard', {
+      p_mode: mode,
+      p_country_code: null,
+      p_limit: limit,
+      p_offset: 0,
+    });
 
-  if (error) throw error;
+    if (error) throw error;
 
-  const rows: RpcRow[] = data?.leaderboard ?? [];
-  const result: LeaderboardResult = {
-    entries: rows.map(mapRow),
-    playerRank: data?.player_rank ?? null,
-  };
+    const rows: RpcRow[] = data?.leaderboard ?? [];
+    const result: LeaderboardResult = {
+      entries: rows.map(mapRow),
+      playerRank: data?.player_rank ?? null,
+    };
 
-  _cache.set(key, { result, fetchedAt: Date.now() });
-  return result;
+    cacheResult(key, result);
+    return result;
+  } catch (e) {
+    // On failure, return stale cache if available
+    const stale = getCachedEntry(key);
+    if (stale) return { ...stale.result, stale: true };
+    throw e;
+  }
 }
 
 /** Fetch regional leaderboard filtered by country code. */
@@ -114,26 +129,33 @@ export async function fetchRegionalLeaderboard(
   const key = cacheKey(mode, countryCode);
 
   if (isFresh(key)) {
-    return _cache.get(key)!.result;
+    return getCachedEntry(key)!.result;
   }
 
-  const { data, error } = await supabase.rpc('get_leaderboard', {
-    p_mode: mode,
-    p_country_code: countryCode,
-    p_limit: limit,
-    p_offset: 0,
-  });
+  try {
+    const { data, error } = await supabase.rpc('get_leaderboard', {
+      p_mode: mode,
+      p_country_code: countryCode,
+      p_limit: limit,
+      p_offset: 0,
+    });
 
-  if (error) throw error;
+    if (error) throw error;
 
-  const rows: RpcRow[] = data?.leaderboard ?? [];
-  const result: LeaderboardResult = {
-    entries: rows.map(mapRow),
-    playerRank: data?.player_rank ?? null,
-  };
+    const rows: RpcRow[] = data?.leaderboard ?? [];
+    const result: LeaderboardResult = {
+      entries: rows.map(mapRow),
+      playerRank: data?.player_rank ?? null,
+    };
 
-  _cache.set(key, { result, fetchedAt: Date.now() });
-  return result;
+    cacheResult(key, result);
+    return result;
+  } catch (e) {
+    // On failure, return stale cache if available
+    const stale = getCachedEntry(key);
+    if (stale) return { ...stale.result, stale: true };
+    throw e;
+  }
 }
 
 /**
@@ -180,4 +202,3 @@ export function buildFriendsLeaderboard(
     playerRank: playerEntry?.rank ?? null,
   };
 }
-

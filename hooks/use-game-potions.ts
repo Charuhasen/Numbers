@@ -22,6 +22,7 @@ export interface ResolvedSlot {
   slotIndex: number;
   potionColumn: string;        // e.g. 'potion_time_freeze'
   sku: string;                 // store_items.sku
+  rarity: 'rare' | 'epic' | 'legendary';
   autoUseMode: AutoUseMode;
   autoUseEnabled: boolean;     // user's toggle state (only matters for 'toggleable')
   initialQty: number;          // min(3, owned) — max 3 per slot, clamped to inventory
@@ -90,6 +91,7 @@ export function useGamePotions(): UseGamePotionsReturn {
         slotIndex: slot.slot_index,
         potionColumn: column,
         sku: item.sku,
+        rarity: (item.metadata?.rarity as 'rare' | 'epic' | 'legendary') || 'rare',
         autoUseMode: autoMode,
         autoUseEnabled: slot.auto_use_enabled,
         initialQty,

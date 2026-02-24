@@ -12,7 +12,6 @@ interface PlayerInfoRowProps {
   isSyncing: boolean;
   lastSyncedAt: Date | null;
   onProfilePress?: () => void;
-  onSettingsPress?: () => void;
 }
 
 export function PlayerInfoRow({
@@ -23,7 +22,6 @@ export function PlayerInfoRow({
   isSyncing,
   lastSyncedAt,
   onProfilePress,
-  onSettingsPress,
 }: PlayerInfoRowProps) {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
@@ -72,13 +70,6 @@ export function PlayerInfoRow({
           <Text style={[styles.bitsText, { color: theme.primary }]}>{bits.toLocaleString()}</Text>
         </View>
 
-        <TouchableOpacity
-          onPress={onSettingsPress}
-          style={[styles.settingsButton, { backgroundColor: theme.surfaceVariant }]}
-          activeOpacity={0.7}
-        >
-          <MaterialIcons name="settings" size={20} color={theme.primary} />
-        </TouchableOpacity>
       </View>
     </View>
   );
@@ -150,12 +141,5 @@ const styles = StyleSheet.create({
   bitsText: {
     fontSize: 14,
     fontWeight: '700',
-  },
-  settingsButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });

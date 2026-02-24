@@ -199,9 +199,10 @@ export default function LeaderboardScreen() {
         }
         r = await fetchRegionalLeaderboard(m, cc);
       }
-      patchPage(s, { result: r, isLoading: false, lastUpdated: getLeaderboardFetchedAt(m, cc), error: null });
+      const staleMsg = r.stale ? 'Showing cached data — pull to refresh when online.' : null;
+      patchPage(s, { result: r, isLoading: false, lastUpdated: getLeaderboardFetchedAt(m, cc), error: staleMsg });
     } catch {
-      patchPage(s, { isLoading: false, error: 'Could not load leaderboard. Pull down to refresh.' });
+      patchPage(s, { isLoading: false, error: 'Leaderboards require an internet connection.' });
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

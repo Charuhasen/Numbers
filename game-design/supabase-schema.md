@@ -132,8 +132,6 @@ create table public.inventory (
 
   -- Legendary
   potion_grid_skip int default 0 check (potion_grid_skip >= 0),
-  potion_revive int default 0 check (potion_revive >= 0),
-  potion_fortune_tonic int default 0 check (potion_fortune_tonic >= 0),
   potion_scanner int default 0 check (potion_scanner >= 0),
 
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
@@ -504,8 +502,7 @@ declare
   v_valid_columns text[] := array[
     'potion_time_freeze', 'potion_second_chance',
     'potion_heart_refill', 'potion_50_50',
-    'potion_grid_skip', 'potion_revive',
-    'potion_fortune_tonic', 'potion_scanner'
+    'potion_grid_skip', 'potion_scanner'
   ];
 begin
   v_user_id := auth.uid();
@@ -553,8 +550,7 @@ declare
   v_valid_columns text[] := array[
     'potion_time_freeze', 'potion_second_chance',
     'potion_heart_refill', 'potion_50_50',
-    'potion_grid_skip', 'potion_revive',
-    'potion_fortune_tonic', 'potion_scanner'
+    'potion_grid_skip', 'potion_scanner'
   ];
 begin
   v_user_id := auth.uid();

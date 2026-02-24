@@ -40,6 +40,8 @@ export function GamePotionTray({ slots, onUsePotion, disabled, secondChanceActiv
         }
 
         const meta = POTION_DISPLAY[slot.potionColumn];
+        const rarity = slot.rarity;
+        const iconColor = rarity === 'legendary' ? theme.potionLegendary : rarity === 'epic' ? theme.potionEpic : theme.potionRare;
         const isAutoUse = slot.autoUseMode === 'always' ||
           (slot.autoUseMode === 'toggleable' && slot.autoUseEnabled);
         const isActive = slot.potionColumn === 'potion_second_chance' && secondChanceActive;
@@ -51,10 +53,10 @@ export function GamePotionTray({ slots, onUsePotion, disabled, secondChanceActiv
                 styles.potionSlot,
                 styles.equippedSlot,
                 styles.activeSlot,
-                { backgroundColor: theme.surfaceVariant, borderColor: theme.primary },
+                { backgroundColor: theme.surfaceVariant, borderColor: iconColor },
               ]}
             >
-              <MaterialIcons name={meta?.icon ?? 'science'} size={24} color={theme.primary} />
+              <MaterialIcons name={meta?.icon ?? 'science'} size={24} color={iconColor} />
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>{slot.remainingUses}</Text>
               </View>
@@ -68,17 +70,17 @@ export function GamePotionTray({ slots, onUsePotion, disabled, secondChanceActiv
             style={[
               styles.potionSlot,
               styles.equippedSlot,
-              { backgroundColor: theme.surfaceVariant, borderColor: theme.primary },
+              { backgroundColor: theme.surfaceVariant, borderColor: iconColor },
             ]}
             disabled={disabled || loadingSlot !== null || slot.remainingUses <= 0}
             activeOpacity={0.7}
             onPress={() => handlePress(index, slot.potionColumn)}
           >
             {loadingSlot === index ? (
-              <ActivityIndicator size="small" color={theme.primary} />
+              <ActivityIndicator size="small" color={iconColor} />
             ) : (
               <>
-                <MaterialIcons name={meta?.icon ?? 'science'} size={24} color={theme.primary} />
+                <MaterialIcons name={meta?.icon ?? 'science'} size={24} color={iconColor} />
                 <View style={styles.badge}>
                   <Text style={styles.badgeText}>{slot.remainingUses}</Text>
                 </View>

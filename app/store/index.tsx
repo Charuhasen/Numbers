@@ -1,4 +1,5 @@
 import { Colors, Spacing } from '@/constants/theme';
+import { useSession } from '@/context/ctx';
 import { useProfile } from '@/context/profile-ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import {
@@ -12,6 +13,7 @@ import {
     purchaseItem,
     type PotionRarity,
 } from '@/lib/store-service';
+import { syncDataWithSupabase } from '@/lib/sync-service';
 import { MaterialIcons } from '@expo/vector-icons';
 import NetInfo from '@react-native-community/netinfo';
 import { useRouter } from 'expo-router';
@@ -40,9 +42,7 @@ const POTION_DISPLAY: Record<string, PotionDisplayMeta> = {
   potion_second_chance: { icon: 'shield',               label: 'Second Chance' },
   potion_50_50:         { icon: 'content-cut',          label: '50/50'         },
   potion_scanner:       { icon: 'center-focus-strong',  label: 'Scanner'       },
-  potion_fortune_tonic: { icon: 'auto-awesome',         label: 'Fortune Tonic' },
   potion_grid_skip:     { icon: 'skip-next',            label: 'Grid Skip'     },
-  potion_revive:        { icon: 'autorenew',            label: 'Revive'        },
 };
 
 const RARITY_ORDER: PotionRarity[] = ['rare', 'epic', 'legendary'];
@@ -73,9 +73,10 @@ interface PotionCardProps {
   rarityColor: string;
   onBuy: (item: StoreItem) => void;
   buying: boolean;
+  disabled?: boolean;
 }
 
-function PotionCard({ item, inventory, userBits, rarityColor, onBuy, buying }: PotionCardProps) {
+function PotionCard({ item, inventory, userBits, rarityColor, onBuy, buying, disabled }: PotionCardProps) {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
   const isDark = colorScheme === 'dark';
@@ -137,7 +138,7 @@ function PotionCard({ item, inventory, userBits, rarityColor, onBuy, buying }: P
           },
         ]}
         onPress={() => onBuy(item)}
-        disabled={buying || !canAfford}
+        disabled={buying || !canAfford || disabled}
         activeOpacity={0.8}
       >
         {buying ? (
@@ -167,6 +168,7 @@ export default function StoreScreen() {
   const theme = Colors[colorScheme ?? 'light'];
   const router = useRouter();
   const { profile, refreshProfile } = useProfile();
+  const { session } = useSession();
 
   const [items, setItems] = useState<StoreItem[]>([]);
   const [inventory, setInventory] = useState<UserInventory | null>(null);
@@ -177,21 +179,34 @@ export default function StoreScreen() {
 
   const load = useCallback(async () => {
     const netState = await NetInfo.fetch();
-    if (!netState.isConnected) {
-       setIsOnline(false);
-       setLoading(false);
-       setRefreshing(false);
-       return;
-    }
-    
-    setIsOnline(true);
-    
+    const online = !!netState.isConnected;
+    setIsOnline(online);
+
     try {
-      const [storeItems, inv] = await Promise.all([getStoreItems(), getUserInventory()]);
+      if (online && session?.user?.id) {
+        await syncDataWithSupabase(session.user.id);
+      }
+
+      // Always load from local cache (works offline too)
+      const storeItems = await getStoreItems();
       setItems(storeItems);
-      setInventory(inv);
+
+      if (online) {
+        const inv = await getUserInventory();
+        setInventory(inv);
+      } else {
+        // Use local inventory from profile context as fallback
+        setInventory(null);
+      }
     } catch (err) {
-      Alert.alert('Error', 'Could not load store. Please try again.');
+      // Still try local cache on error
+      try {
+        const storeItems = await getStoreItems();
+        setItems(storeItems);
+      } catch { /* noop */ }
+      if (online) {
+        Alert.alert('Error', 'Could not load store. Please try again.');
+      }
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -264,15 +279,15 @@ export default function StoreScreen() {
         <View style={styles.centered}>
           <ActivityIndicator size="large" color={theme.primary} />
         </View>
-      ) : !isOnline ? (
+      ) : !isOnline && items.length === 0 ? (
         <View style={styles.centered}>
           <MaterialIcons name="cloud-off" size={48} color={theme.onSurfaceVariant} style={{ marginBottom: 16 }} />
           <Text style={[styles.headerTitle, { color: theme.onSurface, marginBottom: 8 }]}>Offline</Text>
           <Text style={[styles.subtitle, { color: theme.onSurfaceVariant, textAlign: 'center', marginHorizontal: 32 }]}>
             An active internet connection is required to browse the Potion Store.
           </Text>
-          <TouchableOpacity 
-             style={[styles.buyButton, { backgroundColor: theme.primary, width: 140, marginTop: 24 }]} 
+          <TouchableOpacity
+             style={[styles.buyButton, { backgroundColor: theme.primary, width: 140, marginTop: 24 }]}
              onPress={onRefresh}
           >
              <Text style={styles.buyText}>Retry</Text>
@@ -290,6 +305,14 @@ export default function StoreScreen() {
             />
           }
         >
+          {!isOnline && (
+            <View style={[styles.offlineBanner, { backgroundColor: theme.surfaceVariant }]}>
+              <MaterialIcons name="cloud-off" size={16} color={theme.onSurfaceVariant} />
+              <Text style={[styles.offlineBannerText, { color: theme.onSurfaceVariant }]}>
+                Offline — purchases require internet
+              </Text>
+            </View>
+          )}
           <Text style={[styles.subtitle, { color: theme.onSurfaceVariant }]}>
             Spend your bits on potions to gain the edge in Blitz mode.
           </Text>
@@ -305,11 +328,12 @@ export default function StoreScreen() {
                     <View key={item.sku} style={styles.gridItem}>
                       <PotionCard
                         item={item}
-                        inventory={inventory!}
+                        inventory={inventory ?? { potion_time_freeze: 0, potion_second_chance: 0, potion_50_50: 0, potion_grid_skip: 0, potion_scanner: 0 }}
                         userBits={userBits}
                         rarityColor={rarityColor[rarity]}
                         onBuy={handleBuy}
                         buying={buying === item.sku}
+                        disabled={!isOnline}
                       />
                     </View>
                   ))}
@@ -509,6 +533,21 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.7)',
     textDecorationLine: 'line-through',
     marginRight: 4,
+  },
+
+  // Offline Banner
+  offlineBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+    marginBottom: 8,
+  },
+  offlineBannerText: {
+    fontSize: 13,
+    fontWeight: '500',
   },
 
   // Footer

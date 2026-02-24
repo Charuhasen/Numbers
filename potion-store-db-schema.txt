@@ -96,7 +96,7 @@ Based on standard mobile gaming loops, to make the Bits -> Potion economy engagi
 
 Daily Rotating Store: Don't just have a static catalog. Have a separate store_daily_offers concept where a random Legendary potion goes on a -30% discount for 24 hours. This drives daily logins.
 Combo Potions: Allow players to merge 3 identical Tier 1 potions (e.g., +5s Time Freeze) into 1 Tier 2 potion (+10s Time Freeze). This creates a sink for excess inventory and gives a reason to keep grinding lower-tier rewards.
-The "Auto-Use" Tax: If a player toggles "Auto-Use" on a Revive or Second Chance potion, they don't have to pause and tap it manually. However, perhaps Auto-Use applies a slight score penalty (e.g., -5% final score) compared to manual usage, creating a risk/reward skill ceiling for high-level players.
+The "Auto-Use" Tax: If a player toggles "Auto-Use" on a Second Chance potion, they don't have to pause and tap it manually. However, perhaps Auto-Use applies a slight score penalty (e.g., -5% final score) compared to manual usage, creating a risk/reward skill ceiling for high-level players.
 Visual "Gacha" Pack Opening: When players buy a "Bundle" from the store, don't just add it to the inventory. Trigger an unboxing animation in React Native where the potion bottles pop out with haptic feedback (expo-haptics).
 Streaks & Potion Drops: If a player gets 10 correct answers in a row quickly in Classic mode, an inline "Loot Goblin" or "Bonus Box" tile appears on the grid. Tapping it drops a random potion directly into their inventory.
 

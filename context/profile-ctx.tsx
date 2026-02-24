@@ -1,6 +1,6 @@
 import { useSession } from '@/context/ctx';
 import { clearGameSessionData, getGameSessionData } from '@/lib/game-session-store';
-import { getLocalInventory, getLocalPotionSlots, getLocalProfile } from '@/lib/local-db';
+import { getLocalBestScores, getLocalInventory, getLocalPotionSlots, getLocalProfile, scoreExistsNear } from '@/lib/local-db';
 import { queuePendingScore } from '@/lib/score-service';
 import { supabase } from '@/lib/supabase';
 import { syncDataWithSupabase } from '@/lib/sync-service';
@@ -26,8 +26,6 @@ export interface Inventory {
   potion_second_chance: number;
   potion_50_50: number;
   potion_grid_skip: number;
-  potion_revive: number;
-  potion_fortune_tonic: number;
   potion_scanner: number;
 }
 
@@ -92,7 +90,7 @@ export function ProfileProvider({ children }: PropsWithChildren) {
 
     // 2. Read exact mirror from Local DB
     const localProfile = getLocalProfile(userId);
-    
+
     // Safety net: in case user exists in Auth but hasn't synced profile yet
     if (!localProfile) {
       const meta = session.user.user_metadata;
@@ -118,28 +116,13 @@ export function ProfileProvider({ children }: PropsWithChildren) {
         bits: finalProfile.bits ?? 0,
         avatarUrl: finalProfile.avatar_url,
         countryCode: finalProfile.country_code ?? null,
-        allowFriendRequests: false, 
+        allowFriendRequests: false,
       });
     }
 
-    // Best scores are still pulled directly since they are global rankings,
-    // though ideally they would also be synced to local DB `scores` table.
-    // Setting up the basic scores fetch here for now.
-    const scoresResult = await supabase
-      .from('scores')
-      .select('mode, score')
-      .eq('user_id', userId);
-
-    if (scoresResult.data) {
-      const best: BestScores = emptyBestScores();
-      for (const row of scoresResult.data) {
-        const mode = row.mode as keyof BestScores;
-        if (mode in best && row.score > best[mode]) {
-          best[mode] = row.score;
-        }
-      }
-      setBestScores(best);
-    }
+    // Best scores from local DB (includes both local games and synced remote scores)
+    const localBest = getLocalBestScores(userId);
+    setBestScores(localBest);
 
     // Fetch Inventory strictly from local mirror
     const localInventory = getLocalInventory(userId);
@@ -176,18 +159,27 @@ export function ProfileProvider({ children }: PropsWithChildren) {
 
     (async () => {
       // If the app was killed after a game ended but before the game-over screen
-      // could submit, a stale session will be in AsyncStorage. Move it to the
+      // could submit, a stale session will be in SQLite. Move it to the
       // pending queue so it gets submitted on this startup.
-      const staleSession = await getGameSessionData();
+      const staleSession = getGameSessionData();
       if (staleSession) {
-        await queuePendingScore({
-          mode: staleSession.mode,
-          events: staleSession.events,
-          roundReached: staleSession.challengeIndex,
-          score: staleSession.score,
-          sessionId: staleSession.sessionId ?? null,
-        });
-        await clearGameSessionData();
+        // Dedup: check if a similar score already exists within a 1-minute window
+        const isDuplicate = scoreExistsNear(
+          session.user.id,
+          staleSession.mode,
+          staleSession.score,
+          new Date().toISOString(),
+        );
+        if (!isDuplicate) {
+          await queuePendingScore({
+            mode: staleSession.mode,
+            events: staleSession.events,
+            roundReached: staleSession.challengeIndex,
+            score: staleSession.score,
+            sessionId: staleSession.sessionId ?? null,
+          });
+        }
+        clearGameSessionData();
       }
 
       // Sync data handles pushing any scores queued while offline + pulling latest state

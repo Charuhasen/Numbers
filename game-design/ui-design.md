@@ -254,7 +254,7 @@ The most important screen. Every element is designed for zero distraction during
 - Same shape, `surfaceDim` background, dashed border in `onSurfaceVariant` at 30% opacity
 - No icon or text
 
-**Auto-triggered potions (Second Chance, Revive):**
+**Auto-triggered potions (Second Chance):**
 - Show a small status indicator dot in the top-right corner of the slot
 - Dot: 8dp, filled `success` when active, `surfaceDim` when consumed
 - Not tappable — no press animation
@@ -717,7 +717,6 @@ Slides up when a player taps "PLAY" on a mode card (except Blitz).
 
 - Manual potion tap: icon scales up (1.0 → 1.3, 150ms) then settles back. Rarity-colored ring expands outward and fades (300ms).
 - Auto-trigger (Second Chance absorbing a wrong tap): slot briefly flashes `success` (200ms).
-- Revive on death: full-screen subtle flash of `success` at 10% opacity (300ms), hearts refill animation.
 
 ---
 

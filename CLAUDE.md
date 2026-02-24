@@ -143,8 +143,7 @@ GameState: hearts, challengeIndex, gridIndex (0-4), timeRemaining,
 GameEvent: type (correct/wrong/timeout/grid_skip), gridIndex, challengeIndex,
            timeRemaining, timestamp — recorded during play, sent to server at session end
 
-ActivePotionEffects: secondChanceActive, fortuneTonicRoundsLeft, timerFrozen,
-                     timerFreezeRemaining, reviveAvailable
+ActivePotionEffects: secondChanceActive, timerFrozen, timerFreezeRemaining
 ```
 
 ### Gameplay Logic
@@ -155,7 +154,7 @@ ActivePotionEffects: secondChanceActive, fortuneTonicRoundsLeft, timerFrozen,
 | Correct (Blitz) | N/A | Next grid | +100 + (globalTimeRemaining * 10).round() | Global keeps counting down |
 | Wrong answer | -1 (absorbed if Second Chance active) | Stay | No change | Keeps running |
 | Timeout | -1 (Classic only) | Next grid | No change | Reset to next grid's time |
-| Game over (0 hearts) | Check Revive potion first | — | Final | — |
+| Game over (0 hearts) | — | — | Final | — |
 
 ### Timer: `Math.max(6.0 - gridIndex * 1.0, 2.0)` seconds (Classic). Keeps running on wrong answer. Blitz uses global 60s only.
 
@@ -198,10 +197,10 @@ Each board has 1 instruction and 5 grids. **Every grid must have exactly one cor
 ## Potion System
 
 - **Pre-select up to 3 potions** via bottom sheet before starting a game. Tap mode → bottom sheet with inventory + 3 slots → confirm to start.
-- **Auto-triggered (passive):** Second Chance (absorbs 1 wrong tap), Revive (resurrects with 1 heart on death).
-- **Manual activation (active):** Time Freeze (pause 5s), 50/50 (remove 4 wrong), Grid Skip (auto-solve for full points), Scanner (highlight answer 3s, timer keeps running), Heart Refill (+1, max 4), Fortune Tonic (2x drops for 5 rounds).
+- **Auto-triggered (passive):** Second Chance (absorbs 1 wrong tap).
+- **Manual activation (active):** Time Freeze (pause 5s), 50/50 (remove 4 wrong), Grid Skip (auto-solve for full points), Scanner (highlight answer 3s, timer keeps running), Heart Refill (+1, max 4).
 - Only one manual potion active at a time. Cannot swap mid-game.
-- **Drops:** 20% per completed round (40% with Fortune Tonic). Guaranteed at milestone rounds (5, 10, 15...). Rarity scales: Rounds 1-10 mostly Rare, 11-20 mostly Epic, 21+ significant Legendary. No drops in Blitz.
+- **Drops:** 20% per completed round. Guaranteed at milestone rounds (5, 10, 15...). Rarity scales: Rounds 1-10 mostly Rare, 11-20 mostly Epic, 21+ significant Legendary. No drops in Blitz.
 
 ## Supabase Backend
 

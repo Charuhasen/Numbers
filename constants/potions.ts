@@ -2,13 +2,11 @@ import { type AutoUseMode, type StoreItem } from '@/lib/store-service';
 import { MaterialIcons } from '@expo/vector-icons';
 
 export const POTION_DISPLAY: Record<string, { icon: keyof typeof MaterialIcons.glyphMap; label: string }> = {
-    potion_time_freeze: { icon: 'timer', label: 'Time Freeze' },
-    potion_second_chance: { icon: 'shield', label: 'Second Chance' },
-    potion_50_50: { icon: 'content-cut', label: '50/50' },
-    potion_scanner: { icon: 'center-focus-strong', label: 'Scanner' },
-    potion_fortune_tonic: { icon: 'auto-awesome', label: 'Fortune Tonic' },
-    potion_grid_skip: { icon: 'skip-next', label: 'Grid Skip' },
-    potion_revive: { icon: 'autorenew', label: 'Revive' },
+    potion_time_freeze: { icon: 'timer', label: 'Time Freeze' }, // Blue (Rare)
+    potion_second_chance: { icon: 'shield', label: 'Second Chance' }, // Green (Uncommon)
+    potion_50_50: { icon: 'content-cut', label: '50/50' }, // Purple (Epic)
+    potion_scanner: { icon: 'center-focus-strong', label: 'Scanner' }, // Amber (Legendary)
+    potion_grid_skip: { icon: 'skip-next', label: 'Grid Skip' }, // Red (God Tier)
 };
 
 /**
@@ -25,7 +23,5 @@ export function getAutoUseMode(potionColumn: string, storeItems: StoreItem[]): A
 
 const FALLBACK_AUTO_USE_MODE: Record<string, AutoUseMode> = {
     potion_second_chance: 'always',
-    potion_revive: 'always',
     potion_time_freeze: 'toggleable',
-    potion_fortune_tonic: 'toggleable',
 };

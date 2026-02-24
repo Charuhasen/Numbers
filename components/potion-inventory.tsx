@@ -2,13 +2,13 @@ import { getAutoUseMode } from '@/constants/potions';
 import { Colors } from '@/constants/theme';
 import { useProfile, type UserPotionSlot } from '@/context/profile-ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { deleteLocalPotionSlot, insertPendingChange, upsertLocalPotionSlots } from '@/lib/local-db';
 import { getStoreItems, StoreItem } from '@/lib/store-service';
-import { supabase } from '@/lib/supabase';
+import { processPendingChanges } from '@/lib/sync-service';
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
     ActivityIndicator,
-    Alert,
     Modal,
     Pressable,
     ScrollView,
@@ -23,9 +23,7 @@ const POTION_DISPLAY: Record<string, { icon: keyof typeof MaterialIcons.glyphMap
   potion_second_chance: { icon: 'shield',               label: 'Second Chance' },
   potion_50_50:         { icon: 'content-cut',          label: '50/50'         },
   potion_scanner:       { icon: 'center-focus-strong',  label: 'Scanner'       },
-  potion_fortune_tonic: { icon: 'auto-awesome',         label: 'Fortune Tonic' },
   potion_grid_skip:     { icon: 'skip-next',            label: 'Grid Skip'     },
-  potion_revive:        { icon: 'autorenew',            label: 'Revive'        },
 };
 
 export function PotionInventory() {
@@ -87,38 +85,34 @@ export function PotionInventory() {
     return nextSlots;
   };
 
-  const handleUpdateSlot = async (slotIndex: number, potionType: string | null, autoUse: boolean, quantity: number = 1) => {
+  const handleUpdateSlot = (slotIndex: number, potionType: string | null, autoUse: boolean, quantity: number = 1) => {
     if (!profile.id) return;
 
-    // Apply optimistic update first
-    const previousSlots = [...potionSlots];
+    // Apply optimistic update
     applySlotUpdate(slotIndex, potionType, autoUse, quantity);
 
-    try {
-      if (potionType === null) {
-        const { error } = await supabase
-          .from('user_potion_slots')
-          .delete()
-          .eq('user_id', profile.id)
-          .eq('slot_index', slotIndex);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase
-          .from('user_potion_slots')
-          .upsert({
-            user_id: profile.id,
-            slot_index: slotIndex,
-            potion_type: potionType,
-            auto_use_enabled: autoUse,
-            quantity,
-          });
-        if (error) throw error;
-      }
-    } catch (err: any) {
-      // Rollback on failure
-      setPotionSlotsOptimistic(previousSlots);
-      Alert.alert('Error', err.message);
+    // Write to local SQLite immediately
+    if (potionType === null) {
+      deleteLocalPotionSlot(profile.id, slotIndex);
+      insertPendingChange('potion_slot', { action: 'delete', slot_index: slotIndex });
+    } else {
+      upsertLocalPotionSlots([{
+        user_id: profile.id,
+        slot_index: slotIndex,
+        potion_type: potionType,
+        auto_use_enabled: autoUse,
+      }]);
+      insertPendingChange('potion_slot', {
+        action: 'upsert',
+        slot_index: slotIndex,
+        potion_type: potionType,
+        auto_use_enabled: autoUse,
+        quantity,
+      });
     }
+
+    // Fire-and-forget sync attempt
+    processPendingChanges(profile.id).catch(() => {});
   };
 
   const renderSlot = (index: number) => {
@@ -131,6 +125,9 @@ export function PotionInventory() {
     }
 
     const meta = item ? POTION_DISPLAY[item.metadata?.column ?? ''] : null;
+
+    const rarity = (item?.metadata?.rarity as 'rare' | 'epic' | 'legendary') || 'rare';
+    const iconColor = rarity === 'legendary' ? theme.potionLegendary : rarity === 'epic' ? theme.potionEpic : theme.potionRare;
 
     return (
       <View key={index} style={[styles.slotContainer, { backgroundColor: theme.surfaceVariant }]}>
@@ -155,7 +152,7 @@ export function PotionInventory() {
                   { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' },
                 ]}
               >
-                <MaterialIcons name={meta?.icon ?? 'science'} size={24} color={theme.primary} />
+                <MaterialIcons name={meta?.icon ?? 'science'} size={24} color={iconColor} />
               </View>
               <View style={styles.slotInfo}>
                 <Text style={[styles.itemName, { color: theme.onSurface }]}>{item.name}</Text>
@@ -268,6 +265,9 @@ export function PotionInventory() {
                   const count =
                     inventory[(potion.metadata?.column) as keyof typeof inventory] || 0;
 
+                  const rarity = (potion.metadata?.rarity as 'rare' | 'epic' | 'legendary') || 'rare';
+                  const modalIconColor = rarity === 'legendary' ? theme.potionLegendary : rarity === 'epic' ? theme.potionEpic : theme.potionRare;
+
                   return (
                     <Pressable
                       key={potion.sku}
@@ -299,7 +299,7 @@ export function PotionInventory() {
                           },
                         ]}
                       >
-                        <MaterialIcons name={meta?.icon ?? 'science'} size={24} color={theme.primary} />
+                        <MaterialIcons name={meta?.icon ?? 'science'} size={24} color={modalIconColor} />
                       </View>
                       <View style={styles.pickerInfo}>
                         <Text style={[styles.itemName, { color: theme.onSurface }]}>

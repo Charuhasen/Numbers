@@ -2,9 +2,10 @@ import { MODE_CARD_WIDTH, ModeCard } from '@/components/mode-card';
 import { PlayerInfoRow } from '@/components/player-info-row';
 import { PotionInventory } from '@/components/potion-inventory';
 import { Colors } from '@/constants/theme';
+import { useSession } from '@/context/ctx';
 import { useProfile } from '@/context/profile-ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { getLastSyncedAt } from '@/lib/sync-service';
+import { getLastSyncedAt, syncDataWithSupabase } from '@/lib/sync-service';
 import { MaterialIcons } from '@expo/vector-icons';
 import NetInfo from '@react-native-community/netinfo';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -17,6 +18,7 @@ export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
   const { profile, bestScores, refreshProfile } = useProfile();
+  const { session } = useSession();
   const router = useRouter();
   
   const [isOnline, setIsOnline] = useState(false);
@@ -44,7 +46,10 @@ export default function HomeScreen() {
         setIsSyncing(false);
         setLastSyncedAt(getLastSyncedAt());
       });
-    }, [refreshProfile])
+      if (session?.user?.id) {
+        syncDataWithSupabase(session.user.id);
+      }
+    }, [refreshProfile, session?.user?.id])
   );
 
   const username = profile?.username ?? 'Player';
@@ -62,10 +67,6 @@ export default function HomeScreen() {
   const handleProfilePress = () => {
     router.push('/profile');
   };
-  const handleSettingsPress = () => {
-    router.push('/settings');
-  };
-
   // Icon colors: dark-mode aware
   const indigoIconBg = colorScheme === 'dark' ? 'rgba(99,102,241,0.2)' : '#EEF2FF';
   const roseIconBg = colorScheme === 'dark' ? 'rgba(244,63,94,0.2)' : '#FFF1F2';
@@ -85,7 +86,6 @@ export default function HomeScreen() {
         isSyncing={isSyncing}
         lastSyncedAt={lastSyncedAt}
         onProfilePress={handleProfilePress}
-        onSettingsPress={handleSettingsPress}
       />
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} bounces={false} overScrollMode="never">

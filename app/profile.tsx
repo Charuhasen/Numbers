@@ -2,8 +2,12 @@ import { Colors } from '@/constants/theme';
 import { useSession } from '@/context/ctx';
 import { useProfile } from '@/context/profile-ctx';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { isHapticsEnabled, setHapticsEnabled } from '@/lib/haptics';
+import { insertPendingChange, upsertLocalProfile } from '@/lib/local-db';
 import { supabase } from '@/lib/supabase';
+import { processPendingChanges } from '@/lib/sync-service';
 import { MaterialIcons } from '@expo/vector-icons';
+import NetInfo from '@react-native-community/netinfo';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
@@ -15,6 +19,7 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
+  Switch,
   Text,
   TextInput,
   TouchableOpacity,
@@ -61,6 +66,12 @@ export default function ProfileScreen() {
   const [isSaving, setIsSaving] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
+  // Settings state (merged from settings screen)
+  const [hapticsOn, setHapticsOn] = useState(isHapticsEnabled);
+  const [friendRequestsOn, setFriendRequestsOn] = useState(
+    profile?.allowFriendRequests ?? false,
+  );
+
   const regionCode = profile?.countryCode ?? null;
   const username = profile?.username ?? profile?.displayName ?? 'Player';
 
@@ -93,7 +104,13 @@ export default function ProfileScreen() {
     setServerError(null);
 
     try {
-      // Check uniqueness
+      // Uniqueness check requires network
+      const netState = await NetInfo.fetch();
+      if (!netState.isConnected) {
+        setServerError('Username changes require an internet connection to verify uniqueness');
+        return;
+      }
+
       const { count } = await supabase
         .from('profiles')
         .select('id', { count: 'exact', head: true })
@@ -105,12 +122,20 @@ export default function ProfileScreen() {
         return;
       }
 
-      const { error } = await supabase
-        .from('profiles')
-        .update({ username: usernameValue })
-        .eq('id', profile.id);
+      // Update local profile immediately
+      upsertLocalProfile({
+        id: profile.id,
+        username: usernameValue,
+        display_name: profile.displayName ?? '',
+        bits: profile.bits,
+        avatar_url: profile.avatarUrl ?? '',
+        country_code: profile.countryCode ?? '',
+      });
 
-      if (error) throw error;
+      // Queue change for sync
+      insertPendingChange('username', { username: usernameValue });
+      // Fire-and-forget sync
+      processPendingChanges(profile.id).catch(() => {});
 
       await refreshProfile();
       setIsEditingUsername(false);
@@ -120,6 +145,18 @@ export default function ProfileScreen() {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleHapticsToggle = (value: boolean) => {
+    setHapticsOn(value);
+    setHapticsEnabled(value);
+  };
+
+  const handleFriendRequestsToggle = (value: boolean) => {
+    if (!profile?.id) return;
+    setFriendRequestsOn(value);
+    insertPendingChange('friend_requests_toggle', { value });
+    processPendingChanges(profile.id).catch(() => {});
   };
 
   const handleSignOut = () => {
@@ -268,6 +305,45 @@ export default function ProfileScreen() {
             </View>
           </View>
 
+          {/* Preferences */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionLabel, { color: theme.onSurfaceVariant }]}>Preferences</Text>
+            <View style={[styles.card, { backgroundColor: theme.surfaceVariant }]}>
+              <View style={styles.row}>
+                <MaterialIcons name="vibration" size={20} color={theme.onSurface} />
+                <Text style={[styles.rowLabel, { color: theme.onSurface }]}>Vibration</Text>
+                <Switch
+                  value={hapticsOn}
+                  onValueChange={handleHapticsToggle}
+                  trackColor={{ false: theme.surfaceDim, true: '#10B981' }}
+                  thumbColor="#FFFFFF"
+                />
+              </View>
+            </View>
+          </View>
+
+          {/* Privacy */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionLabel, { color: theme.onSurfaceVariant }]}>Privacy</Text>
+            <View style={[styles.card, { backgroundColor: theme.surfaceVariant }]}>
+              <View style={styles.row}>
+                <MaterialIcons name="person-add" size={20} color={theme.onSurface} />
+                <View style={styles.rowTextGroup}>
+                  <Text style={[styles.rowLabel, { color: theme.onSurface }]}>Friend Requests</Text>
+                  <Text style={[styles.rowSubLabel, { color: theme.onSurfaceVariant }]}>
+                    Allow others to send you friend requests
+                  </Text>
+                </View>
+                <Switch
+                  value={friendRequestsOn}
+                  onValueChange={handleFriendRequestsToggle}
+                  trackColor={{ false: theme.surfaceDim, true: '#10B981' }}
+                  thumbColor="#FFFFFF"
+                />
+              </View>
+            </View>
+          </View>
+
           {/* Account */}
           <View style={styles.section}>
             <Text style={[styles.sectionLabel, { color: theme.onSurfaceVariant }]}>Account</Text>
@@ -395,6 +471,14 @@ const styles = StyleSheet.create({
   },
   rowValue: {
     fontSize: 15,
+    fontWeight: '400',
+  },
+  rowTextGroup: {
+    flex: 1,
+    gap: 2,
+  },
+  rowSubLabel: {
+    fontSize: 12,
     fontWeight: '400',
   },
   editBlock: {

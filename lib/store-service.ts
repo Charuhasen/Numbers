@@ -33,8 +33,6 @@ export interface UserInventory {
   potion_second_chance: number;
   potion_50_50: number;
   potion_grid_skip: number;
-  potion_revive: number;
-  potion_fortune_tonic: number;
   potion_scanner: number;
 }
 
@@ -84,7 +82,7 @@ export async function getUserInventory(): Promise<UserInventory> {
   const { data, error } = await supabase
     .from('inventory')
     .select(
-      'potion_time_freeze, potion_second_chance, potion_50_50, potion_grid_skip, potion_revive, potion_fortune_tonic, potion_scanner',
+      'potion_time_freeze, potion_second_chance, potion_50_50, potion_grid_skip, potion_scanner',
     )
     .single();
 

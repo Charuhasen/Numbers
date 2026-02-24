@@ -1,5 +1,5 @@
 import { GameEvent, GameMode } from '@/engine/types';
-import { getPendingScores, insertLocalScore, markScoreSynced } from '@/lib/local-db';
+import { getRetryableScores, incrementScoreRetry, insertLocalScore, markScoreFailed, markScoreSynced } from '@/lib/local-db';
 import { supabase } from '@/lib/supabase';
 import * as Crypto from 'expo-crypto';
 
@@ -91,17 +91,17 @@ export async function queuePendingScore(submission: ScoreSubmission) {
   });
 }
 
-/** Flush all queued score submissions. Returns the number successfully processed. */
+/** Flush all queued score submissions with exponential backoff. Returns the number successfully processed. */
 export async function processPendingScores(): Promise<number> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return 0;
 
-  const pending = getPendingScores(user.id);
-  if (pending.length === 0) return 0;
+  const retryable = getRetryableScores(user.id);
+  if (retryable.length === 0) return 0;
 
   let processed = 0;
 
-  for (const score of pending) {
+  for (const score of retryable) {
     try {
       const events: GameEvent[] = JSON.parse(score.events_json);
       await submitGameScore(
@@ -114,6 +114,11 @@ export async function processPendingScores(): Promise<number> {
       processed++;
     } catch (e) {
       console.error('Failed to sync offline score:', e);
+      if (score.retry_count >= 4) {
+        markScoreFailed(score.id);
+      } else {
+        incrementScoreRetry(score.id);
+      }
     }
   }
 

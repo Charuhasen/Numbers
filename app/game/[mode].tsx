@@ -328,14 +328,6 @@ export default function GameScreen() {
   // │ potion_scanner      │ Manual tap: subtle glow on correct tile + 2 adjacent       │
   // │                     │ tiles in opposite directions for 1s. All 3 look the same. │
   // │                     │ Timer keeps running. Cannot combine with 50/50 same grid. │
-  // ├─────────────────────┼──────────────────────────────────────────────────────────┤
-  // │ potion_fortune_tonic│ Passive: doubles potion drop rates for 5 rounds.         │
-  // │                     │ Auto-consumed at game start. Not manually tappable.       │
-  // │                     │ (TODO: implement drop rate logic)                         │
-  // ├─────────────────────┼──────────────────────────────────────────────────────────┤
-  // │ potion_revive       │ Passive: auto-triggers on death, resurrects with 1 heart.│
-  // │                     │ Not manually tappable.                                    │
-  // │                     │ (TODO: implement revive logic)                            │
   // └─────────────────────┴──────────────────────────────────────────────────────────┘
   //
   const handleUsePotion = useCallback(async (potionColumn: string) => {
@@ -508,7 +500,7 @@ export default function GameScreen() {
         challengeIndex={state.challengeIndex}
         gridIndex={state.gridIndex}
         hearts={state.hearts}
-        showHearts={gameMode !== 'blitz'}
+        showHearts={true}
         onExit={handleExit}
         heartShake={heartShake}
       />
