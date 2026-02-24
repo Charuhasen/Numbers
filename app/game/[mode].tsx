@@ -15,19 +15,34 @@ import { setGameSessionData } from '@/lib/game-session-store';
 import { startGameSession } from '@/lib/score-service';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, InteractionManager, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, InteractionManager, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import Animated, { FadeIn, FadeOut, runOnJS, useAnimatedReaction, useSharedValue } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+import * as ScreenOrientation from 'expo-screen-orientation';
 
 import { triggerHeartShake } from '@/components/game/hearts-display';
 
 export default function GameScreen() {
+  const { width, height } = useWindowDimensions();
+  const isLandscape = width > height;
+
   const { mode } = useLocalSearchParams<{ mode: string }>();
   const router = useRouter();
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
 
   const gameMode = (mode as GameMode) || 'classic';
+  const isBlitzLandscape = gameMode === 'blitz' && isLandscape;
+
+  useEffect(() => {
+    if (gameMode === 'blitz') {
+      ScreenOrientation.unlockAsync();
+    }
+    return () => {
+      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+    };
+  }, [gameMode]);
 
   const [showTimeUp, setShowTimeUp] = useState(false);
   const [potionToast, setPotionToast] = useState<string | null>(null);
@@ -496,41 +511,42 @@ export default function GameScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.surface }]}>
-      <GameTopBar
-        challengeIndex={state.challengeIndex}
-        gridIndex={state.gridIndex}
-        hearts={state.hearts}
-        showHearts={true}
-        onExit={handleExit}
-        heartShake={heartShake}
-      />
-
-      <View style={styles.instructionContainer}>
-        <Text style={[styles.instruction, { color: theme.onSurface }]}>
-          {state.currentInstruction}
-        </Text>
-        <View style={styles.potionToastSlot}>
-          {potionToast && (
-            <Animated.Text
-              entering={FadeIn.duration(100)}
-              exiting={FadeOut.duration(100)}
-              style={[styles.potionToastText, { color: theme.error }]}
-            >
-              {potionToast}
-            </Animated.Text>
-          )}
+      <View style={isBlitzLandscape ? styles.lsTopGroup : undefined} pointerEvents="box-none">
+        <GameTopBar
+          challengeIndex={state.challengeIndex}
+          gridIndex={state.gridIndex}
+          hearts={state.hearts}
+          showHearts={true}
+          onExit={handleExit}
+          heartShake={heartShake}
+        />
+        <View style={styles.instructionContainer}>
+          <Text style={[styles.instruction, { color: theme.onSurface }]}>
+            {state.currentInstruction}
+          </Text>
+          <View style={styles.potionToastSlot}>
+            {potionToast && (
+              <Animated.Text
+                entering={FadeIn.duration(100)}
+                exiting={FadeOut.duration(100)}
+                style={[styles.potionToastText, { color: theme.error }]}
+              >
+                {potionToast}
+              </Animated.Text>
+            )}
+          </View>
         </View>
       </View>
 
-      <View style={styles.timerContainer}>
+      <View style={isBlitzLandscape ? styles.lsTimerGroup : styles.timerContainer} pointerEvents="box-none">
         {gameMode === 'blitz' && globalTimeRemaining ? (
-          <TimerBar progress={globalTimeRemaining} durationSec={60} isGlobal frozen={timerFrozen} freezeTimeRemaining={freezeTimeRemaining} />
+          <TimerBar progress={globalTimeRemaining!} durationSec={60} isGlobal frozen={timerFrozen} freezeTimeRemaining={freezeTimeRemaining} />
         ) : (
           <TimerBar progress={timerProgress} durationSec={timerDuration} frozen={timerFrozen} freezeTimeRemaining={freezeTimeRemaining} />
         )}
       </View>
 
-      <View style={styles.gridContainer}>
+      <View style={isBlitzLandscape ? styles.lsGridGroup : styles.gridContainer} pointerEvents="box-none">
         {showTimeUp && (
           <Animated.Text
             entering={FadeIn.duration(150)}
@@ -548,7 +564,7 @@ export default function GameScreen() {
         />
       </View>
 
-      <View style={styles.statsContainer}>
+      <View style={isBlitzLandscape ? styles.lsStatsGroup : styles.statsContainer} pointerEvents="box-none">
         <StatsBar
           score={state.score}
           bestScore={bestScores[gameMode] ?? 0}
@@ -556,13 +572,14 @@ export default function GameScreen() {
         />
       </View>
 
-      <GamePotionTray
-        slots={potions.slots}
-        onUsePotion={handleUsePotion}
-        disabled={state.phase === 'gameOver' || showBanner}
-        secondChanceActive={state.secondChanceCount > 0}
-      />
-
+      <View style={isBlitzLandscape ? styles.lsPotionsGroup : undefined} pointerEvents="box-none">
+        <GamePotionTray
+          slots={potions.slots}
+          onUsePotion={handleUsePotion}
+          disabled={state.phase === 'gameOver' || showBanner}
+          secondChanceActive={state.secondChanceCount > 0}
+        />
+      </View>
       {showBanner && (
         <ChallengeBanner
           challengeNumber={state.challengeIndex + 1}
@@ -616,4 +633,45 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
   },
+  lsTopGroup: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '45%',
+    zIndex: 10,
+  },
+  lsPotionsGroup: {
+    position: 'absolute',
+    top: '40%',
+    left: 0,
+    width: '45%',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  lsTimerGroup: {
+    position: 'absolute',
+    bottom: 80,
+    left: 0,
+    width: '45%',
+    paddingHorizontal: Spacing.screenPadding,
+    zIndex: 10,
+  },
+  lsStatsGroup: {
+    position: 'absolute',
+    bottom: 16,
+    left: 0,
+    width: '45%',
+    paddingHorizontal: Spacing.screenPadding,
+    zIndex: 10,
+  },
+  lsGridGroup: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    right: 0,
+    width: '55%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+  }
 });
